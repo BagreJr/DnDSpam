@@ -159,6 +159,10 @@ document.addEventListener("DOMContentLoaded", () => {
         modalImage.src = classes[index].image;
         zoomLevel = 0;
         modalImage.classList.remove("zoomed");
+	const selectedClass = classes[index];
+	modalImage.src = selectedClass.image;
+	caption.innerHTML = `<strong>${selectedClass.name}</strong><br>${selectedClass.description}<br>
+	<a href="${selectedClass.link}" target="_blank">La Clase</a>`;
     }
 	
 	
