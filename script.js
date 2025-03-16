@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const selectedClass = classes.find(cls => cls.image.endsWith(imgFileName));
 
             if (selectedClass) {
-                caption.innerHTML = `<strong>${selectedClass.name}</strong><br>${selectedClass.description}<br>
+                caption.innerHTML = `<strong>${selectedClass.name}</strong><br>${selectedClass.description}<br><br>
                 <a href="${selectedClass.link}" target="_blank">La Clase</a>`;
             } else {
                 caption.innerHTML = "Información no disponible";
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	function updateModalImage(index) {
 		const selectedClass = classes[index];
 		modalImage.src = selectedClass.image;
-		caption.innerHTML = `<strong>${selectedClass.name}</strong><br>${selectedClass.description}<br>
+		caption.innerHTML = `<strong>${selectedClass.name}</strong><br>${selectedClass.description}<br><br>
 			<a href="${selectedClass.link}" target="_blank">La Clase</a>`;
 	}
 	
@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
         modalImage.classList.remove("zoomed");
 				const selectedClass = classes[index];
 		modalImage.src = selectedClass.image;
-		caption.innerHTML = `<strong>${selectedClass.name}</strong><br>${selectedClass.description}<br>
+		caption.innerHTML = `<strong>${selectedClass.name}</strong><br>${selectedClass.description}<br><br>
 			<a href="${selectedClass.link}" target="_blank">La Clase</a>`;
     }
 	
