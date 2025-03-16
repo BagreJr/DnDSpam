@@ -13,7 +13,7 @@ a {
     cursor: pointer;
     font-weight: bold;
     margin-top: 10px;
-	color: #737b8f;
+	color: Black;
 }
 /* Contenedor principal */
 .container {
@@ -174,7 +174,7 @@ button:disabled {
 }
 
 .image-caption a {
-    color: #ffcc00;
+    color: Black;
     font-weight: bold;
     text-decoration: none;
 }
@@ -235,4 +235,78 @@ button:disabled {
 
 .show-subclass {
     opacity: 1;
+}
+
+/* Ajustes para dispositivos móviles */
+@media screen and (max-width: 768px) {
+    .result-container {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .image-container {
+        width: 80%;
+        max-width: 250px;
+        height: auto;
+    }
+
+    .text-container {
+        width: 90%;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    button {
+        width: 100%;
+        font-size: 18px;
+        padding: 15px;
+    }
+
+    .gallery img {
+        width: 80px;
+        height: 80px;
+    }
+	    /* Botones de navegación más grandes para pantallas táctiles */
+    .nav-button {
+
+        font-size: 10px;
+        padding: 52px 30px;
+        width: 320px;
+        height: 700px;
+		background: rgba(0, 0, 0, 1);
+    }
+	.nav-button:hover {
+		background-color: rgba(0, 0, 0, 0.1);
+	}
+    .arrow {
+        font-size: 60px;
+    }
+
+    /* Espaciado en el epígrafe para mejorar la lectura */
+    .image-caption {
+        font-size: 16px;
+        max-width: 80%;
+        margin-top: 15px;
+        padding: 5px;
+    }
+	/* Botón de cierre */
+	.close-button {
+		position: absolute;
+		top: -20px;
+		right: 0px;
+		font-size: 30px;
+	}
+    /* Ajustar tamaño del enlace */
+    .image-caption a {
+        font-size: 16px;
+    }
+	#prevImage {
+		left: -180px;
+	}
+
+	#nextImage {
+		right: -180px;
+	}
+
 }
