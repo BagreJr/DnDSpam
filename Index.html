@@ -23,7 +23,8 @@
 
         <!-- Botón para jugar -->
         <button id="discoverButton">Descubrir mi clase</button>
-
+<!-- Botón para entrar al Quiz -->
+<button id="quizButton">Iniciar Quiz</button>
         <!-- Contenedor de la galería (se oculta por defecto) -->
         <!-- <div id="galleryContainer" class="hidden"> -->
 
@@ -55,7 +56,8 @@
 			<img src="images/ranger.webp" alt="ranger">
 			<img src="images/rogue.webp" alt="rogue">
 			<img src="images/savant.webp" alt="savant">
-			<img src="images/sorcerer.webp" alt="Sorcerer">
+			<img src="images/sorcerer.webp" alt="sorcerer">
+			<img src="images/vagabond.webp" alt="vagabond">
 			<img src="images/vessel.webp" alt="vessel">
 			<img src="images/warden.webp" alt="Warden">
 			<img src="images/warlock.webp" alt="warlock">
@@ -76,7 +78,26 @@
     </div>
 
     </div>
-    
+    <!-- Contenedor del Quiz (inicialmente oculto) -->
+<div id="quizContainer" class="hidden">
+<audio id="quizAudio" src="sound/quiz-start.mp3"></audio>
+
+	<div id="quizProgress">
+	<progress id="quizBar" value="0" max="0"></progress>
+	<span id="quizRemaining"></span>
+	</div>
+	<audio id="answerSound" src="sound/answer.mp3"></audio>
+
+    <h2 id="quizTitle">¿Qué clase de D&D eres?</h2>
+    <p id="quizQuestion"></p>
+    <div id="quizOptions"></div>
+    <button id="backButton" class="hidden">Atrás</button>
+	   <button id="exitQuiz" class="hidden">Salir</button>
+    <div id="quizResult"></div>
+</div>
+
+
+
     <script src="script.js"></script>
 </body>
 </html>
