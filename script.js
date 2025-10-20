@@ -209,8 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Update calculation note
     const avgGainText = `${averageHitDie} (promedio) + ${bonusPerLevel} (bonus)`;
-    const maxGainText = `${maxHitDie} (máximo) + ${bonusPerLevel} (bonus)`;
-    hpCalculationNoteEl.innerHTML = `<small>Promedio: ${hpAtLevel1} (N1) + (${avgGainText}) por nivel. Máximo: ${hpAtLevel1} (N1) + (${maxGainText}) por nivel. (Mínimo 1 por nivel)</small>`;
+    hpCalculationNoteEl.innerHTML = `<small>Promedio: ${hpAtLevel1} (N1) + (${avgGainText}) por nivel.</small>`;
 }
 
     // --- EVENT LISTENERS ---
