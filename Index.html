@@ -16,7 +16,7 @@
         <div class="image-container">
             <img id="classImage" src="images/default.webp" alt="Clase de D&D">
         </div>
-
+		
         <!-- Texto de la clase -->
         <h3 id="className">? ? ?</h3>
             <p id="classDescription"></p>
@@ -29,6 +29,7 @@
 		<!-- Botón para entrar al Quiz -->
 		<button id="quizButton">Iniciar Quiz</button>
 		<button id="spellbookButton">Ver Libro de Spells</button>
+		<button id="hpCalculatorButton">Calculadora de HP</button>
         <!-- Contenedor de la galería (se oculta por defecto) -->
         <!-- <div id="galleryContainer" class="hidden"> -->
 
@@ -148,6 +149,7 @@
     </div>
 
     <div id="spellControls">
+	<button id="toggleFavoritesButton" style="margin-left: 10px; padding: 8px 12px; font-size: 14px; background-color: #f0ad4e; color: white; border: 1px solid #eea236; border-radius: 5px; cursor: pointer;">Ver Favoritos</button>
 	<input type="text" id="searchSpell" placeholder="Buscar hechizo por nombre...">
         <select id="filterClass">
             <option value="all">Todas las Clases</option>
@@ -187,12 +189,64 @@
             <option value="level">Ordenar por Nivel (0-9)</option>
         </select>
     </div>
-
+<button id="toggleSpellViewButton" style="padding: 8px 12px; font-size: 14px; background-color: #555; color: white; border: 1px solid #666; border-radius: 5px; cursor: pointer;">Vista Simplificada</button>
     <div id="spellList">
         <p>Cargando hechizos...</p>
     </div>
-</div>
 
+	<div id="favoriteSpellList" class="hidden">
+        <h3>Mis Hechizos Favoritos</h3>
+        </div>
+
+</div>
+<div id="hpCalculatorContainer" class="hidden">
+        <h2>Calculadora Rápida de HP</h2>
+        <div class="hp-calc-input-area">
+             <h4>Configuración del Personaje</h4>
+             <div class="hp-calc-grid">
+                 <div>
+                     <label for="hpLevelInput">Nivel (1-20):</label>
+                     <input type="number" id="hpLevelInput" value="1" min="1" max="20">
+                 </div>
+                 <div>
+                     <label for="hpClassSelect">Clase:</label>
+                     <select id="hpClassSelect">
+                         <option value="">-- Elige Clase --</option>
+                         </select>
+                 </div>
+                 <div>
+                     <label for="hpConModifier">Modificador CON:</label>
+                     <input type="number" id="hpConModifier" value="0" min="-5" max="10">
+                 </div>
+                 <div class="checkbox-group">
+                     <input type="checkbox" id="hpIsHillDwarf">
+                     <label for="hpIsHillDwarf">Enano Colina (+1/Nivel)</label>
+                 </div>
+                 <div class="checkbox-group">
+                     <input type="checkbox" id="hpHasTough">
+                     <label for="hpHasTough">Dote Dureza (+2/Nivel)</label>
+                 </div>
+                 <div>
+                     <label for="hpOtherBonus">Otro Bonus/Nivel:</label>
+                     <input type="number" id="hpOtherBonus" value="0" min="0" max="5">
+                 </div>
+            </div>
+        </div>
+
+        <div id="hpCalculatorResults" class="hp-results-box">
+            <h3>Puntos de Golpe Máximos</h3>
+            <div class="hp-display">
+                <div class="hp-value-box">
+                    <span class="hp-label">Promedio</span>
+                    <span id="hpResultAverage" class="hp-value">--</span>
+                </div>
+            </div>
+            <p><small><strong>Dado Golpe:</strong> <span id="hpResultHitDie">--</span></small></p>
+            <p><small><strong>Salvadas:</strong> <span id="hpResultSaves">--</span></small></p>
+            <p id="hpCalculationNote" class="hp-calc-note"><small>Selecciona una clase y nivel.</small></p>
+        </div>
+        <button id="closeHpCalculator">Cerrar Calculadora</button>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

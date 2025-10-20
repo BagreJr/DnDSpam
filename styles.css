@@ -3,7 +3,11 @@ body {
     font-family: Arial, sans-serif;
     background-color: #282c35;
     color: white;
+    font-size: 16px; /* Tamaño base un poco más grande */
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent; /* Evita flash azul al tocar en algunos móviles */
 }
+
 a {
 	text-align: center;
 	font-size: 18px;
@@ -50,7 +54,7 @@ a {
 
 /* Botones */
 button {
-    padding: 10px 20px;
+    padding: 12px 20px; /* Un poco más de padding vertical */
     font-size: 18px;
     background-color: #ffcc00;
     border: none;
@@ -58,11 +62,32 @@ button {
     cursor: pointer;
     font-weight: bold;
     margin-top: 10px;
+    margin-left: 5px; /* Pequeño espacio entre botones */
+    margin-right: 5px;
+    box-sizing: border-box; /* Incluye padding en el ancho */
 }
-
 button:disabled {
     background-color: #999;
     cursor: not-allowed;
+    opacity: 0.6;
+}
+
+a.button-like { /* Añade esta clase a tus links si quieres que se vean como botones */
+    display: inline-block; /* Permite padding */
+    padding: 12px 20px;
+    font-size: 18px;
+    background-color: #ffcc00;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    color: Black;
+    text-decoration: none; /* Quita subrayado */
+    text-align: center;
+}
+a.button-like:hover {
+    background-color: #e6b800; /* Oscurecer un poco al pasar el mouse */
 }
 
 /* Galería */
@@ -479,7 +504,7 @@ font-size: 16px;
 	align-items: center;
 }
 
-#spellControls select {
+#spellControls select, #spellControls button /* Include button */ {
     padding: 8px;
     font-size: 14px;
     background-color: #444;
@@ -487,22 +512,84 @@ font-size: 16px;
     border: 1px solid #666;
     border-radius: 5px;
 }
-
+#toggleSpellViewButton:hover {
+    background-color: #8d8d8d;
+}
 #spellList {
     width: 90%;
     margin: 20px auto;
     display: grid;
     /* Usamos grid para las tarjetas */
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Default: extended view */
     gap: 15px;
 }
 
 .spell-card {
+    position: relative; /* Añade esto */
     background-color: #3a3f4b;
     border: 1px solid #555;
     border-radius: 8px;
     padding: 15px;
     text-align: left;
+    transition: background-color 0.2s;
+}
+
+.favorite-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #ccc; /* Color inicial (no favorito) */
+    font-size: 24px; /* Tamaño del icono/estrella */
+    cursor: pointer;
+    padding: 0;
+    line-height: 1; /* Asegura que no tenga espacio extra */
+    margin: 0; /* Resetea márgenes */
+}
+
+.favorite-button.favorited {
+    color: #ffcc00; /* Color amarillo (favorito) */
+}
+
+/* Cambia el color al pasar el mouse por encima */
+.favorite-button:hover {
+    color: #ffeb99; /* Amarillo más claro */
+}
+
+/* Asegurar que la lista de favoritos también use grid */
+#favoriteSpellList .spell-card {
+    position: relative; /* Añade esto */
+    background-color: #85926f;
+    border: 1px solid #878c71;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: left;
+    transition: background-color 0.2s;
+}
+
+#favoriteSpellList {
+    /* Mismos estilos de grid que #spellList */
+    width: 90%;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+#favoriteSpellList h3 {
+    grid-column: 1 / -1; /* Hace que el título ocupe toda la fila */
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ffcc00;
+}
+
+
+.spell-name {
+    color: #ffcc00;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    cursor: default; /* Default cursor */
 }
 
 .spell-card h4 {
@@ -537,84 +624,513 @@ font-size: 16px;
     color: white;
     border: 1px solid #666;
     border-radius: 5px;
-    
+
     /* Para que ocupe un espacio coherente */
-    width: 300px; 
+    width: 300px;
     max-width: 100%; /* Se adaptará en móviles */
-    
+
     /* Pequeño truco para que el padding no rompa el layout */
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
+
+#spellList.simplified-view {
+    /* Maybe fewer columns or smaller min-width for just names? */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+/* Hide details by default in simplified view */
+#spellList.simplified-view .spell-details {
+    display: none;
+}
+
+/* Adjust card padding and cursor in simplified view */
+#spellList.simplified-view .spell-card {
+    padding: 8px 12px; /* Less padding */
+    cursor: pointer; /* Indicate clickable */
+    text-align: center; /* Center the name */
+}
+#spellList.simplified-view .spell-card:hover {
+    background-color: #454a54; /* Slightly lighter on hover */
+}
+
+/* Adjust name style/margin in simplified view */
+#spellList.simplified-view .spell-name {
+    margin-bottom: 0; /* Remove space below name */
+    cursor: pointer;
+    font-size: 1.1em; /* Optional: slightly smaller */
+}
+
+/* Show details when a card is expanded */
+#spellList.simplified-view .spell-card.expanded .spell-details {
+    display: block;
+    margin-top: 10px; /* Add space between name and details */
+}
+
+/* Restore original styles when expanded */
+#spellList.simplified-view .spell-card.expanded {
+    padding: 15px;
+    cursor: default;
+    text-align: left; /* Restore original alignment */
+}
+#spellList.simplified-view .spell-card.expanded:hover {
+     background-color: #3a3f4b; /* Restore original background */
+}
+#spellList.simplified-view .spell-card.expanded .spell-name {
+    cursor: default;
+    margin-bottom: 10px; /* Restore original margin */
+    font-size: 1.2em; /* Restore original size */
+}
+
+/* Add these styles to your existing styles.css file */
+
+/* --- Estilos Calculadora HP --- */
+/* --- NUEVOS Estilos Calculadora HP (Reemplaza los anteriores) --- */
+#hpCalculatorContainer {
+    width: 90%;
+    max-width: 700px; /* Ancho ajustado */
+    margin: 30px auto; /* Más margen superior */
+    padding: 25px;
+    background-color: #2c313a; /* Fondo ligeramente diferente */
+    border: 1px solid #444;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+#hpCalculatorContainer h2 {
+    color: #ffcc00;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #555;
+    padding-bottom: 10px;
+}
+
+/* Área de Inputs */
+.hp-calc-input-area {
+    background-color: #3a3f4b;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border: 1px solid #555;
+}
+
+.hp-calc-input-area h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #eee;
+}
+
+.hp-calc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px 20px; /* row-gap column-gap */
+    align-items: end;
+}
+
+#hpCalculatorContainer label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #ccc;
+    text-align: left; /* Alinea etiquetas a la izquierda */
+}
+
+#hpCalculatorContainer select,
+#hpCalculatorContainer input[type="number"] {
+    width: 100%; /* Ocupa todo el espacio de la celda */
+    padding: 8px 10px;
+    font-size: 1em;
+    background-color: #444;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* Checkboxes */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Alinea a la izquierda */
+    padding-top: 10px; /* Alinea verticalmente con otros inputs */
+    grid-column: span 1; /* Ocupa una columna por defecto */
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+    transform: scale(1.1);
+}
+.checkbox-group label {
+    margin-bottom: 0;
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+/* Caja de Resultados (Estilo Hoja de Personaje) */
+.hp-results-box {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #e0e0e0; /* Fondo claro como papel */
+    color: #333; /* Texto oscuro */
+    border: 2px solid #8B4513; /* Borde marrón */
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.hp-results-box h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #8B4513; /* Marrón oscuro */
+    font-family: 'Times New Roman', serif; /* Fuente más clásica */
+    font-size: 1.4em;
+    border-bottom: 1px solid #ccaa88;
+    padding-bottom: 5px;
+}
+
+.hp-display {
+    display: flex;
+    justify-content: space-around; /* Espacia las cajas de HP */
+    margin-bottom: 15px;
+}
+
+.hp-value-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ccaa88;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+    min-width: 100px; /* Ancho mínimo para cada caja */
+}
+
+.hp-label {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.hp-value {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #444;
+}
+
+.hp-results-box p {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #555;
+}
+.hp-results-box p small {
+    color: #666;
+}
+
+.hp-calc-note {
+    margin-top: 15px;
+    font-style: italic;
+    color: #888;
+}
+
+
+/* Botones de Calcular (eliminado) y Cerrar */
+#calculateHpButton {
+    display: none; /* Ocultamos el botón de calcular */
+}
+
+#closeHpCalculator {
+    background-color: #d9534f;
+    color: white;
+    margin-top: 20px;
+}
+#closeHpCalculator:hover {
+    background-color: #c9302c;
+}
+
+/* Responsive para la calculadora */
+@media screen and (max-width: 600px) {
+     #hpCalculatorContainer .hp-calc-grid {
+        grid-template-columns: 1fr; /* Una columna en móviles */
+    }
+    .checkbox-group {
+        justify-content: flex-start;
+    }
+    .hp-display {
+        flex-direction: column; /* Apilar cajas de HP */
+        gap: 10px;
+    }
+    .hp-value-box {
+        min-width: 0; /* Quitar ancho mínimo */
+        width: 100%; /* Ocupar todo el ancho */
+    }
+}
+
 /* Ajustes para dispositivos móviles */
 @media screen and (max-width: 768px) {
-    .result-container {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
+    body {
+        font-size: 15px; /* Ligeramente más pequeño si es necesario, o mantener 16px */
     }
 
+    .container, #quizContainer, #tierListContainer, #spellbookContainer {
+        width: 95%; /* Usar más ancho de pantalla */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* --- Portada y Descubrir Clase --- */
     .image-container {
         width: 80%;
-        max-width: 250px;
-        height: auto;
+        max-width: 300px; /* Un poco más grande si cabe */
+        height: auto; /* Altura automática basada en el ancho */
+        margin-bottom: 15px;
+    }
+     #classImage {
+        border-radius: 8px; /* Bordes redondeados opcionales */
     }
 
-    .text-container {
+    #classDescription {
+        font-size: 1em; /* Ajustar tamaño relativo */
+        padding: 0 10px; /* Evita que el texto toque los bordes */
+    }
+
+    /* Botones principales */
+    .container > button { /* Botones directos del container principal */
         width: 90%;
-        font-size: 16px;
-        text-align: center;
-    }
-
-    button {
-        width: 100%;
-        font-size: 18px;
+        max-width: 350px; /* Limitar ancho máximo */
+        font-size: 1.1em;
         padding: 15px;
+        margin: 8px auto; /* Centrar y espaciar */
+        display: block; /* Para que width funcione bien */
     }
 
+    /* --- Galería --- */
+    .gallery {
+        gap: 8px; /* Menos espacio entre imágenes */
+    }
     .gallery img {
-        width: 80px;
-        height: 80px;
-    }
-	    /* Botones de navegación más grandes para pantallas táctiles */
-    .nav-button {
-
-        font-size: 10px;
-        padding: 52px 30px;
-        width: 320px;
-        height: 700px;
-		background: rgba(0, 0, 0, 0.4);
-    }
-	.nav-button:hover {
-		background-color: rgba(0, 0, 0, 0.1);
-	}
-    .arrow {
-        font-size: 60px;
+        width: 90px; /* Un poco más grandes para tocar */
+        height: 90px;
     }
 
-    /* Espaciado en el epígrafe para mejorar la lectura */
+    /* Modal de Galería */
+    .image-modal img {
+        max-width: 90%; /* Usar más espacio */
+        max-height: 65vh; /* Dejar más espacio para caption y botones */
+    }
+    .zoomed {
+        transform: scale(2.5); /* Zoom un poco menor en móvil */
+    }
     .image-caption {
-        font-size: 16px;
-        max-width: 80%;
-        margin-top: 15px;
-        padding: 5px;
+        font-size: 0.95em;
+        max-width: 85%;
+        margin-top: 10px;
+        padding: 0 5px; /* Pequeño padding */
+        max-height: 15vh; /* Limitar altura del caption */
+        overflow-y: auto; /* Scroll si es muy largo */
     }
-	/* Botón de cierre */
-	.close-button {
-		position: absolute;
-		top: -20px;
-		right: 0px;
-		font-size: 30px;
-	}
-    /* Ajustar tamaño del enlace */
-    .image-caption a {
-        font-size: 16px;
-    }
-	#prevImage {
-		left: -180px;
-	}
+     .image-caption a {
+        font-size: 1em; /* Mantener tamaño consistente */
+        padding: 5px 8px; /* Hacer el link clickeable más grande */
+        display: inline-block; /* Permitir padding */
+        margin-top: 8px;
+     }
 
-	#nextImage {
-		right: -180px;
-	}
+    /* Botones de Navegación de Galería (Más pequeños, visibles y con área táctil) */
+    .nav-button {
+        font-size: 28px; /* Tamaño del icono flecha */
+        padding: 25px 15px; /* Área táctil grande alrededor del icono */
+        background-color: rgba(0, 0, 0, 0.3); /* Semi-transparente */
+        border-radius: 50%; /* Círculo */
+        top: 50%;
+        transform: translateY(-50%);
+        width: auto; /* Ancho automático */
+        height: auto; /* Altura automática */
+        line-height: 1; /* Alinear icono verticalmente */
+    }
+    .nav-button:hover {
+        background-color: rgba(0, 0, 0, 0.5); /* Oscurecer al tocar */
+    }
+    #prevImage {
+        left: 5px; /* Más cerca del borde */
+    }
+    #nextImage {
+        right: 5px; /* Más cerca del borde */
+    }
+
+    /* Botón de Cierre (X) del Modal */
+    .close-button {
+        top: 5px;
+        right: 5px;
+        font-size: 35px; /* Más grande */
+        padding: 10px; /* Área táctil */
+        background-color: rgba(0,0,0,0.2);
+        border-radius: 50%;
+    }
+
+    /* --- Quiz --- */
+    #quizQuestion {
+        font-size: 1.1em;
+    }
+    #quizOptions button {
+        width: 95%; /* Casi todo el ancho */
+        max-width: 400px; /* Pero con un límite */
+        font-size: 1.05em;
+        padding: 12px;
+        margin: 8px auto;
+    }
+    #quizProgress {
+        width: 90%;
+    }
+    #backButton, #exitQuiz, #restartQuiz {
+        width: 60%;
+        max-width: 250px;
+        padding: 12px;
+        margin: 10px auto;
+        display: block;
+    }
+
+    /* --- Tier List --- */
+    .tier-controls {
+        flex-direction: column; /* Apilar botones */
+        gap: 10px;
+    }
+     .tier-controls button {
+        width: 100%;
+     }
+
+    .tier-row {
+        /* Opcional: Apilar en pantallas muy pequeñas */
+        /* flex-direction: column; */
+        min-height: 80px; /* Reducir altura mínima */
+    }
+    .tier-label {
+        width: 60px; /* Etiqueta más estrecha */
+        font-size: 18px; /* Fuente más pequeña */
+        /* Si se apila: */
+        /* width: 100%; border-right: none; border-bottom: 2px solid #555; height: 40px; */
+    }
+     .delete-tier-row-button {
+        width: 35px; /* Ligeramente más grande para tocar */
+        height: 35px;
+        font-size: 24px;
+        line-height: 35px;
+        margin: auto 8px;
+     }
+    .tier-dropzone {
+        padding: 8px; /* Menos padding */
+        gap: 6px; /* Menos espacio entre items */
+        min-height: 60px;
+    }
+    .tier-item {
+        width: 65px; /* Ligeramente más pequeño */
+        padding: 4px;
+    }
+    .tier-item img {
+        width: 50px;
+        height: 50px;
+    }
+    .tier-item span {
+        font-size: 10px;
+    }
+    #itemBank {
+        min-height: 150px;
+    }
+
+    /* --- Grimorio --- */
+    #spellControls {
+        flex-direction: column; /* Apilar controles verticalmente */
+        align-items: stretch; /* Estirar para ocupar ancho */
+        width: 100%;
+    }
+    #spellControls select, #spellControls input, #spellControls button {
+        width: 100%; /* Ocupar todo el ancho */
+        margin-bottom: 8px; /* Espacio entre controles */
+        font-size: 1em;
+    }
+     #searchSpell {
+        width: 100%; /* Ya está implícito por lo anterior, pero por claridad */
+        padding: 10px 12px;
+     }
+
+    #spellList, #favoriteSpellList {
+        width: 100%; /* Usar todo el ancho */
+        /* Probablemente 1 columna ya se ajuste bien con minmax(300px), pero podemos forzarlo: */
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .spell-card {
+        padding: 12px;
+    }
+     .spell-name, .spell-card h4 {
+        font-size: 1.1em;
+     }
+     .spell-meta, .spell-type, .spell-classes {
+        font-size: 0.85em;
+        margin-bottom: 8px;
+     }
+     .spell-description {
+        font-size: 0.95em;
+     }
+
+    /* Botón Favorito más fácil de tocar */
+    .favorite-button {
+        top: 5px;
+        right: 5px;
+        font-size: 28px; /* Más grande */
+        padding: 8px; /* Área táctil invisible alrededor */
+    }
+
+    /* Botón Vista Simplificada/Extendida */
+    #toggleSpellViewButton {
+        width: 100%;
+        margin: 15px 0 5px 0; /* Espacio arriba y abajo */
+    }
+
+     /* Estilos específicos para vista simplificada en móvil */
+     #spellList.simplified-view, #favoriteSpellList.simplified-view {
+        grid-template-columns: 1fr; /* Forzar una columna */
+     }
+     #spellList.simplified-view .spell-card,
+     #favoriteSpellList.simplified-view .spell-card {
+        padding: 10px 15px; /* Más padding para tocar fácil */
+        text-align: left; /* Mantener alineado a la izquierda */
+        display: flex; /* Usar flex para alinear nombre y estrella */
+        justify-content: space-between; /* Poner estrella a la derecha */
+        align-items: center;
+     }
+     #spellList.simplified-view .spell-name,
+     #favoriteSpellList.simplified-view .spell-name {
+         margin-bottom: 0;
+         flex-grow: 1; /* Que el nombre ocupe el espacio disponible */
+         margin-right: 10px; /* Espacio antes de la estrella */
+     }
+     #spellList.simplified-view .favorite-button,
+     #favoriteSpellList.simplified-view .favorite-button {
+         position: static; /* Quitar posicionamiento absoluto */
+         padding: 5px; /* Área táctil */
+     }
+
+     #spellList.simplified-view .spell-card.expanded,
+     #favoriteSpellList.simplified-view .spell-card.expanded {
+        flex-direction: column; /* Apilar nombre, detalles y estrella */
+        align-items: flex-start; /* Alinear al inicio */
+        padding: 12px; /* Padding original */
+     }
+     #spellList.simplified-view .spell-card.expanded .spell-name,
+     #favoriteSpellList.simplified-view .spell-card.expanded .spell-name {
+        margin-bottom: 10px; /* Restaurar margen */
+     }
+      #spellList.simplified-view .spell-card.expanded .favorite-button,
+      #favoriteSpellList.simplified-view .spell-card.expanded .favorite-button {
+         position: absolute; /* Devolver a su posición original */
+         top: 5px;
+         right: 5px;
+      }
+      #spellList.simplified-view .spell-card.expanded .spell-details,
+      #favoriteSpellList.simplified-view .spell-card.expanded .spell-details {
+         width: 100%; /* Que los detalles ocupen todo el ancho */
+      }
 
 }

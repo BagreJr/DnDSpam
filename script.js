@@ -1,6 +1,5 @@
-
-
 document.addEventListener("DOMContentLoaded", () => {
+    // Existing variable declarations (keep all of them)
     const button = document.getElementById("discoverButton");
     const classImage = document.getElementById("classImage");
     const className = document.getElementById("className");
@@ -19,20 +18,18 @@ document.addEventListener("DOMContentLoaded", () => {
 	const mainContainer = document.querySelector(".container"); // Contenedor principal
 	const exitQuiz = document.getElementById("exitQuiz");
 	const quizAudio = document.getElementById("quizAudio");
-	
+
 	const quizProgress = document.getElementById("quizProgress");
 	const quizBar = document.getElementById("quizBar");
 	const quizRemaining = document.getElementById("quizRemaining");
 	const answerSound = document.getElementById("answerSound");
 
-    // --- NUEVAS VARIABLES PARA EL GRIMORIO ---
+    // --- GRIMORIO VARIABLES ---
     const spellbookButton = document.getElementById("spellbookButton");
     const spellbookContainer = document.getElementById("spellbookContainer");
     const exitSpellbookButton = document.getElementById("exitSpellbookButton");
     const spellList = document.getElementById("spellList");
 	const searchSpell = document.getElementById("searchSpell");
-	
-    // Filtros
     const filterClass = document.getElementById("filterClass");
     const filterLevel = document.getElementById("filterLevel");
     const filterType = document.getElementById("filterType");
@@ -40,225 +37,314 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterRitual = document.getElementById("filterRitual");
 	const filterDamage = document.getElementById("filterDamage");
     const sortSpells = document.getElementById("sortSpells");
+    const toggleFavoritesButton = document.getElementById("toggleFavoritesButton");
+    const favoriteSpellListContainer = document.getElementById("favoriteSpellList");
+    const toggleSpellViewButton = document.getElementById("toggleSpellViewButton");
 
-    let allSpells = []; // Aquí guardaremos los 900+ hechizos
-    let isSpellsLoaded = false; // Para cargarlos solo una vez
-    // Lista de clases con imágenes y descripciones
+    // --- TIER LIST VARIABLES ---
+    const tierListButton = document.getElementById("tierListButton");
+    const tierListContainer = document.getElementById("tierListContainer");
+    const exitTierListButton = document.getElementById("exitTierListButton");
+    const addTierRowButton = document.getElementById("addTierRowButton");
+    const itemBank = document.getElementById("itemBank");
+    const tierRowsContainer = document.getElementById("tierRowsContainer");
+	const downloadTierListButton = document.getElementById("downloadTierListButton");
+
+    // --- STATE VARIABLES ---
+    let favoriteSpells = [];
+    const FAVORITES_STORAGE_KEY = 'dndSpellFavorites';
+    let showingFavorites = false;
+    let isSpellViewSimplified = false;
+    let allSpells = [];
+    let isSpellsLoaded = false;
+    let draggedItem = null; // For Tier List Drag-and-Drop
+    let shuffledQuestions = []; // For Quiz Questions
+    let currentQuestionIndex = 0; // For Quiz
+    let answers = []; // For Quiz
+
+ // --- NEW HP CALCULATOR VARIABLES ---
+    const hpCalculatorButton = document.getElementById("hpCalculatorButton");
+    const hpCalculatorContainer = document.getElementById("hpCalculatorContainer");
+    const hpLevelInput = document.getElementById("hpLevelInput"); // New Level input
+    const hpClassSelect = document.getElementById("hpClassSelect");
+    const hpConModifier = document.getElementById("hpConModifier");
+    const hpIsHillDwarf = document.getElementById("hpIsHillDwarf"); // New Checkbox
+    const hpHasTough = document.getElementById("hpHasTough");       // New Checkbox
+    const hpOtherBonus = document.getElementById("hpOtherBonus");   // New Other Bonus input
+    const hpCalculatorResults = document.getElementById("hpCalculatorResults");
+    const closeHpCalculator = document.getElementById("closeHpCalculator");
+    let hpClassesPopulated = false; // Flag to prevent multiple population runs
+
+    // --- DATA --- (Keep your 'classes' array here)
     const classes = [
-{ name: "Alchemist", image: "images/alchemist.webp", description: "Un genio de las ciencias mágicas y la creación de pociones y elixires.", link: "https://homebrewery.naturalcrit.com/share/km9PgnczNSRA", subclasses: ["Amorist", "Apothecary", "Dynamo Engineer", "Ionizer", "Mad Bomber", "Mutagenist", "Ooze Rancher", "Pigmentist", "Polymorphist", "Resonator", "Venomsmith", "Xenoalchemist"] },
-{ name: "Artificer", image: "images/artificer.webp", description: "Maestros de la magia y la tecnología, que crean artefactos mágicos y construcciones complejas.", link: "https://homebrewery.naturalcrit.com/share/XlnxbXPJwSb_", subclasses: ["Aeronaut", "Agent", "Alchemist", "Archivist", "Armorer", "Battle Smith", "Biomancer", "Chronothief", "Composer", "Dungeoneer", "Enhanced", "Forgewright", "Machinist", "Mechanic", "Pilot", "Puppeteer", "Reanimator", "Venomist", "Wandslinger"] },
-{ name: "Barbarian", image: "images/barbarian.webp", description: "Guerreros primitivos que canalizan su furia en combate, capaces de resistir grandes daños y desatar su fuerza bruta.", link: "https://homebrewery.naturalcrit.com/share/EMNC8JdcJ-I1", subclasses: ["Path of the Ancestral Guardian", "Path of the Battlerager", "Path of the Beast", "Path of the Berserker", "Path of the Brute", "Path of the Burning Rage", "Path of the Champion", "Path of the Deep", "Path of the Devourer", "Path of the Dreadnought", "Path of the Drifter", "Path of the Favored", "Path of the Fin", "Path of the Kaiju", "Path of Heavy Metal", "Path of the Inferno", "Path of the Juggernaut", "Path of the Muscle Wizard", "Path of the Lycan", "Path of the Mutant", "Path of the Reaver", "Path of the Storm Herald", "Path of Terror", "Path of the Titan", "Path of the Totem Warrior", "Path of Tranquility", "Path of the Warden", "Path of the Wrecker", "Path of Wild Magic", "Path of the World Tree", "Path of the Zealot"] },
-{ name: "Bard", image: "images/bard.webp", description: "Músicos encantadores y maestros de la magia, cuya música inspira y controla la magia.", link: "https://homebrewery.naturalcrit.com/share/nqImfN7DQmo8", subclasses: ["College of Birdsong", "College of Blade Conductors", "College of Cantors", "College of Chance", "College of Chaos", "College of Command", "College of Creation", "College of Crossroads", "College of Cyberwave", "College of Drama", "College of Eloquence", "College of Eulogies", "College of Fine Art", "College of Fools", "College of Glamour", "College of Glory", "College of Graffiti", "College of Jesters", "College of Lore", "College of the Mad God", "College of Many Faces", "College of Masks", "College of Radiance", "College of Revelry", "College of Romance", "College of the Spheres", "College of Swords", "College of the Vanguard", "College of Valor", "College of Whispers", "College of the Wilds"] },
-{ name: "Binder", image: "images/binder.webp", description: "Mortal que establece pactos con entidades sobrenaturales para obtener poder.", link: "https://homebrewery.naturalcrit.com/share/Rq5NbuBPOkD5", subclasses: ["The Avatarists", "Brotherhood of Ascetics", "Church of Gyx", "Ishtar’s Faithful", "Legion’s Lodge", "Order of Crimson Binding", "Society of the Stygian Seal"] },
-{ name: "Blood Hunter", image: "images/blood_hunter.webp", description: "Cazadores que emplean magia oscura y sacrificios de sangre para cazar monstruos y defender a los inocentes.", link: "https://homebrewery.naturalcrit.com/share/zB7dBsU3NoaA", subclasses: ["Order of Alchemists", "Order of Ascension",  "Order of Dawnbringer", "Order of Heretics", "Order of Ichor", "Order of the Pale Moon", "Order of Reapers", "Order of Salt & Iron", "Order of Sorcery", "Order of Transference", "Order of Undying Thirst", "Order of Witch Knights"] },
-{ name: "Captain", image: "images/captain.webp", description: "Un líder carismático y estratega, que guía a sus compañeros con autoridad y determinación.", link: "https://homebrewery.naturalcrit.com/share/4_dADwfpFgLl", subclasses: ["Demon Banner", "Dragon Banner", "Eagle Banner", "Jolly Roger Banner", "Lion Banner", "Ram Banner", "Raven Banner", "Sport Banner", "Star Wolf Banner", "Treant Banner", "Turtle Banner"] },
-{ name: "Cleric", image: "images/cleric.webp", description: "Canalizan el poder de los dioses para sanar, proteger y combatir las fuerzas del mal.", link: "https://homebrewery.naturalcrit.com/share/ypjQ6cODzLs3", subclasses: ["Arcana Domain", "Beauty Domain", "Blood Domain", "Cataclysm Domain", "Chaos Domain", "Death Domain", "Destruction Domain", "Evolution Domain", "Exorcist Domain", "Forge Domain", "Grave Domain", "Hearth Domain", "Knowledge Domain", "Life Domain", "Light Domain", "Luck Domain", "Madness Domain", "Mysticism Domain", "Nature Domain", "Occult Domain", "Order Domain", "Peace Domain", "Peril Domain", "Pestilence Domain", "Poverty Domain", "Rum Domain", "Shadow Domain", "Shrine Warden Domain", "Steel Domain", "Sun Above Domain", "Tempest Domain", "Thieves Domain", "Time Domain", "Travel Domain", "Trickery Domain", "Twilight Domain", "Void Domain", "War Domain", "Wealth Domain"] },
-{ name: "Commoner", image: "images/commoner.webp", description: "Aunque simple, el potencial de un humano es infinito. Con humildad, resistencia y una voluntad inquebrantable, son capaces de enfrentar desafíos que parecerían fuera de su alcance.", link: "https://homebrewery.naturalcrit.com/share/OJJEj04Qu-zG", subclasses: ["Farmer", "Innkeeper", "Laborer", "Old Timer", "Town Guard"] },
-{ name: "Craftsman", image: "images/craftsman.webp", description: "Experto en la creación de objetos mágicos y artefactos con fines prácticos o poderosos.", link: "https://homebrewery.naturalcrit.com/share/MnBaupC_WVWe", subclasses: ["Arcane Maesters’ Guild", "Armigers’ Guild", "Bladeworkers’ Guild", "Calibaron’s Guild", "Clockworkers’ Guild", "Courtiers’ Guild", "Forgeknight’s Guild", "Liveoaks’ Guild", "Luminaries’ Guild", "Mechanauts’ Guild", "Scrappers’ Guild", "Thunderlords’ Guild", "Trappers’ Guild"] },
-{ name: "Druid", image: "images/druid.webp", description: "Guardianes de la naturaleza con habilidades para transformarse en animales y controlar los elementos naturales.", link: "https://homebrewery.naturalcrit.com/share/e3kR64Zn-Qin", subclasses: ["Circle of the Ancients", "Circle of the City", "Circle of Configuration", "Circle of the Deep", "Circle of the Depths", "Circle of Disaster", "Circle of Dreams", "Circle of the Fist", "Circle of Guardians", "Circle of the Harvest", "Circle of Land", "Circle of the Moon", "Circle of the Obelisk", "Circle of Pollen", "Circle of the Self Sacrifice", "Circle of the Shepherd", "Circle of Spores", "Circle of the Sower", "Circle of Stars", "Circle of Stones", "Circle of the Tempest", "Circle of the Tides", "Circle of Vermin", "Circle of the Yokai", "Circle of Wildfire", "Circle of the Wild Gift", "Circle of the Wyrm", "Primal Circle"] },
-{ name: "Fighter", image: "images/fighter.webp", description: "Guerrero experto en el combate físico, con habilidades para dominar cualquier tipo de arma.", link: "https://homebrewery.naturalcrit.com/share/ObJ7sUAx1Ggn", subclasses: ["Arcane Archer", "Arcane Knight", "Bestiarius", "Bone Knight", "Brawler", "Cavalier", "Celestial Lancer", "Champion", "Commander", "Corsair", "Crusader", "Dynamic Duelist", "Dungeoneer", "Echo Knight", "Guardian", "Guerrilla", "Mage Hand Magus", "Mandalorian", "Marksman", "Master at Arms", "Master of Hounds", "Mutant Knight", "Mystic Warrior", "Quartermaster", "Rations", "Opportunists", "Pseudomorph", "Renegade", "Firearm Upgrades", "Relentless Hunter", "Rune Knight", "Samurai", "Stonecrusher", "Swordsage", "Tinker Knight", "Schematics", "Witch Knight"] },
-{ name: "Gadgeteer", image: "images/gadgeteer.webp", description: "Inventor que utiliza una combinación de ingenio y dispositivos mecánicos para resolver cualquier problema.", link: "https://homebrewery.naturalcrit.com/share/1pBjFWWMDUME", subclasses: ["Drone Jockey", "Futurist", "Hardlight Architect", "Mastermaker", "Nanoengineer"] },
-{ name: "Gunslinger", image: "images/gunslinger.webp", description: "Tirador experto con pistolas, rápido en el combate y letal con cada disparo.", link: "https://homebrewery.naturalcrit.com/share/K2ZWpZUCPF_Q", subclasses: ["Big Game Hunter", "Covert Operative", "Gun Tank", "Gun-Ko Master", "Gundead", "Grenadier", "High Roller", "Holy Marksman", "Janissary", "Laserist", "League of Shadows", "Lucky Son of a Bitch", "Musketeer", "Pistolero", "Sharpshooter", "Space Cowboy", "Spellslinger", "Storm Gunner", "Trick Shot", "Twice-Damned", "White Hat"] },
-{ name: "Illrigger", image: "images/illriger.webp", description: "Un individuo que forja contratos oscuros con entidades infernales para obtener poder a cambio de su alma.", link: "https://homebrewery.naturalcrit.com/share/YkHqcotv-KCQ", subclasses: ["Architect of Ruin", "Black Menagerist", "Brass Banker", "Cardinals of Inferno", "Despotic Ruler", "Fatebreaker", "Fiendish Marksman", "Hellspeaker", "Nails of Odium", "Painkiller", "Queen’s Champion", "Radiant Sentinel", "Sanguine Knight", "Shadowmaster", "Forsaken"] },
-{ name: "Investigator", image: "images/investigador.webp", description: "Profesional en resolver misterios y desentrañar secretos, con una mente aguda y habilidades excepcionales para el rastreo.", link: "https://homebrewery.naturalcrit.com/share/Vdd_tiCoHg9d", subclasses: ["Antiquarian", "Archivist", "Conspiracy Theorist", "Containment Specialist", "Contractor", "Cursed Energy Specialist", "Decommissioner", "Detective", "Exterminator", "Infernal Agent", "Inquisitor", "Kid Sleuth", "Medium", "Occultist", "Spy", "Time Operative", "Witch Hunter"] },
-{ name: "Magus", image: "images/magus.webp", description: "Talentoso en el uso de magia mediante el dominio de espadas y hechizos combinados.", link: "https://homebrewery.naturalcrit.com/share/ghElGwEE2Io9", subclasses: ["Order of Arcanists", "Order of Arcane Archers", "Order of Armorers", "Order of the Aurora", "Order of Blades", "Order of Blade Dancers", "Order of Conduits", "Order of Evolution", "Order of Hexblades", "Order of the Occultism", "Order of Scales", "Order of Spellswords", "Order of Sentinels", "Order of Spellbreakers", "Order of Travelers"] },
-{ name: "Martyr", image: "images/martyr.webp", description: "Héroe que sacrifica su propio bienestar por el bien de los demás, con un fuerte sentido del sacrificio y la redención.", link: "https://homebrewery.naturalcrit.com/share/o8FUKqZUgoT7", subclasses: ["Burden of Anonymity", "Burden of Ascension", "Burden of Atonement", "Burden of Calamity", "Burden of Discord", "Burden of the End", "Burden of Fame", "Burden of Humanity", "Burden of Levity", "Burden of Mercy", "Burden of Rebirth", "Burden of Revolution", "Burden of Truth", "Burden of Tyranny", "Burden of Uncharted"] },
-{ name: "Monk", image: "images/monk.webp", description: "Experto en artes marciales y en la meditación, que canaliza su energía interior para mejorar sus habilidades físicas y espirituales.", link: "https://homebrewery.naturalcrit.com/share/guTke3mXD9Nk", subclasses: ["Way of the Astral Self", "Way of the Ascendant Dragon", "Way of the Boulder", "Way of the Bow", "Way of the Brawler", "Way of the Dodo", "Way of the Drunken Fist", "Way of the Eight Gates", "Way of the Feather", "Way of Ferocity", "Way of the Flagellant", "Way of the Flowing River", "Way of the Four Fists", "Way of Gravity", "Way of the Hurricane", "Way of the Mask", "Way of the Open Hand", "Way of Radiance", "Way of the Reaper", "Way of the Sacred Inks", "Way of the Shadow Arts", "Way of Street Fighting", "Way of the Vigilante", "Way of the Void", "Way of the Warped", "Way of the Wu Jen", "Way of the Wuxia"] },
-{ name: "Necromancer", image: "images/necromancer.webp", description: "Ente que manipula las fuerzas de la muerte y controla a los muertos para servir a sus fines oscuros.", link: "https://homebrewery.naturalcrit.com/share/yrujLNR8NHGX", subclasses: ["Black Rider", "Blood Ascendent", "Bow of the Grave", "Corpse Florist", "Crone", "Divine Soul", "Dead Mist Acolyte", "Death Knight", "Harbinger of Darkness", "Necrodancer", "Overlord", "Pale Master", "Pharaoh", "Plague Lord", "Reanimator", "Reaper", "Toymaker"] },
-{ name: "Paladin", image: "images/paladin.webp", description: "Caballero sagrado que combate el mal con el poder divino y un fuerte código de honor.", link: "https://homebrewery.naturalcrit.com/share/QL_7_qGcSaio", subclasses: ["Oath of the Ancients", "Oath of Beauty", "Oath of the Blade", "Oath of the Bound", "Oath of Conquest", "Oath of the Corsair", "Oath of the Crown", "Oath of Devotion", "Oath of the Doomforged", "Oath of the Eternal Dragon", "Oath of Eternal Night", "Oath of the Exorcist", "Oath of the Forge", "Oath of Glory", "Oath of Heresy", "Oath of Inquisition", "Oath of Liberty", "Oath of Mysticism", "Oath of Preservation", "Oath of Prosperity", "Oath of Redemption", "Oath of Revelry", "Oath of the Sepulcher", "Oath of the Shield", "Oath of Storms", "Oath of the Sun", "Oath of Vengeance", "Oath of the Watchers", "Oath of Winter", "Oath of the Yojimbo", "The Oathless", "Oathbreaker"] },
-{ name: "Psionico", image: "images/psion.webp", description: "La realidad se desvía hacia donde van tus pensamientos. Los psiónicos canalizan la voluntad pura, transformando el pensamiento, la emoción y la memoria en fuerza psíquica pura.", link: "https://homebrewery.naturalcrit.com/share/MoGx_lZZ32mC", subclasses: ["Awakened Mind", "Consuming Mind", "Elemental Mind", "Shaper’s Mind", "Transcended Mind", "Unleashed Mind","Wandering Mind"] },
-{ name: "Ranger", image: "images/ranger.webp", description: "Explorador experto en el uso de arcos y el sigilo, con un vínculo profundo con la naturaleza.", link: "https://homebrewery.naturalcrit.com/share/usNwevklFcoN", subclasses: ["Beastborne", "Beast Master", "Bounty Hunter", "Buccaneer", "Deadeye Sniper", "Drakewarden", "Druidic Guardian", "Dunestrider", "Fey Wanderer", "Freerunner", "Gloom Stalker", "Grim Warden", "Horizon Walker", "Highwayman", "Hunter", "Monster Slayer", "Nomad", "Reconnaissance Scout", "Ronin", "Skysworn", "Shadowbane", "Spiritbound", "Spellbreaker", "Stargazer", "Swarmkeeper", "Vigilante", "Wrangler"] },
-{ name: "Rogue", image: "images/rogue.webp", description: "Experto en el sigilo, la evasión y las trampas, ideal para misiones que requieren astucia y agilidad.", link: "https://homebrewery.naturalcrit.com/share/TQg2QgZKbsDv", subclasses: ["Arachnoid Stalker", "Arcane Trickster", "Angler", "Assassin", "Bloodknife", "Chameleon", "Charlatan", "Duskcaller", "Enforcer", "Daredevil", "Duelist", "Falconer", "Gambler", "Grifter", "Infiltrator", "Inquisitive", "Jumper", "Justicar", "Magehunter", "Mastermind", "Phantom", "Ruffian", "Saboteur", "Scoundrel", "Scout", "Socialite", "Soulknife", "Shadow Master", "Skinchanger", "Surgeon", "Swashbuckler", "Tamaya", "Temporal Trickster", "Thief", "Titan Slayer"] },
-{ name: "Savant", image: "images/savant.webp", description: "Conocedor profundo de las artes arcanas o la ciencia, con habilidades excepcionales para el estudio y la enseñanza.", link: "https://homebrewery.naturalcrit.com/share/3Lw7KbWJnUsy", subclasses: ["Archaeologist", "Culinarian", "Engineer", "Investigator", "Naturalist", "Mentors", "Occultist", "Orator", "Philosopher", "Physician", "Rune Scribe", "Tactician", "Tinker", "Virtuoso", "Voyager"] },
-{ name: "Sorcerer", image: "images/sorcerer.webp", description: "Un hechicero que canaliza su magia a través de su linaje o conexión con fuerzas sobrenaturales.", link: "https://homebrewery.naturalcrit.com/share/NOEmC8CLMj9P", subclasses: ["Aberrant Mind", "The Chained", "Clockwork Soul", "Divine Soul", "Divine Right", "Draconic Bloodline", "Emberheart", "Emotion Lord", "Faeblood", "Gifted One", "Greensinger", "Hellspawn", "Jinx", "Lunar Sorcery", "Mirrorkin", "Mutagenic Bloodline", "Nanite Host", "Oozemaster", "Radiation Freak", "Reincarnated Hero", "Shadow", "Spiritborn", "Spirit Caller", "Stoneblood", "Storm Sorcery", "Toon Magic", "Vampiric Soul", "Voidwielder", "Waveborn", "Wild Magic"] },
-{ name: "Vagabond", image: "images/vagabond.webp", description: "Exiliados, perseguidos o simplemente inquietos que viven en movimiento. El camino es su hogar y la desesperación, su mayor maestra.", link: "https://homebrewery.naturalcrit.com/share/7LePIfQ0CLhu", subclasses: ["Adrenaline Junkie", "Brigand", "Experiment X", "Feylost", "Gourmand", "Houndmaster","Justicar","Knight Errant","Mage Brand","Mindblade","Plague Doctor","Pugilist","Rōnin","Troubadour"] },
-{ name: "Vessel", image: "images/vessel.webp", description: "Un ser marcado por una conexión especial con espíritus, otorgándole poderes místicos y transformadores.", link: "https://homebrewery.naturalcrit.com/share/vBYpvFeHFy6v", subclasses: ["The Ancient Wyrms", "The Ascended", "The Beyond", "The Cataclysm", "The Cursed", "The Fallen", "The Formless", "The Mushroom Prince", "The Mythic Hero", "The Parasite", "The Overgrown", "The Titan", "The Trickster", "The Undying"] },
-{ name: "Warden", image: "images/warden.webp", description: "Defensores de tierras y territorios, especializados en la protección de lo que es sagrado o valioso.", link: "https://homebrewery.naturalcrit.com/share/90VpGRQPU-Cn", subclasses: ["Bloodwrath Guardian", "Carrion King", "Eye of Twilight", "Fey Trailblazer", "Godsworn", "Grey Watchman", "Hellkeeper", "Iceheart Bastion", "Lawbringer", "Loreseeker", "Nightgaunt", "Soulblood Shaman", "Stoneheart Defender", "Storm Sentinel", "Verdant Protector", "Witchbane Hunter"] },
-{ name: "Warlock", image: "images/warlock.webp", description: "Ser que obtiene poder mediante pactos con entidades sobrenaturales a cambio de favores y lealtad.", link: "https://homebrewery.naturalcrit.com/share/kLwQFqpQ7pei", subclasses: ["The Alabaster", "The Archfey", "The Archmage", "The Celestial", "The Coven", "The Dead Mists", "The Elder Sphinx", "The Fathomless", "The Fiend", "The Future You", "The Genie", "The GM", "The Great Old One", "The Great Wyrm", "The Hexblade", "The King", "The Legacy", "The Legendary Hero", "The Magician", "The Mummy Lord", "The Primeval Growth", "The Shinigami", "The Singularity", "The Star", "The Swarm", "The Symbiont", "The Titan", "The Unblinking", "The Undead", "The Undying", "The Wild Hunt"] },
-{ name: "Warlord", image: "images/warlord.webp", description: "Señor de la guerra, un líder militar que dirige a sus tropas con astucia y habilidad estratégica en el campo de batalla.", link: "https://homebrewery.naturalcrit.com/share/3IUIglJ_K-O4", subclasses: ["Academy of Chivalry", "Academy of Dawnbringer", "Academy of Dreadlords", "Academy of Ferocity", "Academy of Schemes", "Academy of Skalds", "Academy of Tactics"] },
-{ name: "Warmage", image: "images/warmage.webp", description: "Estratega experto que domina un area de magia especializada para devastar a sus enemigos en el campo de batalla.", link: "https://homebrewery.naturalcrit.com/share/rau8aywbKXzF", subclasses: ["House of Bishops", "House of Coalition Arcanist", "House of Darts", "House of Dice", "House of Go", "House of Kings", "House of Knights", "House of Queens", "House of Lancers", "House of Pawns", "House of Rooks", "House of Roulette"] },
-{ name: "Witch", image: "images/witch.webp", description: "Una usuaria de la magia arcana que emplea encantamientos y maldiciones para manipular el destino.", link: "https://homebrewery.naturalcrit.com/share/cl5HbkIH2xFw", subclasses: ["Black Magic", "Blood Magic", "Blue Magic", "Duskcaller Magic", "Fragrant Magic", "Gingerbread Magic", "Green Magic", "Lunar Magic", "Purple Magic", "Red Magic", "Sky Magic", "Steel Magic", "Tea Magic", "Technicolor Magic", "White Magic"] },
-{ name: "Wizard", image: "images/wizard.webp", description: "Erudito en el estudio y dominio de la magia arcana, capaz de lanzar poderosos hechizos y controlarla con precisión.", link: "https://homebrewery.naturalcrit.com/share/ymEiMM7-iT9H", subclasses: ["Familiar Master", "Magic Missile Mage", "Mystic Savant", "Order of Scribes", "School of Abjuration", "School of Automata", "School of Bladesinging", "School of Conjuration", "School of Chronomancy", "School of Divination", "School of Enchantment", "School of Evocation", "School of Gastronomy", "School of Graviturgy", "School of Hardlight", "School of Hexcraft", "School of Illusion", "School of Necromancy", "School of Metallurgy", "School of Somnomancy", "School of Theurgy", "School of Teleportation", "School of Transmutation", "School of War Magic", "School of Warp Watcher", "Shinobi"] }
+        { name: "Alchemist", hitDie: 'd8', savingThrows: ['DEX', 'INT'], image: "images/alchemist.webp", description: "Un genio de las ciencias mágicas y la creación de pociones y elixires.", link: "https://homebrewery.naturalcrit.com/share/km9PgnczNSRA", subclasses: ["Amorist", "Apothecary", "Dynamo Engineer", "Ionizer", "Mad Bomber", "Mutagenist", "Ooze Rancher", "Pigmentist", "Polymorphist", "Resonator", "Venomsmith", "Xenoalchemist"] },
+        { name: "Artificer", hitDie: 'd8', savingThrows: ['CON', 'INT'], image: "images/artificer.webp", description: "Maestros de la magia y la tecnología, que crean artefactos mágicos y construcciones complejas.", link: "https://homebrewery.naturalcrit.com/share/XlnxbXPJwSb_", subclasses: ["Aeronaut", "Agent", "Alchemist", "Archivist", "Armorer", "Battle Smith", "Biomancer", "Chronothief", "Composer", "Dungeoneer", "Enhanced", "Forgewright", "Machinist", "Mechanic", "Pilot", "Puppeteer", "Reanimator", "Venomist", "Wandslinger"] },
+        { name: "Barbarian", hitDie: 'd12', savingThrows: ['STR', 'CON'], image: "images/barbarian.webp", description: "Guerreros primitivos que canalizan su furia en combate, capaces de resistir grandes daños y desatar su fuerza bruta.", link: "https://homebrewery.naturalcrit.com/share/EMNC8JdcJ-I1", subclasses: ["Path of the Ancestral Guardian", "Path of the Battlerager", "Path of the Beast", "Path of the Berserker", "Path of the Brute", "Path of the Burning Rage", "Path of the Champion", "Path of the Deep", "Path of the Devourer", "Path of the Dreadnought", "Path of the Drifter", "Path of the Favored", "Path of the Fin", "Path of the Kaiju", "Path of Heavy Metal", "Path of the Inferno", "Path of the Juggernaut", "Path of the Muscle Wizard", "Path of the Lycan", "Path of the Mutant", "Path of the Reaver", "Path of the Storm Herald", "Path of Terror", "Path of the Titan", "Path of the Totem Warrior", "Path of Tranquility", "Path of the Warden", "Path of the Wrecker", "Path of Wild Magic", "Path of the World Tree", "Path of the Zealot"] },
+        { name: "Bard", hitDie: 'd8', savingThrows: ['DEX', 'CHA'], image: "images/bard.webp", description: "Músicos encantadores y maestros de la magia, cuya música inspira y controla la magia.", link: "https://homebrewery.naturalcrit.com/share/nqImfN7DQmo8", subclasses: ["College of Birdsong", "College of Blade Conductors", "College of Cantors", "College of Chance", "College of Chaos", "College of Command", "College of Creation", "College of Crossroads", "College of Cyberwave", "College of Drama", "College of Eloquence", "College of Eulogies", "College of Fine Art", "College of Fools", "College of Glamour", "College of Glory", "College of Graffiti", "College of Jesters", "College of Lore", "College of the Mad God", "College of Many Faces", "College of Masks", "College of Radiance", "College of Revelry", "College of Romance", "College of the Spheres", "College of Swords", "College of the Vanguard", "College of Valor", "College of Whispers", "College of the Wilds"] },
+        { name: "Binder", hitDie: 'd8', savingThrows: ['WIS', 'CHA'], image: "images/binder.webp", description: "Mortal que establece pactos con entidades sobrenaturales para obtener poder.", link: "https://homebrewery.naturalcrit.com/share/Rq5NbuBPOkD5", subclasses: ["The Avatarists", "Brotherhood of Ascetics", "Church of Gyx", "Ishtar’s Faithful", "Legion’s Lodge", "Order of Crimson Binding", "Society of the Stygian Seal"] },
+        { name: "Blood Hunter", hitDie: 'd12', savingThrows: ['STR', 'CON'], image: "images/blood_hunter.webp", description: "Cazadores que emplean magia oscura y sacrificios de sangre para cazar monstruos y defender a los inocentes.", link: "https://homebrewery.naturalcrit.com/share/zB7dBsU3NoaA", subclasses: ["Order of Alchemists", "Order of Ascension",  "Order of Dawnbringer", "Order of Heretics", "Order of Ichor", "Order of the Pale Moon", "Order of Reapers", "Order of Salt & Iron", "Order of Sorcery", "Order of Transference", "Order of Undying Thirst", "Order of Witch Knights"] },
+        { name: "Captain", hitDie: 'd8', savingThrows: ['CON', 'CHA'], image: "images/captain.webp", description: "Un líder carismático y estratega, que guía a sus compañeros con autoridad y determinación.", link: "https://homebrewery.naturalcrit.com/share/4_dADwfpFgLl", subclasses: ["Demon Banner", "Dragon Banner", "Eagle Banner", "Jolly Roger Banner", "Lion Banner", "Ram Banner", "Raven Banner", "Sport Banner", "Star Wolf Banner", "Treant Banner", "Turtle Banner"] },
+        { name: "Cleric", hitDie: 'd8', savingThrows: ['WIS', 'CHA'], image: "images/cleric.webp", description: "Canalizan el poder de los dioses para sanar, proteger y combatir las fuerzas del mal.", link: "https://homebrewery.naturalcrit.com/share/ypjQ6cODzLs3", subclasses: ["Arcana Domain", "Beauty Domain", "Blood Domain", "Cataclysm Domain", "Chaos Domain", "Death Domain", "Destruction Domain", "Evolution Domain", "Exorcist Domain", "Forge Domain", "Grave Domain", "Hearth Domain", "Knowledge Domain", "Life Domain", "Light Domain", "Luck Domain", "Madness Domain", "Mysticism Domain", "Nature Domain", "Occult Domain", "Order Domain", "Peace Domain", "Peril Domain", "Pestilence Domain", "Poverty Domain", "Rum Domain", "Shadow Domain", "Shrine Warden Domain", "Steel Domain", "Sun Above Domain", "Tempest Domain", "Thieves Domain", "Time Domain", "Travel Domain", "Trickery Domain", "Twilight Domain", "Void Domain", "War Domain", "Wealth Domain"] },
+        { name: "Commoner", hitDie: 'd8', savingThrows: ['STR', 'CON'], image: "images/commoner.webp", description: "Aunque simple, el potencial de un humano es infinito. Con humildad, resistencia y una voluntad inquebrantable, son capaces de enfrentar desafíos que parecerían fuera de su alcance.", link: "https://homebrewery.naturalcrit.com/share/OJJEj04Qu-zG", subclasses: ["Farmer", "Innkeeper", "Laborer", "Old Timer", "Town Guard"] },
+        { name: "Craftsman", hitDie: 'd10', savingThrows: ['CON', 'INT'], image: "images/craftsman.webp", description: "Experto en la creación de objetos mágicos y artefactos con fines prácticos o poderosos.", link: "https://homebrewery.naturalcrit.com/share/MnBaupC_WVWe", subclasses: ["Arcane Maesters’ Guild", "Armigers’ Guild", "Bladeworkers’ Guild", "Calibaron’s Guild", "Clockworkers’ Guild", "Courtiers’ Guild", "Forgeknight’s Guild", "Liveoaks’ Guild", "Luminaries’ Guild", "Mechanauts’ Guild", "Scrappers’ Guild", "Thunderlords’ Guild", "Trappers’ Guild"] },
+        { name: "Druid", hitDie: 'd8', savingThrows: ['INT', 'WIS'], image: "images/druid.webp", description: "Guardianes de la naturaleza con habilidades para transformarse en animales y controlar los elementos naturales.", link: "https://homebrewery.naturalcrit.com/share/e3kR64Zn-Qin", subclasses: ["Circle of the Ancients", "Circle of the City", "Circle of Configuration", "Circle of the Deep", "Circle of the Depths", "Circle of Disaster", "Circle of Dreams", "Circle of the Fist", "Circle of Guardians", "Circle of the Harvest", "Circle of Land", "Circle of the Moon", "Circle of the Obelisk", "Circle of Pollen", "Circle of the Self Sacrifice", "Circle of the Shepherd", "Circle of Spores", "Circle of the Sower", "Circle of Stars", "Circle of Stones", "Circle of the Tempest", "Circle of the Tides", "Circle of Vermin", "Circle of the Yokai", "Circle of Wildfire", "Circle of the Wild Gift", "Circle of the Wyrm", "Primal Circle"] },
+        { name: "Fighter", hitDie: 'd10', savingThrows: ['STR', 'CON'], image: "images/fighter.webp", description: "Guerrero experto en el combate físico, con habilidades para dominar cualquier tipo de arma.", link: "https://homebrewery.naturalcrit.com/share/ObJ7sUAx1Ggn", subclasses: ["Arcane Archer", "Arcane Knight", "Bestiarius", "Bone Knight", "Brawler", "Cavalier", "Celestial Lancer", "Champion", "Commander", "Corsair", "Crusader", "Dynamic Duelist", "Dungeoneer", "Echo Knight", "Guardian", "Guerrilla", "Mage Hand Magus", "Mandalorian", "Marksman", "Master at Arms", "Master of Hounds", "Mutant Knight", "Mystic Warrior", "Quartermaster", "Rations", "Opportunists", "Pseudomorph", "Renegade", "Firearm Upgrades", "Relentless Hunter", "Rune Knight", "Samurai", "Stonecrusher", "Swordsage", "Tinker Knight", "Schematics", "Witch Knight"] },
+        { name: "Gadgeteer", hitDie: 'd6', savingThrows: ['DEX', 'INT'], image: "images/gadgeteer.webp", description: "Inventor que utiliza una combinación de ingenio y dispositivos mecánicos para resolver cualquier problema.", link: "https://homebrewery.naturalcrit.com/share/1pBjFWWMDUME", subclasses: ["Drone Jockey", "Futurist", "Hardlight Architect", "Mastermaker", "Nanoengineer"] },
+        { name: "Gunslinger", hitDie: 'd8', savingThrows: ['DEX', 'CHA'], image: "images/gunslinger.webp", description: "Tirador experto con pistolas, rápido en el combate y letal con cada disparo.", link: "https://homebrewery.naturalcrit.com/share/K2ZWpZUCPF_Q", subclasses: ["Big Game Hunter", "Covert Operative", "Gun Tank", "Gun-Ko Master", "Gundead", "Grenadier", "High Roller", "Holy Marksman", "Janissary", "Laserist", "League of Shadows", "Lucky Son of a Bitch", "Musketeer", "Pistolero", "Sharpshooter", "Space Cowboy", "Spellslinger", "Storm Gunner", "Trick Shot", "Twice-Damned", "White Hat"] },
+        { name: "Illrigger", hitDie: 'd10', savingThrows: ['CON', 'CHA'], image: "images/illriger.webp", description: "Un individuo que forja contratos oscuros con entidades infernales para obtener poder a cambio de su alma.", link: "https://homebrewery.naturalcrit.com/share/YkHqcotv-KCQ", subclasses: ["Architect of Ruin", "Black Menagerist", "Brass Banker", "Cardinals of Inferno", "Despotic Ruler", "Fatebreaker", "Fiendish Marksman", "Hellspeaker", "Nails of Odium", "Painkiller", "Queen’s Champion", "Radiant Sentinel", "Sanguine Knight", "Shadowmaster", "Forsaken"] },
+        { name: "Investigator", hitDie: 'd8', savingThrows: ['DEX', 'INT'], image: "images/investigador.webp", description: "Profesional en resolver misterios y desentrañar secretos, con una mente aguda y habilidades excepcionales para el rastreo.", link: "https://homebrewery.naturalcrit.com/share/Vdd_tiCoHg9d", subclasses: ["Antiquarian", "Archivist", "Conspiracy Theorist", "Containment Specialist", "Contractor", "Cursed Energy Specialist", "Decommissioner", "Detective", "Exterminator", "Infernal Agent", "Inquisitor", "Kid Sleuth", "Medium", "Occultist", "Spy", "Time Operative", "Witch Hunter"] },
+        { name: "Magus", hitDie: 'd10', savingThrows: ['CON', 'INT'], image: "images/magus.webp", description: "Talentoso en el uso de magia mediante el dominio de espadas y hechizos combinados.", link: "https://homebrewery.naturalcrit.com/share/ghElGwEE2Io9", subclasses: ["Order of Arcanists", "Order of Arcane Archers", "Order of Armorers", "Order of the Aurora", "Order of Blades", "Order of Blade Dancers", "Order of Conduits", "Order of Evolution", "Order of Hexblades", "Order of the Occultism", "Order of Scales", "Order of Spellswords", "Order of Sentinels", "Order of Spellbreakers", "Order of Travelers"] },
+        { name: "Martyr", hitDie: 'd12', savingThrows: ['STR', 'WIS'], image: "images/martyr.webp", description: "Héroe que sacrifica su propio bienestar por el bien de los demás, con un fuerte sentido del sacrificio y la redención.", link: "https://homebrewery.naturalcrit.com/share/o8FUKqZUgoT7", subclasses: ["Burden of Anonymity", "Burden of Ascension", "Burden of Atonement", "Burden of Calamity", "Burden of Discord", "Burden of the End", "Burden of Fame", "Burden of Humanity", "Burden of Levity", "Burden of Mercy", "Burden of Rebirth", "Burden of Revolution", "Burden of Truth", "Burden of Tyranny", "Burden of Uncharted"] },
+        { name: "Monk", hitDie: 'd8', savingThrows: ['STR', 'DEX'], image: "images/monk.webp", description: "Experto en artes marciales y en la meditación, que canaliza su energía interior para mejorar sus habilidades físicas y espirituales.", link: "https://homebrewery.naturalcrit.com/share/guTke3mXD9Nk", subclasses: ["Way of the Astral Self", "Way of the Ascendant Dragon", "Way of the Boulder", "Way of the Bow", "Way of the Brawler", "Way of the Dodo", "Way of the Drunken Fist", "Way of the Eight Gates", "Way of the Feather", "Way of Ferocity", "Way of the Flagellant", "Way of the Flowing River", "Way of the Four Fists", "Way of Gravity", "Way of the Hurricane", "Way of the Mask", "Way of the Open Hand", "Way of Radiance", "Way of the Reaper", "Way of the Sacred Inks", "Way of the Shadow Arts", "Way of Street Fighting", "Way of the Vigilante", "Way of the Void", "Way of the Warped", "Way of the Wu Jen", "Way of the Wuxia"] },
+        { name: "Necromancer", hitDie: 'd6', savingThrows: ['INT', 'CON'], image: "images/necromancer.webp", description: "Ente que manipula las fuerzas de la muerte y controla a los muertos para servir a sus fines oscuros.", link: "https://homebrewery.naturalcrit.com/share/yrujLNR8NHGX", subclasses: ["Black Rider", "Blood Ascendent", "Bow of the Grave", "Corpse Florist", "Crone", "Divine Soul", "Dead Mist Acolyte", "Death Knight", "Harbinger of Darkness", "Necrodancer", "Overlord", "Pale Master", "Pharaoh", "Plague Lord", "Reanimator", "Reaper", "Toymaker"] },
+        { name: "Paladin", hitDie: 'd10', savingThrows: ['WIS', 'CHA'], image: "images/paladin.webp", description: "Caballero sagrado que combate el mal con el poder divino y un fuerte código de honor.", link: "https://homebrewery.naturalcrit.com/share/QL_7_qGcSaio", subclasses: ["Oath of the Ancients", "Oath of Beauty", "Oath of the Blade", "Oath of the Bound", "Oath of Conquest", "Oath of the Corsair", "Oath of the Crown", "Oath of Devotion", "Oath of the Doomforged", "Oath of the Eternal Dragon", "Oath of Eternal Night", "Oath of the Exorcist", "Oath of the Forge", "Oath of Glory", "Oath of Heresy", "Oath of Inquisition", "Oath of Liberty", "Oath of Mysticism", "Oath of Preservation", "Oath of Prosperity", "Oath of Redemption", "Oath of Revelry", "Oath of the Sepulcher", "Oath of the Shield", "Oath of Storms", "Oath of the Sun", "Oath of Vengeance", "Oath of the Watchers", "Oath of Winter", "Oath of the Yojimbo", "The Oathless", "Oathbreaker"] },
+        { name: "Psionico", hitDie: 'd6', savingThrows: ['WIS', 'INT'], image: "images/psion.webp", description: "La realidad se desvía hacia donde van tus pensamientos. Los psiónicos canalizan la voluntad pura, transformando el pensamiento, la emoción y la memoria en fuerza psíquica pura.", link: "https://homebrewery.naturalcrit.com/share/MoGx_lZZ32mC", subclasses: ["Awakened Mind", "Consuming Mind", "Elemental Mind", "Shaper’s Mind", "Transcended Mind", "Unleashed Mind","Wandering Mind"] },
+        { name: "Ranger", hitDie: 'd10', savingThrows: ['STR', 'DEX'], image: "images/ranger.webp", description: "Explorador experto en el uso de arcos y el sigilo, con un vínculo profundo con la naturaleza.", link: "https://homebrewery.naturalcrit.com/share/usNwevklFcoN", subclasses: ["Beastborne", "Beast Master", "Bounty Hunter", "Buccaneer", "Deadeye Sniper", "Drakewarden", "Druidic Guardian", "Dunestrider", "Fey Wanderer", "Freerunner", "Gloom Stalker", "Grim Warden", "Horizon Walker", "Highwayman", "Hunter", "Monster Slayer", "Nomad", "Reconnaissance Scout", "Ronin", "Skysworn", "Shadowbane", "Spiritbound", "Spellbreaker", "Stargazer", "Swarmkeeper", "Vigilante", "Wrangler"] },
+        { name: "Rogue", hitDie: 'd8', savingThrows: ['DEX', 'INT'], image: "images/rogue.webp", description: "Experto en el sigilo, la evasión y las trampas, ideal para misiones que requieren astucia y agilidad.", link: "https://homebrewery.naturalcrit.com/share/TQg2QgZKbsDv", subclasses: ["Arachnoid Stalker", "Arcane Trickster", "Angler", "Assassin", "Bloodknife", "Chameleon", "Charlatan", "Duskcaller", "Enforcer", "Daredevil", "Duelist", "Falconer", "Gambler", "Grifter", "Infiltrator", "Inquisitive", "Jumper", "Justicar", "Magehunter", "Mastermind", "Phantom", "Ruffian", "Saboteur", "Scoundrel", "Scout", "Socialite", "Soulknife", "Shadow Master", "Skinchanger", "Surgeon", "Swashbuckler", "Tamaya", "Temporal Trickster", "Thief", "Titan Slayer"] },
+        { name: "Savant", hitDie: 'd8', savingThrows: ['INT', 'WIS'], image: "images/savant.webp", description: "Conocedor profundo de las artes arcanas o la ciencia, con habilidades excepcionales para el estudio y la enseñanza.", link: "https://homebrewery.naturalcrit.com/share/3Lw7KbWJnUsy", subclasses: ["Archaeologist", "Culinarian", "Engineer", "Investigator", "Naturalist", "Mentors", "Occultist", "Orator", "Philosopher", "Physician", "Rune Scribe", "Tactician", "Tinker", "Virtuoso", "Voyager"] },
+        { name: "Sorcerer", hitDie: 'd6', savingThrows: ['CON', 'CHA'], image: "images/sorcerer.webp", description: "Un hechicero que canaliza su magia a través de su linaje o conexión con fuerzas sobrenaturales.", link: "https://homebrewery.naturalcrit.com/share/NOEmC8CLMj9P", subclasses: ["Aberrant Mind", "The Chained", "Clockwork Soul", "Divine Soul", "Divine Right", "Draconic Bloodline", "Emberheart", "Emotion Lord", "Faeblood", "Gifted One", "Greensinger", "Hellspawn", "Jinx", "Lunar Sorcery", "Mirrorkin", "Mutagenic Bloodline", "Nanite Host", "Oozemaster", "Radiation Freak", "Reincarnated Hero", "Shadow", "Spiritborn", "Spirit Caller", "Stoneblood", "Storm Sorcery", "Toon Magic", "Vampiric Soul", "Voidwielder", "Waveborn", "Wild Magic"] },
+        { name: "Vagabond", hitDie: 'd10', savingThrows: ['STR', 'CON'], image: "images/vagabond.webp", description: "Exiliados, perseguidos o simplemente inquietos que viven en movimiento. El camino es su hogar y la desesperación, su mayor maestra.", link: "https://homebrewery.naturalcrit.com/share/7LePIfQ0CLhu", subclasses: ["Adrenaline Junkie", "Brigand", "Experiment X", "Feylost", "Gourmand", "Houndmaster","Justicar","Knight Errant","Mage Brand","Mindblade","Plague Doctor","Pugilist","Rōnin","Troubadour"] },
+        { name: "Vessel", hitDie: 'd10', savingThrows: ['CON', 'CHA'], image: "images/vessel.webp", description: "Un ser marcado por una conexión especial con espíritus, otorgándole poderes místicos y transformadores.", link: "https://homebrewery.naturalcrit.com/share/vBYpvFeHFy6v", subclasses: ["The Ancient Wyrms", "The Ascended", "The Beyond", "The Cataclysm", "The Cursed", "The Fallen", "The Formless", "The Mushroom Prince", "The Mythic Hero", "The Parasite", "The Overgrown", "The Titan", "The Trickster", "The Undying"] },
+        { name: "Warden", hitDie: 'd12', savingThrows: ['CON', 'STR'], image: "images/warden.webp", description: "Defensores de tierras y territorios, especializados en la protección de lo que es sagrado o valioso.", link: "https://homebrewery.naturalcrit.com/share/90VpGRQPU-Cn", subclasses: ["Bloodwrath Guardian", "Carrion King", "Eye of Twilight", "Fey Trailblazer", "Godsworn", "Grey Watchman", "Hellkeeper", "Iceheart Bastion", "Lawbringer", "Loreseeker", "Nightgaunt", "Soulblood Shaman", "Stoneheart Defender", "Storm Sentinel", "Verdant Protector", "Witchbane Hunter"] },
+        { name: "Warlock", hitDie: 'd8', savingThrows: ['WIS', 'CHA'], hitDie: 'd8', savingThrows: ['WIS', 'CHA'], image: "images/warlock.webp", description: "Ser que obtiene poder mediante pactos con entidades sobrenaturales a cambio de favores y lealtad.", link: "https://homebrewery.naturalcrit.com/share/kLwQFqpQ7pei", subclasses: ["The Alabaster", "The Archfey", "The Archmage", "The Celestial", "The Coven", "The Dead Mists", "The Elder Sphinx", "The Fathomless", "The Fiend", "The Future You", "The Genie", "The GM", "The Great Old One", "The Great Wyrm", "The Hexblade", "The King", "The Legacy", "The Legendary Hero", "The Magician", "The Mummy Lord", "The Primeval Growth", "The Shinigami", "The Singularity", "The Star", "The Swarm", "The Symbiont", "The Titan", "The Unblinking", "The Undead", "The Undying", "The Wild Hunt"] },
+        { name: "Warlord", hitDie: 'd10', savingThrows: ['INT', 'CON'], image: "images/warlord.webp", description: "Señor de la guerra, un líder militar que dirige a sus tropas con astucia y habilidad estratégica en el campo de batalla.", link: "https://homebrewery.naturalcrit.com/share/3IUIglJ_K-O4", subclasses: ["Academy of Chivalry", "Academy of Dawnbringer", "Academy of Dreadlords", "Academy of Ferocity", "Academy of Schemes", "Academy of Skalds", "Academy of Tactics"] },
+        { name: "Warmage", hitDie: 'd8', savingThrows: ['INT', 'CON'], image: "images/warmage.webp", description: "Estratega experto que domina un area de magia especializada para devastar a sus enemigos en el campo de batalla.", link: "https://homebrewery.naturalcrit.com/share/rau8aywbKXzF", subclasses: ["House of Bishops", "House of Coalition Arcanist", "House of Darts", "House of Dice", "House of Go", "House of Kings", "House of Knights", "House of Queens", "House of Lancers", "House of Pawns", "House of Rooks", "House of Roulette"] },
+        { name: "Witch", hitDie: 'd8', savingThrows: ['CHA', 'WIS'], image: "images/witch.webp", description: "Una usuaria de la magia arcana que emplea encantamientos y maldiciones para manipular el destino.", link: "https://homebrewery.naturalcrit.com/share/cl5HbkIH2xFw", subclasses: ["Black Magic", "Blood Magic", "Blue Magic", "Duskcaller Magic", "Fragrant Magic", "Gingerbread Magic", "Green Magic", "Lunar Magic", "Purple Magic", "Red Magic", "Sky Magic", "Steel Magic", "Tea Magic", "Technicolor Magic", "White Magic"] },
+        { name: "Wizard", hitDie: 'd6', savingThrows: ['INT', 'WIS'], image: "images/wizard.webp", description: "Erudito en el estudio y dominio de la magia arcana, capaz de lanzar poderosos hechizos y controlarla con precisión.", link: "https://homebrewery.naturalcrit.com/share/ymEiMM7-iT9H", subclasses: ["Familiar Master", "Magic Missile Mage", "Mystic Savant", "Order of Scribes", "School of Abjuration", "School of Automata", "School of Bladesinging", "School of Conjuration", "School of Chronomancy", "School of Divination", "School of Enchantment", "School of Evocation", "School of Gastronomy", "School of Graviturgy", "School of Hardlight", "School of Hexcraft", "School of Illusion", "School of Necromancy", "School of Metallurgy", "School of Somnomancy", "School of Theurgy", "School of Teleportation", "School of Transmutation", "School of War Magic", "School of Warp Watcher", "Shinobi"] }
     ];
+
+    // --- FUNCIONES ---
 
     // Función para lanzar confetti
     function launchConfetti() {
         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     }
 
-    // Evento del botón para jugar
+
+    // --- NEW HP CALCULATOR FUNCTIONS ---
+    function populateHpClassSelect() {
+        if (hpClassesPopulated) return; // Only run once
+        classes.sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically
+        classes.forEach(cls => {
+            const option = document.createElement("option");
+            option.value = cls.name;
+            option.textContent = cls.name;
+            hpClassSelect.appendChild(option);
+        });
+        hpClassesPopulated = true;
+    }
+
+    function getMaxHitDieValue(hitDieString) {
+        if (!hitDieString) return 6; // Default to d6 if missing
+        const match = hitDieString.match(/d(\d+)/);
+        return match ? parseInt(match[1]) : 6;
+    }
+
+    function calculateAndDisplayHp() {
+    const targetLevel = parseInt(hpLevelInput.value);
+    const selectedClassName = hpClassSelect.value;
+    const conMod = parseInt(hpConModifier.value);
+    const isHillDwarf = hpIsHillDwarf.checked;
+    const hasTough = hpHasTough.checked;
+    const otherBonusPerLevel = parseInt(hpOtherBonus.value) || 0; // Default to 0 if NaN
+
+    // Get result elements
+    const hpResultAverageEl = document.getElementById("hpResultAverage");
+    const hpResultHitDieEl = document.getElementById("hpResultHitDie");
+    const hpResultSavesEl = document.getElementById("hpResultSaves");
+    const hpCalculationNoteEl = document.getElementById("hpCalculationNote");
+
+    // Clear previous results initially
+    hpResultAverageEl.textContent = "--";
+    hpResultHitDieEl.textContent = "--";
+    hpResultSavesEl.textContent = "--";
+    hpCalculationNoteEl.innerHTML = "<small>Selecciona una clase y nivel.</small>";
+
+
+    // --- Validations ---
+    if (!selectedClassName) {
+        hpCalculationNoteEl.innerHTML = "<small style='color:red;'>Por favor, selecciona una clase.</small>";
+        return;
+    }
+    if (isNaN(targetLevel) || targetLevel < 1 || targetLevel > 20) {
+         hpCalculationNoteEl.innerHTML = "<small style='color:red;'>Por favor, introduce un nivel válido (1-20).</small>";
+        return;
+    }
+    if (isNaN(conMod)) {
+         hpCalculationNoteEl.innerHTML = "<small style='color:red;'>Modificador CON inválido.</small>";
+        return;
+    }
+
+    // --- Find Class Data ---
+    const selectedClass = classes.find(cls => cls.name === selectedClassName);
+    if (!selectedClass || !selectedClass.hitDie) {
+         hpCalculationNoteEl.innerHTML = "<small style='color:red;'>Error: Datos de clase no encontrados.</small>";
+        return;
+    }
+
+    // --- Calculations ---
+    const maxHitDie = getMaxHitDieValue(selectedClass.hitDie);
+    const averageHitDie = Math.floor(maxHitDie / 2) + 1; // Average (rounded up)
+    const bonusPerLevel = conMod + (isHillDwarf ? 1 : 0) + (hasTough ? 2 : 0) + otherBonusPerLevel;
+
+    let hpAtLevel1 = maxHitDie + bonusPerLevel;
+    hpAtLevel1 = Math.max(1, hpAtLevel1); // Min HP at level 1 is 1
+
+    let currentHp_Average = hpAtLevel1;
+    let currentHp_Max = hpAtLevel1;
+
+    for (let lvl = 2; lvl <= targetLevel; lvl++) {
+        // Ensure at least 1 HP gain per level
+        const gain_Average = Math.max(1, averageHitDie + bonusPerLevel);
+        const gain_Max = Math.max(1, maxHitDie + bonusPerLevel);
+
+        currentHp_Average += gain_Average;
+        currentHp_Max += gain_Max;
+    }
+
+    // --- Display Results ---
+    hpResultAverageEl.textContent = currentHp_Average;
+    hpResultHitDieEl.textContent = selectedClass.hitDie;
+    hpResultSavesEl.textContent = selectedClass.savingThrows.join(', ');
+
+    // Update calculation note
+    const avgGainText = `${averageHitDie} (promedio) + ${bonusPerLevel} (bonus)`;
+    const maxGainText = `${maxHitDie} (máximo) + ${bonusPerLevel} (bonus)`;
+    hpCalculationNoteEl.innerHTML = `<small>Promedio: ${hpAtLevel1} (N1) + (${avgGainText}) por nivel. Máximo: ${hpAtLevel1} (N1) + (${maxGainText}) por nivel. (Mínimo 1 por nivel)</small>`;
+}
+
+    // --- EVENT LISTENERS ---
+
+    // Evento del botón "Descubrir mi clase"
     button.addEventListener("click", () => {
         button.disabled = true;
         button.style.opacity = "0.5";
-		
 		quizButton.disabled = true;
 		quizButton.style.opacity = "0.5";
-		
-        let shuffleCount = 25;
+        tierListButton.disabled = true;
+        tierListButton.style.opacity = "0.5";
+        spellbookButton.disabled = true;
+        spellbookButton.style.opacity = "0.5";
+        hpCalculatorButton.disabled = true;
+        hpCalculatorButton.style.opacity = "0.5";
+
+        let shuffleCount = 45;
         let interval = setInterval(() => {
             let randomIndex = Math.floor(Math.random() * classes.length);
             classImage.src = classes[randomIndex].image;
             className.textContent = "? ? ?";
 			classDescription.classList.add("hidden");
 			subclassName.textContent = "";
-        }, 10);
+        }, 100); // Increased interval for visibility
 
         setTimeout(() => {
             clearInterval(interval);
             let finalClass = classes[Math.floor(Math.random() * classes.length)];
 			let randomSubclass = finalClass.subclasses[Math.floor(Math.random() * finalClass.subclasses.length)];
-			
-            setTimeout(() => {
+
+            // Preload the final image
+            const finalImage = new Image();
+            finalImage.onload = () => {
                 classImage.src = finalClass.image;
                 className.textContent = finalClass.name;
                 classDescription.innerHTML = `Subclase: ${randomSubclass}<br> <br> ${finalClass.description} <br> <a href="${finalClass.link}" target="_blank">Más información de la clase</a>`;
                 classDescription.classList.remove("hidden");
-				subclassName.textContent = `Subclase: ${randomSubclass}`;
+				// subclassName is not used here, description contains it.
                 launchConfetti();
 
-                setTimeout(() => {
-					if (subclassName) {
-                        subclassName.classList.add("show-subclass");
-                    }
-                    button.disabled = false;
-                    button.style.opacity = "1";
-					quizButton.disabled = false;
-                    quizButton.style.opacity = "1";
-                }, 1500);
-            }, 100);
+                button.disabled = false;
+                button.style.opacity = "1";
+                quizButton.disabled = false;
+                quizButton.style.opacity = "1";
+                tierListButton.disabled = false;
+                tierListButton.style.opacity = "1";
+                spellbookButton.disabled = false;
+                spellbookButton.style.opacity = "1";
+                hpCalculatorButton.disabled = false;
+                hpCalculatorButton.style.opacity = "1";
+            };
+            finalImage.src = finalClass.image; // Start loading
+
         }, shuffleCount * 100);
     });
-		// Galeria
+
+    // --- GALERÍA ---
     const galleryImages = document.querySelectorAll(".gallery img");
     const modal = document.getElementById("imageModal");
     const modalImage = document.getElementById("modalImage");
     const caption = document.getElementById("imageCaption");
     const closeButton = document.getElementById("closeModal");
-
     let zoomLevel = 0;
+    let currentIndex = 0;
 
-    // Evento para abrir la imagen en el modal con su información
+    function updateModalImage(index) {
+        const selectedClass = classes[index];
+        modalImage.src = selectedClass.image;
+        caption.innerHTML = `<strong>${selectedClass.name}</strong><br>${selectedClass.description}<br><br>
+			<a href="${selectedClass.link}" target="_blank">La Clase</a>`;
+    }
+
+    function showImage(index) {
+        if (index < 0) index = classes.length - 1;
+        if (index >= classes.length) index = 0;
+        currentIndex = index;
+        zoomLevel = 0;
+        modalImage.classList.remove("zoomed");
+        updateModalImage(currentIndex); // Use the function to set image and caption
+        modal.style.display = "flex";
+    }
+
     galleryImages.forEach((img, index) => {
-        img.addEventListener("click", () => {
-            zoomLevel = 0;
-            modalImage.src = img.src;
-            showImage(currentIndex);
-            // Extraer solo el nombre del archivo para comparar correctamente
-            const imgFileName = img.src.split("/").pop();
+		img.addEventListener("click", () => {
+			showImage(index);
+		});
+	});
 
-            // Buscar la clase correspondiente en la lista
-            const selectedClass = classes.find(cls => cls.image.endsWith(imgFileName));
-
-            if (selectedClass) {
-                caption.innerHTML = `<strong>${selectedClass.name}</strong><br>${selectedClass.description}<br><br>
-                <a href="${selectedClass.link}" target="_blank">La Clase</a>`;
-            } else {
-                caption.innerHTML = "Información no disponible";
-            }
-
-            modal.style.display = "flex";
-        });
-    });
-
-// Evento para hacer zoom en la imagen (alterna el estado)
     modalImage.addEventListener("click", (event) => {
-        // Alterna la clase 'zoomed'
         modalImage.classList.toggle("zoomed");
-
-        if (modalImage.classList.contains("zoomed")) {
-            // Si acabamos de hacer zoom...
-            zoomLevel = 1;
-            // Calculamos la posición inicial del click para el primer zoom
-            const rect = modalImage.getBoundingClientRect();
-            const x = ((event.clientX - rect.left) / rect.width) * 100;
-            const y = ((event.clientY - rect.top) / rect.height) * 100;
-            modalImage.style.setProperty("--zoom-x", `${x}%`);
-            modalImage.style.setProperty("--zoom-y", `${y}%`);
-        } else {
-            // Si acabamos de quitar el zoom...
-            zoomLevel = 0;
-        }
-    });
-
-    // Evento para mover la "lupa" (NUEVO)
-    modalImage.addEventListener("mousemove", (event) => {
-        // Solo actualiza la posición si la imagen tiene zoom (zoomLevel es 1)
+        zoomLevel = modalImage.classList.contains("zoomed") ? 1 : 0;
         if (zoomLevel === 1) {
             const rect = modalImage.getBoundingClientRect();
             const x = ((event.clientX - rect.left) / rect.width) * 100;
             const y = ((event.clientY - rect.top) / rect.height) * 100;
-            
-            // Actualiza continuamente el punto de origen del zoom (la lupa)
             modalImage.style.setProperty("--zoom-x", `${x}%`);
             modalImage.style.setProperty("--zoom-y", `${y}%`);
         }
     });
-	
-    // Evento para cerrar el modal con la "X"
+
+    modalImage.addEventListener("mousemove", (event) => {
+        if (zoomLevel === 1) {
+            const rect = modalImage.getBoundingClientRect();
+            const x = ((event.clientX - rect.left) / rect.width) * 100;
+            const y = ((event.clientY - rect.top) / rect.height) * 100;
+            modalImage.style.setProperty("--zoom-x", `${x}%`);
+            modalImage.style.setProperty("--zoom-y", `${y}%`);
+        }
+    });
+
     closeButton.addEventListener("click", () => {
         modal.style.display = "none";
         modalImage.classList.remove("zoomed");
     });
 
-    // Cerrar el modal si se hace clic fuera de la imagen
     modal.addEventListener("click", (event) => {
         if (event.target === modal) {
             modal.style.display = "none";
             modalImage.classList.remove("zoomed");
         }
     });
-	
-// Navegación
-	// Variables para la navegación
-	let currentIndex = 0;
 
-	// Función para actualizar la imagen y el texto del modal
-	function updateModalImage(index) {
-		const selectedClass = classes[index];
-		modalImage.src = selectedClass.image;
-		caption.innerHTML = `<strong>${selectedClass.name}</strong><br>${selectedClass.description}<br><br>
-			<a href="${selectedClass.link}" target="_blank">La Clase</a>`;
-	}
-	
-	// Función para mostrar una imagen en el modal
-    function showImage(index) {
-        if (index < 0) index = classes.length - 1;
-        if (index >= classes.length) index = 0;
-        currentIndex = index;
-        modalImage.src = classes[index].image;
-        zoomLevel = 0;
-        modalImage.classList.remove("zoomed");
-				const selectedClass = classes[index];
-		modalImage.src = selectedClass.image;
-		caption.innerHTML = `<strong>${selectedClass.name}</strong><br>${selectedClass.description}<br><br>
-			<a href="${selectedClass.link}" target="_blank">La Clase</a>`;
-    }
-	
-	
-	// Evento para abrir la imagen en el modal con flechas
-	galleryImages.forEach((img, index) => {
-		img.addEventListener("click", () => {
-			zoomLevel = 0;
-			currentIndex = index;
-			showImage(currentIndex);
-			updateModalImage(currentIndex);
-			modal.style.display = "flex";
-		});
+	document.getElementById("nextImage").addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent modal closing
+		showImage(currentIndex + 1);
 	});
 
-	// Evento para avanzar a la siguiente imagen
-	document.getElementById("nextImage").addEventListener("click", () => {
-		currentIndex = (currentIndex + 1) % classes.length;
-		updateModalImage(currentIndex);
+	document.getElementById("prevImage").addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent modal closing
+		showImage(currentIndex - 1);
 	});
 
-	// Evento para retroceder a la imagen anterior
-	document.getElementById("prevImage").addEventListener("click", () => {
-		currentIndex = (currentIndex - 1 + classes.length) % classes.length;
-		updateModalImage(currentIndex);
-	});
-	
-	document.addEventListener("keydown", (event) => {
+    document.addEventListener("keydown", (event) => {
         if (modal.style.display === "flex") {
             if (event.key === "ArrowLeft") {
                 showImage(currentIndex - 1);
@@ -270,18 +356,15 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
-	
-	
-// ---- QUIZ ---- //
 
-
-// Preguntas de ejemplo, puedes agregar
-const quizQuestions = [
+    // --- QUIZ --- (Keep your Quiz functions: quizQuestions, startQuiz, updateProgress, showQuestion, selectOption, showResult, shuffleArray)
+    // Preguntas de ejemplo, puedes agregar
+    const quizQuestions = [
     {
         question: "Te das cuenta que el tabernero te quiere estafar ¿Qué haces?",
         options: [
             { text: "Lo beso para que sus labios no sigan hablandome", classes: ["Alchemist","Bard"] },
-            { text: "Le muestro el arma", classes: ["Gunslinger", "Warlord", "Captain", "Warden","Gadgeteer","Warmage"] }, 
+            { text: "Le muestro el arma", classes: ["Gunslinger", "Warlord", "Captain", "Warden","Gadgeteer","Warmage"] },
             { text: "Planeo como robarle luego", classes: ["Artificer","Investigator","Rogue","Necromancer"] },
             { text: "Lo reporto a las autoridades", classes: ["Paladin", "Cleric","Craftsman"] },
             { text: "Lo mato a golpes", classes: ["Blood Hunter","Barbarian", "Fighter","Ranger","Illrigger","Magus","Vessel"] },
@@ -325,7 +408,7 @@ const quizQuestions = [
 	{
         question: "Llegas a una biblioteca prohibida llena de tomos antiguos ¿Qué haces?",
         options: [
-            { text: "Leo cada libro en busca de conocimiento oculto", classes: ["Wizard","Psion","Savant"] },
+            { text: "Leo cada libro en busca de conocimiento oculto", classes: ["Wizard","Psionico","Savant"] },
             { text: "Busco magia oscura para volverme más poderoso", classes: ["Warlock","Necromancer","Witch"] },
             { text: "Quemo los libros, nadie debería acceder a este mal", classes: ["Paladin","Cleric","Martyr"] },
             { text: "Los robo para venderlos al mejor postor", classes: ["Rogue","Investigator","Sorcerer"] },
@@ -338,7 +421,7 @@ const quizQuestions = [
         options: [
             { text: "Le devuelvo el insulto con un chiste más ingenioso", classes: ["Bard","Savant","Captain"] },
             { text: "Le rompo la nariz ahí mismo", classes: ["Barbarian","Fighter","Blood Hunter","Illrigger","Magus"] },
-            { text: "Uso magia sutil para humillarlo sin que lo note", classes: ["Wizard","Warlock","Sorcerer","Witch","Psion"] },
+            { text: "Uso magia sutil para humillarlo sin que lo note", classes: ["Wizard","Warlock","Sorcerer","Witch","Psionico"] },
             { text: "Ignoro el insulto, no vale mi energía", classes: ["Ranger","Monk","Druid","Commoner","Martyr"] },
             { text: "Recurro a mis contactos para arruinar su reputación", classes: ["Rogue","Investigator","Necromancer"] },
             { text: "Le doy un discurso para que reflexione sobre su arrogancia", classes: ["Paladin","Cleric","Warlord","Warden"] }
@@ -359,7 +442,7 @@ const quizQuestions = [
         question: "Estás perdido en un pantano de noche ¿Qué haces?",
         options: [
             { text: "Busco señales naturales para orientarme", classes: ["Ranger","Druid","Vagabond"] },
-            { text: "Lanzo un hechizo de luz para abrir camino", classes: ["Wizard","Sorcerer","Warmage","Psion"] },
+            { text: "Lanzo un hechizo de luz para abrir camino", classes: ["Wizard","Sorcerer","Warmage","Psionico"] },
             { text: "Subo a un árbol para ubicarme mejor", classes: ["Rogue","Monk"] },
             { text: "Grito pidiendo ayuda, seguro alguien escucha", classes: ["Commoner","Bard","Captain"] },
             { text: "Construyo un artefacto improvisado para orientarme", classes: ["Artificer","Craftsman","Gadgeteer","Alchemist"] },
@@ -369,7 +452,7 @@ const quizQuestions = [
     {
         question: "Un espíritu te ofrece conocimiento prohibido a cambio de tu memoria ¿Qué haces?",
         options: [
-            { text: "Acepto, el conocimiento es más valioso que mi pasado", classes: ["Wizard","Psion","Warlock","Necromancer"] },
+            { text: "Acepto, el conocimiento es más valioso que mi pasado", classes: ["Wizard","Psionico","Warlock","Necromancer"] },
             { text: "Lo rechazo, nada vale mi identidad", classes: ["Paladin","Cleric","Martyr","Monk"] },
             { text: "Negocio para reducir el precio", classes: ["Bard","Captain","Illrigger","Savant"] },
             { text: "Intento engañar al espíritu y llevarme el conocimiento gratis", classes: ["Rogue","Investigator","Vagabond"] },
@@ -406,7 +489,7 @@ const quizQuestions = [
             { text: "Lo despierto con un sermón sobre la responsabilidad", classes: ["Savant","Cleric","Paladin","Martyr"] },
             { text: "Le pongo un sombrero más gracioso y le saco retratos", classes: ["Bard","Captain"] },
             { text: "Lo dejo ahi tirado", classes: ["Artificer","Craftsman","Alchemist"] },
-            { text: "Le robo los conjuros", classes: ["Wizard","Sorcerer","Warmage","Psion"] },
+            { text: "Le robo los conjuros", classes: ["Wizard","Sorcerer","Warmage","Psionico"] },
             { text: "Lo cargo en la espalda y lo dejo en la taberna más cercana", classes: ["Fighter","Ranger","Monk","Warden"] }
         ]
     },
@@ -427,7 +510,7 @@ const quizQuestions = [
             { text: "Acepto, siempre quise una esposa", classes: ["Commoner","Vagabond","Warden"] },
             { text: "Acepto pero solo por el oro, después vemos", classes: ["Rogue","Necromancer","Illrigger"] },
             { text: "Declino con una canción romántica para suavizarlo", classes: ["Bard","Savant","Captain"] },
-            { text: "Lanzo un hechizo para cambiar su apariencia", classes: ["Wizard","Sorcerer","Psion","Witch"] },
+            { text: "Lanzo un hechizo para cambiar su apariencia", classes: ["Wizard","Sorcerer","Psionico","Witch"] },
             { text: "Acepto, y la respeto como es y me convierto en su campeón", classes: ["Paladin","Cleric","Martyr"] },
             { text: "Le construyo un esposo orco", classes: ["Artificer","Craftsman","Gadgeteer","Alchemist"] }
         ]
@@ -447,7 +530,7 @@ const quizQuestions = [
         question: "En un pueblo, todos los perros empiezan a ladrarte a la vez ¿Qué haces?",
         options: [
             { text: "Ladro más fuerte para imponer respeto", classes: ["Barbarian","Blood Hunter","Fighter"] },
-            { text: "Lanzo un hechizo para convertirlos en gatos", classes: ["Sorcerer","Psion","Witch"] },
+            { text: "Lanzo un hechizo para convertirlos en gatos", classes: ["Sorcerer","Psionico","Witch"] },
             { text: "Me subo a un techo y me escondo", classes: ["Rogue","Investigator","Vagabond"] },
             { text: "Los bendigo y les doy comida, ahora son mis aliados", classes: ["Cleric","Paladin","Druid","Ranger"] },
             { text: "Los estudio como si fueran un fenómeno paranormal", classes: ["Wizard","Savant","Artificer","Alchemist"] },
@@ -462,14 +545,14 @@ const quizQuestions = [
             { text: "La fundo y hago un arma nueva mejorada", classes: ["Craftsman","Artificer","Alchemist"] },
             { text: "La mando a un retiro y la dejo de usar", classes: ["Cleric","Paladin","Martyr","Druid"] },
             { text: "La uso como show de comedia", classes: ["Bard","Commoner"] },
-            { text: "La clavo en una piedra para que este eternamente sola", classes: ["Wizard","Magus","Vessel","Psion"] }
+            { text: "La clavo en una piedra para que este eternamente sola", classes: ["Wizard","Magus","Vessel","Psionico"] }
         ]
     },
     {
         question: "Un niño te pide que le enseñes a ser héroe ¿Qué haces?",
         options: [
             { text: "Lo entreno a golpes, la vieja escuela", classes: ["Barbarian","Fighter","Ranger"] },
-            { text: "Le enseño que el conocimiento es poder", classes: ["Wizard","Savant","Psion"] },
+            { text: "Le enseño que el conocimiento es poder", classes: ["Wizard","Savant","Psionico"] },
             { text: "Le enseño a robar antes de que la vida lo golpee", classes: ["Rogue","Investigator","Vagabond"] },
             { text: "Le enseño a ayudar a los demás primero", classes: ["Cleric","Paladin","Martyr","Warden"] },
             { text: "Le enseño a hacer explotar cosas", classes: ["Artificer","Alchemist","Gadgeteer","Warmage"] },
@@ -482,7 +565,7 @@ const quizQuestions = [
             { text: "Lo golpeo por estafador", classes: ["Barbarian","Blood Hunter","Fighter"] },
             { text: "Firmo el contrato, nunca se sabe", classes: ["Commoner","Paladin","Cleric"] },
             { text: "Reviso el contrato en busca de cláusulas ocultas", classes: ["Investigator","Rogue","Savant"] },
-            { text: "Lanzo un hechizo para que olvide quién soy", classes: ["Wizard","Warlock","Witch","Psion"] },
+            { text: "Lanzo un hechizo para que olvide quién soy", classes: ["Wizard","Warlock","Witch","Psionico"] },
             { text: "Lo contrato para que trabaje conmigo", classes: ["Illrigger","Captain","Warlord","Warden"] },
             { text: "Le mejoro la póliza y le cobro comisión", classes: ["Artificer","Craftsman","Alchemist","Gadgeteer"] }
         ]
@@ -492,7 +575,7 @@ const quizQuestions = [
         options: [
             { text: "Detengo al guardia.", classes: ["Paladin","Cleric","Martyr","Warden"] },
             { text: "Le enseño al niño a robar sin ser atrapado.", classes: ["Rogue","Vagabond","Investigator","Commoner"] },
-            { text: "Uso magia para alterar la memoria del guardia y dejarlo libre.", classes: ["Wizard","Sorcerer","Psion","Warlock","Witch"] },
+            { text: "Uso magia para alterar la memoria del guardia y dejarlo libre.", classes: ["Wizard","Sorcerer","Psionico","Warlock","Witch"] },
             { text: "Aprovecho la situación para manipular al niño y ganarme un sirviente fiel.", classes: ["Illrigger","Necromancer","Binder","Vessel"] },
             { text: "Construyo un artefacto para proveer pan en el barrio y evitar futuros robos.", classes: ["Artificer","Craftsman","Gadgeteer","Alchemist","Savant"] },
             { text: "Observo en silencio, el mundo enseña sus lecciones mejor que yo.", classes: ["Druid","Ranger","Monk","Blood Hunter","Barbarian"] }
@@ -517,7 +600,7 @@ const quizQuestions = [
             { text: "Lo libero, cargando yo con el peso de esa misericordia.", classes: ["Monk","Druid","Martyr","Commoner"] },
             { text: "Lo tomo como experimento, su sufrimiento servirá a mi conocimiento.", classes: ["Necromancer","Alchemist","Wizard","Savant","Witch"] },
             { text: "Lo obligo a servirme con pactos o juramentos, convirtiendo su crimen en mi fuerza.", classes: ["Warlock","Illrigger","Binder","Vessel"] },
-            { text: "Lo manipulo para que dedique el resto de su vida a reparar el daño hecho.", classes: ["Investigator","Psion","Craftsman","Gadgeteer"] }
+            { text: "Lo manipulo para que dedique el resto de su vida a reparar el daño hecho.", classes: ["Investigator","Psionico","Craftsman","Gadgeteer"] }
         ]
     },
     {
@@ -528,7 +611,7 @@ const quizQuestions = [
             { text: "Busco una solución alternativa aunque me consuma la vida intentándolo.", classes: ["Wizard","Savant","Craftsman","Artificer"] },
             { text: "Uso la maldición como herramienta para mis propios fines.", classes: ["Warlock","Necromancer","Illrigger","Binder"] },
             { text: "Sacrifico a los inocentes sin dudar.", classes: ["Captain","Warlord","Warden","Magus","Sorcerer"] },
-            { text: "Me río del dilema.", classes: ["Witch","Vessel","Psion","Warmage"] }
+            { text: "Me río del dilema.", classes: ["Witch","Vessel","Psionico","Warmage"] }
         ]
     },
     {
@@ -536,7 +619,7 @@ const quizQuestions = [
         options: [
             { text: "Lucho contra el demonio aunque muera intentándolo.", classes: ["Barbarian","Paladin","Fighter","Blood Hunter"] },
             { text: "Negocio con él, buscando un acuerdo más justo.", classes: ["Captain","Investigator","Warlord","Savant"] },
-            { text: "Lo manipulo con engaños y magia para evitar el tributo.", classes: ["Wizard","Warlock","Psion","Witch"] },
+            { text: "Lo manipulo con engaños y magia para evitar el tributo.", classes: ["Wizard","Warlock","Psionico","Witch"] },
             { text: "Propongo sacrificar al pueblo y quedarme con el botín.", classes: ["Necromancer","Illrigger","Vessel","Binder"] },
             { text: "Construyo defensas e inventos para resistir sus ataques.", classes: ["Artificer","Craftsman","Gadgeteer","Alchemist"] },
             { text: "Llevo al pueblo a otro lugar, la tierra no vale más que la gente.", classes: ["Druid","Ranger","Monk","Commoner"] }
@@ -549,7 +632,7 @@ const quizQuestions = [
             { text: "Lo ayudo a esconder la verdad, la lealtad está por encima de la ley.", classes: ["Bard","Rogue","Vagabond","Barbarian","Fighter"] },
             { text: "Lo uso como herramienta, ahora su secreto me da poder sobre él.", classes: ["Illrigger","Necromancer","Binder","Vessel"] },
             { text: "Lo redimo con paciencia y disciplina, guiándolo hacia el bien.", classes: ["Monk","Martyr","Druid","Savant"] },
-            { text: "Manipulo la percepción pública para borrar toda sospecha.", classes: ["Wizard","Warlock","Witch","Psion"] },
+            { text: "Manipulo la percepción pública para borrar toda sospecha.", classes: ["Wizard","Warlock","Witch","Psionico"] },
             { text: "Diseño un sistema para que nunca vuelva a ocurrir algo así.", classes: ["Artificer","Craftsman","Gadgeteer","Alchemist"] }
         ]
     },
@@ -582,7 +665,7 @@ const quizQuestions = [
             { text: "Rechazo, prefiero vivir libre aunque sea débil.", classes: ["Monk","Druid","Vagabond","Commoner","Magus"] },
             { text: "Acepto, pero planeo traicionar al dios en el futuro.", classes: ["Rogue","Illrigger","Necromancer","Binder"] },
             { text: "Analizo el trato como un contrato y busco cláusulas ocultas.", classes: ["Investigator","Craftsman","Savant","Artificer"] },
-            { text: "Acepto con entusiasmo, todo poder es un regalo sin importar el costo.", classes: ["Warlock","Witch","Psion","Vessel"] },
+            { text: "Acepto con entusiasmo, todo poder es un regalo sin importar el costo.", classes: ["Warlock","Witch","Psionico","Vessel"] },
             { text: "Le disparo al dios, nunca me gustó que me den órdenes.", classes: ["Gunslinger","Warmage","Blood Hunter","Barbarian"] }
         ]
     },
@@ -594,7 +677,7 @@ const quizQuestions = [
             { text: "Intento salvar a ambos aunque sea imposible.", classes: ["Druid","Ranger","Savant","Monk"] },
             { text: "Me retiro, no cargaré con una decisión tan cruel.", classes: ["Commoner","Warden","Investigator","Craftsman"] },
             { text: "Sacrifico a mi amigo para un ritual que salvará a los demás.", classes: ["Necromancer","Binder","Illrigger","Vessel"] },
-            { text: "Uso el dilema para manipular al grupo y ganar control.", classes: ["Warlock","Witch","Psion","Warmage"] }
+            { text: "Uso el dilema para manipular al grupo y ganar control.", classes: ["Warlock","Witch","Psionico","Warmage"] }
         ]
     },
     {
@@ -610,233 +693,238 @@ const quizQuestions = [
 			{ text: "La Invocadora", classes: ["Necromancer"] },
             { text: "El Daño Puro", classes: ["Rogue", "Fighter","Gunslinger","Monk","Vessel","Warmage"] },
             { text: "La Superviviente", classes: ["Druid", "Ranger","Vagabond"] },
-			{ text: "La Cara", classes: ["Investigator", "Psion"] },
+			{ text: "La Cara", classes: ["Investigator", "Psionico"] },
 			{ text: "El Protegido", classes: ["Binder","Commoner","Gadgeteer"] },
             { text: "El Malvado", classes: ["Illrigger","Necromancer"] }
         ]
     }
-];
+    ];
 
-let currentQuestionIndex = 0;
-let answers = [];
-
-// Mostrar contenedor del Quiz y ocultar lo demás
-quizButton.addEventListener("click", () => {
-    mainContainer.classList.add("hidden");
-    quizContainer.classList.remove("hidden");
-    startQuiz();
-});
-
-function startQuiz() {
-    currentQuestionIndex = 0;
-    answers = [];
-
-    // Separar las preguntas fijas de las que no lo son
-    const fixed = quizQuestions.filter(q => q.fixed);
-    const notFixed = quizQuestions.filter(q => !q.fixed);
-
-    // Mezclar las que no son fijas
-    shuffleArray(notFixed);
-
-    // Combinar: primero la fija, luego las aleatorias
-    shuffledQuestions = [...notFixed, ...fixed];
-
-    quizResult.innerHTML = "";
-    showQuestion();
-	
-	quizBar.max = quizQuestions.length;
-	quizBar.value = 0;
-	quizRemaining.textContent = `${quizQuestions.length} preguntas restantes`;
-}
-
-function updateProgress(currentIndex) {
-quizBar.value = currentIndex;
-quizRemaining.textContent = `${quizQuestions.length - currentIndex} preguntas restantes`;
-}
-
-function showQuestion() {
-    const q = shuffledQuestions[currentQuestionIndex];
-    quizQuestion.textContent = q.question;
-    quizOptions.innerHTML = "";
-
-    q.options.forEach((opt) => {
-        const btn = document.createElement("button");
-        btn.textContent = opt.text;
-        btn.addEventListener("click", () => selectOption(btn, opt.classes));
-        quizOptions.appendChild(btn);
-    });
-
-    backButton.classList.toggle("hidden", currentQuestionIndex === 0);
-}
-
-
-function selectOption(button, classes) {
-    button.classList.add("fade-out");
-    answers[currentQuestionIndex] = classes;
-	
-	answerSound.currentTime = 0;
-	answerSound.play();
-	updateProgress(currentQuestionIndex + 1);
-	
-    setTimeout(() => {
-        if (currentQuestionIndex < shuffledQuestions.length - 1) {
-            currentQuestionIndex++;
-            showQuestion();
-        } else {
-            showResult();
+    quizButton.addEventListener("click", () => {
+        mainContainer.classList.add("hidden");
+        tierListContainer.classList.add("hidden");
+        spellbookContainer.classList.add("hidden");
+        quizContainer.classList.remove("hidden");
+        exitQuiz.classList.remove("hidden");
+        if (quizAudio) {
+            quizAudio.currentTime = 0;
+            quizAudio.play().catch(err => console.log("Audio playback failed:", err));
         }
-    }, 400);
-}
-
-
-quizButton.addEventListener("click", () => {
-    mainContainer.classList.add("hidden");
-    quizContainer.classList.remove("hidden");
-    exitQuiz.classList.remove("hidden");
-    // Reproduce el audio
-    quizAudio.currentTime = 0;
-    quizAudio.play().catch(err => console.log("No se pudo reproducir el audio:", err));
-    startQuiz();
-});
-
-
-// Botón atrás
-backButton.addEventListener("click", () => {
-    if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        showQuestion();
-    }
-});
-
-// Botón Salir
-quizButton.addEventListener("click", () => {
-	quizAudio.currentTime = 0;
-    mainContainer.classList.add("hidden");
-    quizContainer.classList.remove("hidden");
-    exitQuiz.classList.remove("hidden"); // <-- lo mostramos
-    startQuiz();
-});
-
-exitQuiz.addEventListener("click", () => {
-    quizAudio.currentTime = 0;
-    quizContainer.classList.add("hidden");
-    mainContainer.classList.remove("hidden");
-    quizResult.innerHTML = "";
-});
-
-function showResult() {
-    quizQuestion.textContent = "";
-    quizOptions.innerHTML = "";
-	quizAudio.currentTime = 0;
-    backButton.classList.add("hidden");
-    exitQuiz.classList.remove("hidden");
-
-    let score = {};
-    answers.forEach(selected => {
-        selected.forEach(cls => {
-            score[cls] = (score[cls] || 0) + 1;
-        });
+        startQuiz();
     });
 
-    const result = Object.keys(score).reduce((a, b) => score[a] > score[b] ? a : b);
-    const finalClass = classes.find(c => c.name.toLowerCase() === result.toLowerCase());
+    function startQuiz() {
+        currentQuestionIndex = 0;
+        answers = [];
 
-    // Lanzar confeti
-    confetti({ particleCount: 120, spread: 100, origin: { y: 0.6 } });
+        const fixed = quizQuestions.filter(q => q.fixed);
+        const notFixed = quizQuestions.filter(q => !q.fixed);
+        shuffleArray(notFixed);
+        shuffledQuestions = [...notFixed, ...fixed]; // Use the shuffled list
 
-    if (finalClass) {
-        quizResult.innerHTML = `
-            <h3>¡Eres ${finalClass.name}!</h3>
-            <p>${finalClass.description}</p>
-            <div style="margin-top:20px;">
-                <img src="${finalClass.image}" alt="${finalClass.name}" style="width:400px; max-width:90%; border-radius:10px;">
-            </div>
-            <br>
-            <button id="restartQuiz">Volver al inicio</button>
-        `;
-    } else {
-        quizResult.innerHTML = `<h3>Tu clase es: ${result}</h3>`;
+        quizResult.innerHTML = "";
+        showQuestion();
+
+        quizBar.max = shuffledQuestions.length; // Use shuffled length
+        quizBar.value = 0;
+        quizRemaining.textContent = `${shuffledQuestions.length} preguntas restantes`;
+        quizProgress.classList.remove('hidden'); // Show progress bar
     }
 
-    document.getElementById("restartQuiz").addEventListener("click", () => {
+    function updateProgress(currentIndex) {
+        quizBar.value = currentIndex;
+        quizRemaining.textContent = `${shuffledQuestions.length - currentIndex} preguntas restantes`;
+    }
+
+    function showQuestion() {
+        if (currentQuestionIndex >= shuffledQuestions.length) {
+            showResult(); // Should not happen if selectOption logic is correct, but safe fallback
+            return;
+        }
+        const q = shuffledQuestions[currentQuestionIndex];
+        quizQuestion.textContent = q.question;
+        quizOptions.innerHTML = "";
+
+        shuffleArray(q.options).forEach((opt) => { // Shuffle options as well
+            const btn = document.createElement("button");
+            btn.textContent = opt.text;
+            btn.addEventListener("click", () => selectOption(btn, opt.classes));
+            quizOptions.appendChild(btn);
+        });
+
+        backButton.classList.toggle("hidden", currentQuestionIndex === 0);
+        exitQuiz.classList.remove("hidden");
+    }
+
+    function selectOption(button, classes) {
+        // Apply fade-out effect
+        quizOptions.querySelectorAll('button').forEach(btn => {
+            if (btn === button) {
+                // Optionally highlight the selected button briefly
+                btn.style.backgroundColor = '#ffcc00'; // Highlight color
+            }
+             btn.disabled = true; // Disable all buttons
+             btn.classList.add("fade-out");
+        });
+
+        answers[currentQuestionIndex] = classes;
+
+        if (answerSound) {
+            answerSound.currentTime = 0;
+            answerSound.play().catch(e => console.log("Answer sound failed:", e));
+        }
+        updateProgress(currentQuestionIndex + 1);
+
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }, 400); // Wait for fade-out
+    }
+
+    backButton.addEventListener("click", () => {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            answers.pop(); // Remove the last answer
+            updateProgress(currentQuestionIndex); // Update progress back
+            showQuestion();
+        }
+    });
+
+    exitQuiz.addEventListener("click", () => {
+        if (quizAudio) quizAudio.pause();
         quizContainer.classList.add("hidden");
         mainContainer.classList.remove("hidden");
         quizResult.innerHTML = "";
+        quizProgress.classList.add('hidden'); // Hide progress bar on exit
     });
-}
 
-function shuffleArray(array) {
-    // Algoritmo de Fisher-Yates para mezclar
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
+    function showResult() {
+        quizQuestion.textContent = "";
+        quizOptions.innerHTML = "";
+        if (quizAudio) quizAudio.pause();
+        backButton.classList.add("hidden");
+        exitQuiz.classList.remove("hidden");
+        quizProgress.classList.add('hidden'); // Hide progress bar on results
 
-// ---- TIER LIST y SPELL BOOK ---- //
-
-    const tierListButton = document.getElementById("tierListButton");
-    const tierListContainer = document.getElementById("tierListContainer");
-    const exitTierListButton = document.getElementById("exitTierListButton");
-    const addTierRowButton = document.getElementById("addTierRowButton");
-    const itemBank = document.getElementById("itemBank");
-    const tierRowsContainer = document.getElementById("tierRowsContainer");
-	const downloadTierListButton = document.getElementById("downloadTierListButton");
-
-// ... (después de los listeners de tierListButton y exitTierListButton) ...
-
-spellbookButton.addEventListener("click", () => {
-    mainContainer.classList.add("hidden");
-    quizContainer.classList.add("hidden");
-    tierListContainer.classList.add("hidden");
-    spellbookContainer.classList.remove("hidden");
-
-    // Carga los hechizos solo la primera vez
-    if (!isSpellsLoaded) {
-        loadSpells();
-    }
-});
-
-exitSpellbookButton.addEventListener("click", () => {
-    spellbookContainer.classList.add("hidden");
-    mainContainer.classList.remove("hidden");
-});
-    let draggedItem = null; // Variable para guardar el item que se está arrastrando
-
-    // Función para añadir eventos de Drop (soltar) a una zona
-    function addDragEventsToZone(zone) {
-        // 1. Cuando un item está SOBRE la zona
-        zone.addEventListener("dragover", (e) => {
-            e.preventDefault(); // Necesario para permitir el drop
-            zone.classList.add("drag-over");
+        let score = {};
+        answers.forEach(selected => {
+            if (selected) { // Ensure answer exists (if user went back)
+                selected.forEach(cls => {
+                    score[cls] = (score[cls] || 0) + 1;
+                });
+            }
         });
 
-        // 2. Cuando un item DEJA de estar sobre la zona
+        // Find the class(es) with the highest score
+        let maxScore = 0;
+        let topClasses = [];
+        for (const cls in score) {
+            if (score[cls] > maxScore) {
+                maxScore = score[cls];
+                topClasses = [cls];
+            } else if (score[cls] === maxScore) {
+                topClasses.push(cls);
+            }
+        }
+
+        let resultHTML = "";
+        if (topClasses.length === 0) {
+            resultHTML = `<h3>No pudimos determinar tu clase. ¡Inténtalo de nuevo!</h3>`;
+        } else if (topClasses.length === 1) {
+            const result = topClasses[0];
+            const finalClass = classes.find(c => c.name === result); // Use direct name comparison
+             if (finalClass) {
+                 resultHTML = `
+                    <h3>¡Tu clase es ${finalClass.name}!</h3>
+                    <p>${finalClass.description}</p>
+                    <div style="margin-top:20px;">
+                        <img src="${finalClass.image}" alt="${finalClass.name}" style="width:400px; max-width:90%; border-radius:10px;">
+                    </div>
+                     <br>
+                     <a href="${finalClass.link}" target="_blank">Ver Clase Completa</a>
+                 `;
+             } else {
+                 resultHTML = `<h3>Tu clase es: ${result}</h3><p>(Descripción no encontrada)</p>`;
+             }
+        } else {
+             resultHTML = `<h3>¡Tienes afinidad con varias clases!</h3><p>Las clases con las que más encajas son:</p><ul>`;
+             topClasses.forEach(clsName => {
+                 const clsData = classes.find(c => c.name === clsName);
+                 if(clsData) {
+                    resultHTML += `<li><strong>${clsData.name}</strong> (<a href="${clsData.link}" target="_blank">Ver Clase</a>)</li>`;
+                 } else {
+                     resultHTML += `<li><strong>${clsName}</strong></li>`;
+                 }
+             });
+             resultHTML += `</ul><p>¡Considera un personaje multiclase o elige la que más te llame!</p>`;
+        }
+
+
+        quizResult.innerHTML = resultHTML + `<br><button id="restartQuiz">Volver al inicio</button>`;
+
+        launchConfetti(); // Confetti on results
+
+        document.getElementById("restartQuiz").addEventListener("click", () => {
+            quizContainer.classList.add("hidden");
+            mainContainer.classList.remove("hidden");
+            quizResult.innerHTML = "";
+        });
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+
+    // --- TIER LIST --- (Keep your Tier List functions and listeners)
+    tierListButton.addEventListener("click", () => {
+        mainContainer.classList.add("hidden");
+        quizContainer.classList.add("hidden");
+        spellbookContainer.classList.add("hidden");
+        tierListContainer.classList.remove("hidden");
+        // Ensure item bank is populated if it wasn't already
+        if (itemBank.children.length === 0) {
+            populateItemBank();
+        }
+    });
+
+    exitTierListButton.addEventListener("click", () => {
+        tierListContainer.classList.add("hidden");
+        mainContainer.classList.remove("hidden");
+    });
+
+    function addDragEventsToZone(zone) {
+        zone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            zone.classList.add("drag-over");
+        });
         zone.addEventListener("dragleave", () => {
             zone.classList.remove("drag-over");
         });
-
-        // 3. Cuando un item es SOLTADO en la zona
         zone.addEventListener("drop", (e) => {
             e.preventDefault();
             zone.classList.remove("drag-over");
-            
-            if (draggedItem) { // Si realmente estamos arrastrando algo
-                zone.appendChild(draggedItem); // Mueve el item a esta zona
+            if (draggedItem) {
+                zone.appendChild(draggedItem);
             }
         });
     }
 
-    // Función para poblar el banco de items con las clases
     function populateItemBank() {
-        // Usamos la misma constante 'classes' que ya tienes definida
+        itemBank.innerHTML = ''; // Clear first in case of re-population
         classes.forEach(cls => {
             const item = document.createElement("div");
             item.classList.add("tier-item");
             item.draggable = true;
-            // ID único para referencia
-            item.id = `tier-item-${cls.name.replace(/\s+/g, '-')}`; 
+            item.id = `tier-item-${cls.name.replace(/\s+/g, '-')}`;
 
             const img = document.createElement("img");
             img.src = cls.image;
@@ -848,98 +936,48 @@ exitSpellbookButton.addEventListener("click", () => {
             item.appendChild(img);
             item.appendChild(nameSpan);
 
-            // Eventos de Drag (arrastrar) para el item
             item.addEventListener("dragstart", () => {
-                draggedItem = item; // Guarda el item que estamos arrastrando
-                // 'setTimeout' es un truco para que el estilo se aplique después de "levantar" el item
+                draggedItem = item;
                 setTimeout(() => item.classList.add("dragging"), 0);
             });
-
             item.addEventListener("dragend", () => {
                 if(draggedItem) {
-                    draggedItem.classList.remove("dragging"); // Limpia el estilo
+                    draggedItem.classList.remove("dragging");
                 }
-                draggedItem = null; // Suelta el item
+                draggedItem = null;
             });
-
-            itemBank.appendChild(item); // Añade el item al banco
+            itemBank.appendChild(item);
         });
+        // Add drag events to the bank itself after populating
+        addDragEventsToZone(itemBank);
     }
-    
-    // 1. Poblar el banco de items al cargar la página
-    populateItemBank();
 
-    // 2. Añadir eventos a TODAS las zonas de drop existentes (las filas por defecto + el banco)
-    document.querySelectorAll(".tier-dropzone").forEach(zone => {
-        addDragEventsToZone(zone);
-    });
-
-    // 3. Botón de añadir nueva fila
     addTierRowButton.addEventListener("click", () => {
         const newRow = document.createElement("div");
         newRow.classList.add("tier-row");
-
-        // Generar un color aleatorio para la etiqueta
         const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
-
-        // Añadimos el HTML de la fila, incluyendo el botón de borrado
         newRow.innerHTML = `
             <div class="tier-label" contenteditable="true" style="background-color: ${randomColor};">Nueva Fila</div>
             <button class="delete-tier-row-button">×</button>
             <div class="tier-dropzone"></div>
         `;
-        
-        // --- Conectar los eventos a la fila NUEVA ---
-
-        // a) Conectar el evento de borrado al nuevo botón 'X'
         const newDeleteButton = newRow.querySelector('.delete-tier-row-button');
         addDeleteEventToButton(newDeleteButton);
-
-        // b) Conectar el evento de dropzone a la nueva zona
         const newDropzone = newRow.querySelector(".tier-dropzone");
         addDragEventsToZone(newDropzone);
-
-        // Añadir la nueva fila al contenedor
         tierRowsContainer.appendChild(newRow);
     });
 
-    // 4. Botones para mostrar/ocultar el Tier List
-    tierListButton.addEventListener("click", () => {
-        mainContainer.classList.add("hidden");
-        quizContainer.classList.add("hidden"); // Ocultar quiz si está abierto
-        tierListContainer.classList.remove("hidden");
-    });
-
-    exitTierListButton.addEventListener("click", () => {
-        tierListContainer.classList.add("hidden");
-        mainContainer.classList.remove("hidden");
-    });
-
-    // --- NUEVAS FUNCIONES PARA BORRAR FILAS ---
-
-    /**
-     * Mueve todos los items de una fila al banco y luego la elimina.
-     */
     function handleTierRowDelete(deleteButton) {
-        // 1. Encontrar la fila padre
         const rowToDelete = deleteButton.closest('.tier-row');
         if (!rowToDelete) return;
-
-        // 2. Encontrar todos los items (.tier-item) dentro de esa fila
         const itemsToMove = rowToDelete.querySelectorAll('.tier-item');
-        
-        // 3. Mover cada item de vuelta al banco (#itemBank)
         itemsToMove.forEach(item => {
-            itemBank.appendChild(item); // itemBank está definido globalmente
+            itemBank.appendChild(item);
         });
-
-        // 4. Eliminar la fila del DOM
         rowToDelete.remove();
     }
 
-    /**
-     * Añade el listener de click a un botón de borrado, incluyendo una confirmación.
-     */
     function addDeleteEventToButton(button) {
         button.addEventListener('click', () => {
             if (confirm('¿Seguro que quieres borrar esta fila? Los items volverán al banco.')) {
@@ -948,340 +986,445 @@ exitSpellbookButton.addEventListener("click", () => {
         });
     }
 
-    // Conectar la lógica de borrado a los botones que YA existen en el HTML
-    document.querySelectorAll('.delete-tier-row-button').forEach(button => {
-        addDeleteEventToButton(button);
+    // Initial setup for existing elements
+    document.querySelectorAll(".tier-dropzone").forEach(zone => addDragEventsToZone(zone));
+    document.querySelectorAll('.delete-tier-row-button').forEach(button => addDeleteEventToButton(button));
+    populateItemBank(); // Populate bank on initial load
+
+    // --- GRIMORIO ---
+
+    spellbookButton.addEventListener("click", () => {
+        mainContainer.classList.add("hidden");
+        quizContainer.classList.add("hidden");
+        tierListContainer.classList.add("hidden");
+        spellbookContainer.classList.remove("hidden");
+        if (!isSpellsLoaded) {
+            loadSpells();
+        } else {
+             // If spells are loaded, ensure the correct list (all or favs) is shown
+             if (showingFavorites) {
+                 renderFavoriteSpells(); // Re-render in case favs changed
+                 spellList.classList.add('hidden');
+                 favoriteSpellListContainer.classList.remove('hidden');
+             } else {
+                 applyFiltersAndSort(); // Re-apply filters to main list
+                 spellList.classList.remove('hidden');
+                 favoriteSpellListContainer.classList.add('hidden');
+             }
+        }
     });
 
-    // ---- FIN TIER LIST ---- //
-	
-// ---- GRIMORIO DE HECHIZOS ---- //
+    exitSpellbookButton.addEventListener("click", () => {
+        spellbookContainer.classList.add("hidden");
+        mainContainer.classList.remove("hidden");
+    });
 
-/**
-* Carga los hechizos desde el archivo spells.json
- */
-async function loadSpells() {
-    try {
-        const response = await fetch('spells.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        allSpells = await response.json();
-        isSpellsLoaded = true;
+    toggleSpellViewButton.addEventListener('click', () => {
+        isSpellViewSimplified = !isSpellViewSimplified;
+        const currentList = showingFavorites ? favoriteSpellListContainer : spellList;
+        currentList.classList.toggle('simplified-view', isSpellViewSimplified);
+        toggleSpellViewButton.textContent = isSpellViewSimplified ? 'Vista Extendida' : 'Vista Simplificada';
 
-// --- SECCIÓN MODIFICADA ---
-        // Mapeo de nombres "bonitos" del array 'classes' a las claves "feas" del JSON
-        // Añade aquí cualquier otra excepción que encuentres
-        const classJsonMap = {
-            "Bard": "bardo",
-            "Cleric": "clerigo",
-            "Druid": "druida",
-            "Paladin": "paladin",
-            "Ranger": "ranger",
-            "Sorcerer": "sorcerer",
-            "Warlock": "warlock",
-            "Wizard": "wizard",
-            "Artificer": "artificer",
-            "Warmage": "warmage",
-            "Witch": "witch",
-            "Martyr": "martyrs", // Excepción: 'Martyr' -> 'martyrs'
-            "Vessel": "The Vessel", // Excepción: 'Vessel' -> 'The Vessel'
-            "Necromancer": "Necromancer",
-            "Magus": "Magus",
-            "Investigator": "Investigator"
-            // Nota: "Shaman" no está en tu array 'classes', así que no se añadirá al filtro.
-            // Si quieres añadirlo, primero debes añadir "Shaman" a tu array 'classes' principal.
-        };
-		
-		const damageTypes = [
-                { value: "acid", display: "Ácido" },
-                { value: "bludgeoning", display: "Contundente" }, // (Golpe)
-                { value: "cold", display: "Frío" },
-                { value: "fire", display: "Fuego" },
-                { value: "force", display: "Fuerza" },
-                { value: "lightning", display: "Rayo" },
-                { value: "necrotic", display: "Necrótico" },
-                { value: "piercing", display: "Perforante" },
-                { value: "poison", display: "Veneno" },
-                { value: "psychic", display: "Psíquico" },
-                { value: "radiant", display: "Radiante" },
-                { value: "slashing", display: "Cortante" },
-                { value: "thunder", display: "Trueno" }
-            ];
-		
-		// Ordena la lista alfabéticamente por el nombre a mostrar
-            damageTypes.sort((a, b) => a.display.localeCompare(b.display));
-
-            // Añade cada tipo de daño al <select>
-            damageTypes.forEach(type => {
-                const option = document.createElement('option');
-                option.value = type.value; // ej: "acid"
-                option.textContent = type.display; // ej: "Ácido"
-                filterDamage.appendChild(option);
-            });
-		
-	// Limpiar el filtro (por si acaso)
-			filterClass.innerHTML = '<option value="all">Todas las Clases</option>';
-
-			// Poblar el filtro de clases dinámicamente
-			classes.forEach(cls => {
-				const jsonKey = classJsonMap[cls.name];
-				// Si la clase existe en nuestro mapa Y en el JSON...
-				if (jsonKey && allSpells.length > 0 && allSpells[0].hasOwnProperty(jsonKey)) {
-					const option = document.createElement('option');
-					option.value = jsonKey; // El valor es la clave del JSON (ej: "martyrs")
-					option.textContent = cls.name; // El texto es el nombre bonito (ej: "Martyr")
-					filterClass.appendChild(option);
-				}
-			});
-
-            // 1. Encontrar todas las escuelas únicas
-            const allSchools = allSpells.map(spell => spell.Escuela);
-            // Usamos 'Set' para eliminar duplicados
-            const uniqueSchools = [...new Set(allSchools)]; 
-            
-            // 2. Ordenarlas alfabéticamente
-            uniqueSchools.sort((a, b) => (a || "").localeCompare(b || "")); 
-
-            // 3. Añadirlas al <select>
-            uniqueSchools.forEach(school => {
-                if (school) { // Evita valores nulos o vacíos
-                    const option = document.createElement('option');
-                    // Capitaliza la primera letra para que se vea mejor
-                    const displayName = school.charAt(0).toUpperCase() + school.slice(1);
-                    option.value = school;
-                    option.textContent = displayName;
-                    filterSchool.appendChild(option);
-                }
-            });
-            // --- FIN DEL NUEVO BLOQUE ---
-
-			// Añadir listeners a los filtros
-			const allFilters = [filterClass, filterLevel, filterType, filterSchool, filterRitual, filterDamage, sortSpells];
-			allFilters.forEach(filter => {
-				filter.addEventListener('change', applyFiltersAndSort);
-			});
-			
-			searchSpell.addEventListener('input', applyFiltersAndSort);
-			
-			// Renderizar la lista inicial
-			applyFiltersAndSort();
-
-		} catch (error) {
-			console.error("Error al cargar los hechizos:", error);
-			spellList.innerHTML = `<p style="color: red;">Error al cargar el libro de hechizos. Revisa el archivo spells.json.</p>`;
-		}
-	}
-
-/**
- * Aplica los filtros y el orden seleccionados, y luego llama a renderSpells
- */
-/**
- * Aplica los filtros y el orden seleccionados, y luego llama a renderSpells
- */
-function applyFiltersAndSort() {
-    let filteredSpells = [...allSpells]; // Empezamos con la lista completa
-
-    // 1. Filtrar
-    const classVal = filterClass.value;
-    const levelVal = filterLevel.value;
-    const typeVal = filterType.value;
-    const ritualVal = filterRitual.value;
-	const schoolVal = filterSchool.value;
-	const damageVal = filterDamage.value;
-	
-	
-    // Obtenemos el valor del buscador, lo pasamos a minúsculas y quitamos espacios
-    const searchVal = searchSpell.value.toLowerCase().trim();
-    // --- FIN ---
-    // --- LÓGICA DE FILTRADO MODIFICADA ---
-    if (classVal !== 'all') {
-        // classVal ya es la clave correcta del JSON (ej: "bardo", "martyrs", "The Vessel")
-        // Filtramos donde el valor de esa clave sea 1 (significa "sí")
-        filteredSpells = filteredSpells.filter(spell => spell[classVal] === 1);
-    }
-    if (levelVal !== 'all') {
-        // Comparamos 'Nivel' (del JSON) con el valor del filtro (convertido a número)
-        filteredSpells = filteredSpells.filter(spell => spell.Nivel == levelVal);
-    }
-    if (typeVal !== 'all') {
-        // El filtro nos da "Arcano", "Divino" o "Primal".
-        // Mapeamos eso a las claves A, D, P de tu JSON.
-        if (typeVal === 'Arcano') {
-            filteredSpells = filteredSpells.filter(spell => spell.A === 1);
-        } else if (typeVal === 'Divino') {
-            filteredSpells = filteredSpells.filter(spell => spell.D === 1);
-        } else if (typeVal === 'Primal') {
-            filteredSpells = filteredSpells.filter(spell => spell.P === 1);
-        }
-    }
-	
-	if (schoolVal !== 'all') {
-        // Filtra donde la 'Escuela' del hechizo sea igual al valor seleccionado
-        filteredSpells = filteredSpells.filter(spell => 
-            spell.Escuela === schoolVal
-        );
-    }
-	
-    if (ritualVal !== 'all') {
-        // El filtro nos da "true" o "false"
-        // Mapeamos eso a "si" o "no" de tu JSON
-        if (ritualVal === 'true') {
-            filteredSpells = filteredSpells.filter(spell => spell.ritual === "si");
-        } else if (ritualVal === 'false') {
-            filteredSpells = filteredSpells.filter(spell => spell.ritual === "no");
-        }
-    }
-    if (damageVal !== 'all') {
-        // Buscamos el término exacto en inglés. Ej: "fire damage"
-        // Esto es más seguro que buscar solo "fire" (que podría estar en "firefly")
-        const searchTerm = damageVal + " damage"; 
-        
-        filteredSpells = filteredSpells.filter(spell => {
-            // Comprobamos que la clave "efecto" exista
-            if (spell.efecto) {
-                // Convertimos el texto del efecto a minúsculas
-                // y comprobamos si incluye nuestro término de búsqueda
-                return spell.efecto.toLowerCase().includes(searchTerm);
+        // Ensure details are hidden/shown correctly on toggle
+        const allCards = currentList.querySelectorAll('.spell-card');
+        allCards.forEach(card => {
+            const details = card.querySelector('.spell-details');
+            if (details) {
+                 details.classList.toggle('hidden', isSpellViewSimplified);
             }
-            return false; // Si no hay "efecto", no se incluye
+            // Reset expanded state when switching views
+            card.classList.remove('expanded');
+        });
+    });
+
+    // Consolidated Click Handler for Spellbook Area (Handles Favorites AND Simplified View)
+    spellbookContainer.addEventListener('click', (event) => {
+        const favButton = event.target.closest('.favorite-button');
+        const spellCard = event.target.closest('.spell-card');
+
+        if (favButton) { // Favorite button clicked
+            event.stopPropagation(); // Prevent card expand/collapse if clicking star
+            const spellName = favButton.dataset.spellName;
+            if (spellName) {
+                toggleFavorite(spellName, favButton);
+            }
+        } else if (isSpellViewSimplified && spellCard) { // Card clicked in simplified view
+            // Make sure the click wasn't on the favorite button we just handled
+             if (!event.target.closest('.favorite-button')) {
+                const details = spellCard.querySelector('.spell-details');
+                // Only toggle the clicked card
+                spellCard.classList.toggle('expanded');
+                if (details) {
+                    details.classList.toggle('hidden');
+                }
+                 // Optional: Collapse other expanded cards in the same list
+                 const parentList = spellCard.closest('#spellList, #favoriteSpellList');
+                 if (parentList) {
+                     parentList.querySelectorAll('.spell-card.expanded').forEach(otherCard => {
+                         if (otherCard !== spellCard) {
+                             otherCard.classList.remove('expanded');
+                             const otherDetails = otherCard.querySelector('.spell-details');
+                             if (otherDetails) otherDetails.classList.add('hidden');
+                         }
+                     });
+                 }
+             }
+        }
+    });
+
+    toggleFavoritesButton.addEventListener('click', () => {
+   showingFavorites = !showingFavorites;
+        const spellbookDiv = document.getElementById('spellbookContainer');
+
+        // 1. Ocultar AMBAS listas primero para evitar solapamientos
+        spellList.classList.add('hidden');
+        favoriteSpellListContainer.classList.add('hidden');
+
+        // 2. Limpiar el contenido de la lista que NO se va a mostrar (opcional pero seguro)
+        if (showingFavorites) {
+             spellList.innerHTML = ''; // Limpia la lista principal si vamos a mostrar favoritos
+        } else {
+             favoriteSpellListContainer.innerHTML = ''; // Limpia favoritos si vamos a mostrar la principal
+        }
+
+
+        // 3. Renderizar y Mostrar la lista correcta
+        if (showingFavorites) {
+            console.log("mostrar Favoritos"); // Para depuración
+            renderFavoriteSpells(); // Renderiza en favoriteSpellListContainer
+            favoriteSpellListContainer.classList.remove('hidden'); // Muestra la lista de favoritos
+            toggleFavoritesButton.textContent = 'Ver Todos';
+            toggleFavoritesButton.style.backgroundColor = '#5bc0de'; // Azul
+            spellbookDiv.classList.add('showing-favorites');
+        } else {
+            console.log("mostrar Todos los Hechizos"); // Para depuración
+            applyFiltersAndSort(); // Renderiza en spellList
+            spellList.classList.remove('hidden'); // Muestra la lista principal
+            toggleFavoritesButton.textContent = 'Ver Favoritos';
+            toggleFavoritesButton.style.backgroundColor = '#f0ad4e'; // Amarillo original
+            spellbookDiv.classList.remove('showing-favorites');
+        }
+
+        // 4. Aplicar vista simplificada/extendida a la lista AHORA visible
+        const visibleList = showingFavorites ? favoriteSpellListContainer : spellList;
+        visibleList.classList.toggle('simplified-view', isSpellViewSimplified);
+        // Asegurarse de que las tarjetas en la lista visible respeten el estado de la vista
+        visibleList.querySelectorAll('.spell-card').forEach(card => {
+            const details = card.querySelector('.spell-details');
+            if (details) details.classList.toggle('hidden', isSpellViewSimplified);
+            card.classList.remove('expanded'); // Colapsar todo al cambiar de lista
+        });
+    });
+
+
+    // --- FAVORITES FUNCTIONS ---
+    function loadFavorites() {
+        const storedFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
+        if (storedFavorites) {
+            try {
+                favoriteSpells = JSON.parse(storedFavorites);
+            } catch (e) { console.error("Error parsing favorites:", e); favoriteSpells = []; }
+        } else {
+            favoriteSpells = [];
+        }
+    }
+
+    function saveFavorites() {
+        localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favoriteSpells));
+    }
+
+    function toggleFavorite(spellName, buttonElement) {
+        const index = favoriteSpells.indexOf(spellName);
+        if (index > -1) {
+            favoriteSpells.splice(index, 1);
+        } else {
+            favoriteSpells.push(spellName);
+        }
+        saveFavorites();
+        updateFavoriteButtonState(spellName); // Update ALL buttons for this spell
+
+        // If currently showing favorites, re-render that list
+        if (showingFavorites) {
+            renderFavoriteSpells();
+        }
+    }
+
+    function renderFavoriteSpells() {
+        favoriteSpellListContainer.innerHTML = '<h3>Mis Hechizos Favoritos</h3>'; // Clear and add title
+
+        const favoriteSpellObjects = allSpells.filter(spell => favoriteSpells.includes(spell.Nombre));
+
+        if (favoriteSpellObjects.length === 0) {
+            favoriteSpellListContainer.innerHTML += '<p>No has marcado ningún hechizo como favorito.</p>';
+            // Still apply simplified view class in case user switches back later
+            favoriteSpellListContainer.classList.toggle('simplified-view', isSpellViewSimplified);
+            return;
+        }
+
+        // Apply sorting to favorites as well
+        const sortVal = sortSpells.value;
+        if (sortVal === 'name') {
+           favoriteSpellObjects.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+       } else if (sortVal === 'level') {
+           favoriteSpellObjects.sort((a, b) => a.Nivel - b.Nivel || a.Nombre.localeCompare(b.Nombre)); // Add secondary name sort
+       }
+
+        renderSpells(favoriteSpellObjects, favoriteSpellListContainer); // Render into the correct container
+        // Ensure simplified view is applied correctly after rendering
+        favoriteSpellListContainer.classList.toggle('simplified-view', isSpellViewSimplified);
+
+        // Ensure cards within favorites respect simplified view state
+        favoriteSpellListContainer.querySelectorAll('.spell-card .spell-details').forEach(details => {
+            details.classList.toggle('hidden', isSpellViewSimplified);
+        });
+        favoriteSpellListContainer.querySelectorAll('.spell-card').forEach(card => card.classList.remove('expanded'));
+
+    }
+
+    function updateFavoriteButtonState(spellName) {
+        const isFav = favoriteSpells.includes(spellName);
+        // Select buttons in BOTH lists
+        const buttons = document.querySelectorAll(`#spellList .favorite-button[data-spell-name="${spellName}"], #favoriteSpellList .favorite-button[data-spell-name="${spellName}"]`);
+        buttons.forEach(button => {
+            button.textContent = isFav ? '★' : '☆';
+            button.classList.toggle('favorited', isFav);
+            button.title = isFav ? 'Quitar de favoritos' : 'Añadir a favoritos';
         });
     }
-	
-	// --- NUEVO FILTRO DE BÚSQUEDA (se aplica después de los otros) ---
-    if (searchVal.length > 0) {
-        filteredSpells = filteredSpells.filter(spell => 
-            spell.Nombre.toLowerCase().includes(searchVal)
-        );
-    }
-    // --- FIN ---
 
-    // 2. Ordenar
-    // --- LÓGICA DE ORDEN MODIFICADA ---
-    const sortVal = sortSpells.value;
-    if (sortVal === 'name') {
-        // Ordenamos por la clave "Nombre"
-        filteredSpells.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
-    } else if (sortVal === 'level') {
-        // Ordenamos por la clave "Nivel"
-        filteredSpells.sort((a, b) => a.Nivel - b.Nivel);
-    }
-    // --- FIN LÓGICA DE ORDEN ---
+    // --- SPELL LOADING AND RENDERING ---
+    async function loadSpells() {
+        try {
+            const response = await fetch('spells.json');
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            allSpells = await response.json();
+            isSpellsLoaded = true;
+            loadFavorites(); // Load favorites AFTER spells are loaded
 
-    // 3. Renderizar
-    renderSpells(filteredSpells);
-}
+            // --- Populate Filters (Keep this logic) ---
+            const classJsonMap = { "Bard": "bardo", "Cleric": "clerigo", "Druid": "druida", "Paladin": "paladin", "Ranger": "ranger", "Sorcerer": "sorcerer", "Warlock": "warlock", "Wizard": "wizard", "Artificer": "artificer", "Warmage": "warmage", "Witch": "witch", "Martyr": "martyrs", "Vessel": "The Vessel", "Necromancer": "Necromancer", "Magus": "Magus", "Investigator": "Investigator", "Shaman": "Shaman" }; // Added Shaman
+            const damageTypes = [ { value: "acid", display: "Ácido" }, { value: "bludgeoning", display: "Contundente" }, { value: "cold", display: "Frío" }, { value: "fire", display: "Fuego" }, { value: "force", display: "Fuerza" }, { value: "lightning", display: "Rayo" }, { value: "necrotic", display: "Necrótico" }, { value: "piercing", display: "Perforante" }, { value: "poison", display: "Veneno" }, { value: "psychic", display: "Psíquico" }, { value: "radiant", display: "Radiante" }, { value: "slashing", display: "Cortante" }, { value: "thunder", display: "Trueno" } ];
 
-/**
- * Muestra los hechizos en el HTML
- * @param {Array} spells - El array de hechizos (ya filtrados y ordenados)
- */
-function renderSpells(spells) {
-    // Limpiar la lista anterior
-    spellList.innerHTML = '';
+            // Populate Damage Filter
+            damageTypes.sort((a, b) => a.display.localeCompare(b.display));
+            filterDamage.innerHTML = '<option value="all">Cualquier Tipo de Daño</option>'; // Reset
+            damageTypes.forEach(type => {
+                filterDamage.add(new Option(type.display, type.value));
+            });
 
-    if (spells.length === 0) {
-        spellList.innerHTML = '<p>No se encontraron hechizos con esos filtros.</p>';
-        return;
-    }
+            // Populate Class Filter
+            filterClass.innerHTML = '<option value="all">Todas las Clases</option>'; // Reset
+            classes.forEach(cls => {
+                const jsonKey = classJsonMap[cls.name];
+                if (jsonKey && allSpells.length > 0 && allSpells[0].hasOwnProperty(jsonKey)) {
+                     filterClass.add(new Option(cls.name, jsonKey));
+                }
+            });
+             // Manually add Shaman if needed and exists in JSON
+             if (allSpells.length > 0 && allSpells[0].hasOwnProperty("Shaman")) {
+                filterClass.add(new Option("Chamán", "Shaman"));
+             }
 
-    // Mapa para volver a convertir claves de JSON en nombres bonitos
-    // (Inverso al mapa de loadSpells)
-    const classDisplayMap = {
-        "bardo": "Bardo",
-        "clerigo": "Clérigo",
-        "druida": "Druida",
-        "paladin": "Paladín",
-        "ranger": "Ranger",
-        "sorcerer": "Hechicero",
-        "warlock": "Brujo",
-        "wizard": "Mago",
-        "artificer": "Artificero",
-        "warmage": "Mago de Guerra",
-        "witch": "Bruja",
-        "martyrs": "Mártir",
-        "The Vessel": "Vessel",
-        "Necromancer": "Nigromante",
-        "Magus": "Magus",
-        "Investigator": "Investigador",
-        "Shaman": "Chamán"
-        // (Asegúrate de que los nombres aquí coincidan con lo que quieres mostrar)
-    };
+            // Populate School Filter
+            const uniqueSchools = [...new Set(allSpells.map(spell => spell.Escuela))].filter(Boolean).sort();
+            filterSchool.innerHTML = '<option value="all">Todas las Escuelas</option>'; // Reset
+            uniqueSchools.forEach(school => {
+                const displayName = school.charAt(0).toUpperCase() + school.slice(1);
+                 filterSchool.add(new Option(displayName, school));
+            });
 
-// --- NUEVO: Mapa de traducción para Tiempo de Lanzamiento ---
-    const castingTimeMap = {
-        "action": "1 Acción",
-        "bonus action": "1 Bonus Action",
-        "reaction": "1 Reacción",
-        "1 minute": "1 Minuto",
-        "10 minutes": "10 Minutos",
-        "1 hour": "1 Hora", // Tu JSON puede tener "1 Hour" o "1 hour"
-        "8 hours": "8 Horas",
-        "12 hours": "12 Horas",
-        "24 hours": "24 Horas"
-        // (puedes añadir más si los descubres)
-    };
+            // Add Event Listeners to Filters
+            const allFilters = [filterClass, filterLevel, filterType, filterSchool, filterRitual, filterDamage, sortSpells, searchSpell];
+            allFilters.forEach(filter => {
+                 // Use 'input' for search for real-time filtering
+                const eventType = filter === searchSpell ? 'input' : 'change';
+                filter.addEventListener(eventType, applyFiltersAndSort);
+            });
 
-    // Crear una tarjeta por cada hechizo
-    spells.forEach(spell => {
-        const spellCard = document.createElement('div');
-        spellCard.className = 'spell-card';
-        
-        // 1. Construir string de Tipos de Magia (Arcano, Divino, Primal)
-        let magicTypes = [];
-        if (spell.A === 1) magicTypes.push('Arcano');
-        if (spell.D === 1) magicTypes.push('Divino');
-        if (spell.P === 1) magicTypes.push('Primal');
-        const typeString = magicTypes.length > 0 ? magicTypes.join(', ') : 'N/A';
+            applyFiltersAndSort(); // Initial render
 
-        // 2. Construir string de Componentes (V, S, M)
-        let components = [];
-        if (spell.verbal === "si") components.push('V');
-        if (spell.somatico === "si") components.push('S');
-        if (spell.material === "si") components.push('M');
-        const compString = components.join(', ');
-
-        // 3. Construir string de Clases
-        let spellClasses = [];
-        // Iteramos sobre las claves de nuestro mapa
-        for (const key in classDisplayMap) {
-            if (spell[key] === 1) { // Si el hechizo tiene esta clase (valor 1)
-                spellClasses.push(classDisplayMap[key]); // Añadimos el nombre bonito
-            }
+        } catch (error) {
+            console.error("Error loading spells:", error);
+            spellList.innerHTML = `<p style="color: red;">Error al cargar el libro de hechizos. ${error.message}</p>`;
         }
-        const classString = spellClasses.length > 0 ? spellClasses.join(', ') : 'N/A';
-        
-		// 4. Obtener y traducir el tiempo de lanzamiento
-        // IMPORTANTE: Tu clave JSON es "Casting time" (con espacio)
-        const originalCastingTime = spell["Casting time"] || "N/A";
-        // Buscamos la traducción; si no existe, usamos el valor original
-        const translatedCastingTime = castingTimeMap[originalCastingTime.toLowerCase()] || originalCastingTime;
+    }
 
-        // 5. Construir la tarjeta HTML
-        spellCard.innerHTML = `
-            <h4>${spell.Nombre}</h4>
-            <p class="spell-meta">
-                Nivel ${spell.Nivel} (${spell.Escuela || 'N/A'})
-                ${spell.ritual === "si" ? ' (Ritual)' : ''}
-            </p>
-            <p class="spell-meta">
-                <strong>Tiempo:</strong> ${translatedCastingTime} | 
-                <strong>Rango:</strong> ${spell.Range || 'N/A'} | 
-                <strong>Duración:</strong> ${spell.duracion || 'N/A'}
-            </p>
-            <p class="spell-meta">
-                <strong>Componentes:</strong> ${compString}
-                ${spell.material === "si" && spell.descripcion_material ? ` (${spell.descripcion_material})` : ''}
-            </p>
-            <p class="spell-type">Tipo: ${typeString}</p>
-            <p class="spell-classes">Clases: ${classString}</p>
-            <p class="spell-description">${spell.efecto || 'Sin descripción.'}</p>
-            ${spell.level_alto ? `<p class="spell-description"><strong>A mayor nivel:</strong> ${spell.level_alto}</p>` : ''}
-        `;
-        // --- FIN SECCIÓN MODIFICADA ---
+    function applyFiltersAndSort() {
+        if (!isSpellsLoaded) return; // Don't filter if spells aren't loaded
 
-        spellList.appendChild(spellCard);
+        let filteredSpells = [...allSpells];
+        const classVal = filterClass.value;
+        const levelVal = filterLevel.value;
+        const typeVal = filterType.value;
+        const ritualVal = filterRitual.value;
+        const schoolVal = filterSchool.value;
+        const damageVal = filterDamage.value;
+        const searchVal = searchSpell.value.toLowerCase().trim();
+        const sortVal = sortSpells.value;
+
+        // Apply filters
+        if (classVal !== 'all') filteredSpells = filteredSpells.filter(spell => spell[classVal] === 1);
+        if (levelVal !== 'all') filteredSpells = filteredSpells.filter(spell => spell.Nivel == levelVal);
+        if (typeVal === 'Arcano') filteredSpells = filteredSpells.filter(spell => spell.A === 1);
+        else if (typeVal === 'Divino') filteredSpells = filteredSpells.filter(spell => spell.D === 1);
+        else if (typeVal === 'Primal') filteredSpells = filteredSpells.filter(spell => spell.P === 1);
+        if (schoolVal !== 'all') filteredSpells = filteredSpells.filter(spell => spell.Escuela === schoolVal);
+        if (ritualVal === 'true') filteredSpells = filteredSpells.filter(spell => spell.ritual === "si");
+        else if (ritualVal === 'false') filteredSpells = filteredSpells.filter(spell => spell.ritual === "no");
+        if (damageVal !== 'all') {
+            const searchTerm = damageVal + " damage";
+            filteredSpells = filteredSpells.filter(spell => spell.efecto && spell.efecto.toLowerCase().includes(searchTerm));
+        }
+        if (searchVal) {
+            filteredSpells = filteredSpells.filter(spell => spell.Nombre.toLowerCase().includes(searchVal));
+        }
+
+        // Apply sorting
+        if (sortVal === 'name') {
+            filteredSpells.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+        } else if (sortVal === 'level') {
+            filteredSpells.sort((a, b) => a.Nivel - b.Nivel || a.Nombre.localeCompare(b.Nombre)); // Secondary sort by name
+        }
+
+        renderSpells(filteredSpells, spellList); // Render into the main list container
+         // Ensure correct view state is applied after filtering/sorting
+         spellList.classList.toggle('simplified-view', isSpellViewSimplified);
+          spellList.querySelectorAll('.spell-card .spell-details').forEach(details => {
+              details.classList.toggle('hidden', isSpellViewSimplified);
+          });
+          spellList.querySelectorAll('.spell-card').forEach(card => card.classList.remove('expanded'));
+
+    }
+
+    function renderSpells(spells, container = spellList) {
+        container.innerHTML = ''; // Clear the target container
+
+        const isEmpty = spells.length === 0;
+        const isEmptyFavorites = isEmpty && container === favoriteSpellListContainer;
+        const isEmptyMain = isEmpty && container === spellList;
+
+        if (isEmptyFavorites) {
+             container.innerHTML = '<h3>Mis Hechizos Favoritos</h3><p>No has marcado ningún hechizo como favorito.</p>';
+        } else if (isEmptyMain) {
+             container.innerHTML = '<p>No se encontraron hechizos con esos filtros.</p>';
+        }
+
+        if(isEmpty) {
+             // Still apply view class for consistency if user switches views later
+            container.classList.toggle('simplified-view', isSpellViewSimplified);
+            return; // Don't render cards if empty
+        }
+
+        // Add title back if it's the favorite list and not empty
+        if (container === favoriteSpellListContainer) {
+             container.innerHTML = '<h3>Mis Hechizos Favoritos</h3>';
+        }
+
+        const classDisplayMap = { "bardo": "Bardo", "clerigo": "Clérigo", "druida": "Druida", "paladin": "Paladín", "ranger": "Ranger", "sorcerer": "Hechicero", "warlock": "Brujo", "wizard": "Mago", "artificer": "Artificero", "warmage": "Mago de Guerra", "witch": "Bruja", "martyrs": "Mártir", "The Vessel": "Vessel", "Necromancer": "Nigromante", "Magus": "Magus", "Investigator": "Investigador", "Shaman": "Chamán" };
+        const castingTimeMap = { "action": "1 Acción", "bonus action": "1 Acción Bonus", "reaction": "1 Reacción", "1 minute": "1 Minuto", "10 minutes": "10 Minutos", "1 hour": "1 Hora", "8 hours": "8 Horas", "12 hours": "12 Horas", "24 hours": "24 Horas" };
+
+        spells.forEach(spell => {
+            const spellCard = document.createElement('div');
+            spellCard.className = 'spell-card';
+
+            let magicTypes = [];
+            if (spell.A === 1) magicTypes.push('Arcano');
+            if (spell.D === 1) magicTypes.push('Divino');
+            if (spell.P === 1) magicTypes.push('Primal');
+            const typeString = magicTypes.join(', ') || 'N/A';
+
+            let components = [];
+            if (spell.verbal === "si") components.push('V');
+            if (spell.somatico === "si") components.push('S');
+            if (spell.material === "si") components.push('M');
+            const compString = components.join(', ');
+
+            let spellClasses = [];
+            for (const key in classDisplayMap) {
+                if (spell[key] === 1) spellClasses.push(classDisplayMap[key]);
+            }
+            const classString = spellClasses.join(', ') || 'N/A';
+
+            const originalCastingTime = spell["Casting time"] || "N/A";
+            const translatedCastingTime = castingTimeMap[originalCastingTime.toLowerCase()] || originalCastingTime;
+
+            const isFav = favoriteSpells.includes(spell.Nombre);
+            const detailsHiddenClass = isSpellViewSimplified ? 'hidden' : '';
+
+            // Separate name and details for simplified view toggle
+            spellCard.innerHTML = `
+                <h4 class="spell-name">${spell.Nombre}</h4>
+                <div class="spell-details ${detailsHiddenClass}">
+                    <p class="spell-meta">
+                        Nivel ${spell.Nivel} (${spell.Escuela || 'N/A'})
+                        ${spell.ritual === "si" ? ' (Ritual)' : ''}
+                    </p>
+                    <p class="spell-meta">
+                    <p><strong>Tiempo:</strong> ${translatedCastingTime} </p>
+                    <p><strong>Rango:</strong> ${spell.Range || 'N/A'}</p>
+                    <p><strong>Duración:</strong> ${spell.duracion || 'N/A'} </p>
+                    </p>
+                    <p class="spell-meta">
+                        <strong>Componentes:</strong> ${compString}
+                        ${spell.material === "si" && spell["descripcion material"] ? ` (${spell["descripcion material"]})` : ''}
+                    </p>
+                    <p class="spell-description">${spell.efecto || 'Sin descripción.'}</p>
+                    ${spell["level alto"] ? `<p class="spell-description"><strong>A mayor nivel:</strong> ${spell["level alto"]}</p>` : ''}
+                    <p class="spell-type">Tipo: ${typeString}</p>
+                    <p class="spell-classes">Clases: ${classString}</p>
+                </div>
+            `;
+
+            const favButton = document.createElement('button');
+            favButton.className = `favorite-button ${isFav ? 'favorited' : ''}`;
+            favButton.dataset.spellName = spell.Nombre;
+            favButton.textContent = isFav ? '★' : '☆';
+            favButton.title = isFav ? 'Quitar de favoritos' : 'Añadir a favoritos';
+            // No listener here - handled by delegation on spellbookContainer
+
+            spellCard.appendChild(favButton);
+            container.appendChild(spellCard);
+        });
+
+        // Ensure the container has the correct view class AFTER rendering
+        container.classList.toggle('simplified-view', isSpellViewSimplified);
+    }
+// --- NEW HP CALCULATOR LISTENERS ---
+hpCalculatorButton.addEventListener("click", () => {
+    mainContainer.classList.add("hidden");
+    quizContainer.classList.add("hidden");
+    tierListContainer.classList.add("hidden");
+    spellbookContainer.classList.add("hidden");
+    // Hide other specific containers if they exist (like character sheet)
+    document.getElementById("characterSheetContainer")?.classList.add("hidden");
+
+    hpCalculatorContainer.classList.remove("hidden");
+    populateHpClassSelect(); // Ensure dropdown is filled
+    calculateAndDisplayHp(); // Calculate on open
+});
+
+// Remove the specific calculate button listener
+// calculateHpButton.addEventListener("click", calculateAndDisplayHp); <-- DELETE THIS LINE
+
+closeHpCalculator.addEventListener("click", () => {
+    hpCalculatorContainer.classList.add("hidden");
+    mainContainer.classList.remove("hidden"); // Show the main starting content
+});
+
+// Add listeners to all inputs for real-time calculation
+hpLevelInput.addEventListener('input', calculateAndDisplayHp);
+hpClassSelect.addEventListener('change', calculateAndDisplayHp);
+hpConModifier.addEventListener('input', calculateAndDisplayHp);
+hpIsHillDwarf.addEventListener('change', calculateAndDisplayHp);
+hpHasTough.addEventListener('change', calculateAndDisplayHp);
+hpOtherBonus.addEventListener('input', calculateAndDisplayHp);
+
+    closeHpCalculator.addEventListener("click", () => {
+        hpCalculatorContainer.classList.add("hidden");
+        mainContainer.classList.remove("hidden"); // Show the main starting content
     });
-}
+
+    // --- INITIALIZATION ---
+    populateHpClassSelect(); // Populate HP class select on initial load
 
 });
