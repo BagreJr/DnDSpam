@@ -6,6 +6,7 @@
     <title>¿Qué clase de D&D soy?</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  
 </head>
 <body>
     <div class="container">
@@ -23,8 +24,11 @@
 
         <!-- Botón para jugar -->
         <button id="discoverButton">Descubrir mi clase</button>
-<!-- Botón para entrar al Quiz -->
-<button id="quizButton">Iniciar Quiz</button>
+		<!-- Botón para entrar al Tier List -->
+		<button id="tierListButton">Crear Tier List</button>
+		<!-- Botón para entrar al Quiz -->
+		<button id="quizButton">Iniciar Quiz</button>
+		<button id="spellbookButton">Ver Libro de Spells</button>
         <!-- Contenedor de la galería (se oculta por defecto) -->
         <!-- <div id="galleryContainer" class="hidden"> -->
 
@@ -96,7 +100,98 @@
     <div id="quizResult"></div>
 </div>
 
+<div id="tierListContainer" class="hidden">
+    <h2>Crea tu Tier List de Clases</h2>
+    
+	<div class="tier-controls">
+			<button id="addTierRowButton">Añadir Fila</button>
+			<button id="exitTierListButton">Salir</button>
+	</div>
+		<h3 style="margin-top: 30px;">Tu tierlist</h3>
+			<div id="tierRowsContainer">
+					<div class="tier-row">
+						<div class="tier-label" contenteditable="true" style="background-color: #ff7f7f;">S</div>
+						<button class="delete-tier-row-button">×</button>
+						<div class="tier-dropzone"></div>
+					</div>
+					<div class="tier-row">
+						<div class="tier-label" contenteditable="true" style="background-color: #ffbf7f;">A</div>
+						<button class="delete-tier-row-button">×</button>
+						<div class="tier-dropzone"></div>
+					</div>
+					<div class="tier-row">
+						<div class="tier-label" contenteditable="true" style="background-color: #ffff7f;">B</div>
+						<button class="delete-tier-row-button">×</button>
+						<div class="tier-dropzone"></div>
+					</div>
+					<div class="tier-row">
+						<div class="tier-label" contenteditable="true" style="background-color: #7fff7f;">C</div>
+						<button class="delete-tier-row-button">×</button>
+						<div class="tier-dropzone"></div>
+					</div>
+					<div class="tier-row">
+						<div class="tier-label" contenteditable="true" style="background-color: #7fbfff;">D</div>
+						<button class="delete-tier-row-button">×</button>
+						<div class="tier-dropzone"></div>
+					</div>
+			</div>
+			<h3 style="margin-top: 30px;">Clases (Arrastra a un tier)</h3>
+			<div id="itemBank" class="tier-dropzone">
+				</div>
+		</div>
 
+<div id="spellbookContainer" class="hidden">
+    <h2>Libro de Hechizos</h2>
+    <div class="tier-controls">
+        <button id="exitSpellbookButton">Salir</button>
+		
+    </div>
+
+    <div id="spellControls">
+	<input type="text" id="searchSpell" placeholder="Buscar hechizo por nombre...">
+        <select id="filterClass">
+            <option value="all">Todas las Clases</option>
+            </select>
+        <select id="filterLevel">
+            <option value="all">Todos los Niveles</option>
+            <option value="0">Nivel 0 (Truco)</option>
+            <option value="1">Nivel 1</option>
+            <option value="2">Nivel 2</option>
+            <option value="3">Nivel 3</option>
+            <option value="4">Nivel 4</option>
+            <option value="5">Nivel 5</option>
+            <option value="6">Nivel 6</option>
+            <option value="7">Nivel 7</option>
+            <option value="8">Nivel 8</option>
+            <option value="9">Nivel 9</option>
+        </select>
+        <select id="filterType">
+            <option value="all">Todo Tipo</option>
+            <option value="Arcano">Arcano</option>
+            <option value="Divino">Divino</option>
+            <option value="Primal">Primal</option>
+        </select>
+		<select id="filterSchool">
+                <option value="all">Todas las Escuelas</option>
+                </select>
+        <select id="filterRitual">
+            <option value="all">Ritual (Cualquiera)</option>
+            <option value="true">Sí es Ritual</option>
+            <option value="false">No es Ritual</option>
+        </select>
+		<select id="filterDamage">
+                <option value="all">Cualquier Tipo de Daño</option>
+        </select>
+        <select id="sortSpells">
+            <option value="name">Ordenar por Nombre (A-Z)</option>
+            <option value="level">Ordenar por Nivel (0-9)</option>
+        </select>
+    </div>
+
+    <div id="spellList">
+        <p>Cargando hechizos...</p>
+    </div>
+</div>
 
     <script src="script.js"></script>
 </body>

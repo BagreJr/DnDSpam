@@ -104,12 +104,14 @@ button:disabled {
     max-width: 80%;
     max-height: 80vh;
     transition: transform 0.3s ease-in-out;
+	cursor: zoom-in;
 }
 
 /* Zoom al hacer clic */
 .zoomed {
-    transform: scale(2);
+    transform: scale(3);
     transform-origin: var(--zoom-x) var(--zoom-y);
+    cursor: crosshair; /* <-- AÑADE ESTO */
 }
 
 /* Botón de cierre */
@@ -317,7 +319,232 @@ margin-bottom: 5px;
 font-size: 16px;
 }
 
+/* --- Estilos del Tier List --- */
+#tierListContainer {
+    width: 90%;
+    margin: 20px auto;
+    text-align: left;
+}
 
+.tier-controls {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#exitTierListButton {
+    background-color: #d9534f;
+    color: white;
+}
+#exitTierListButton:hover {
+    background-color: #c9302c;
+}
+
+#addTierRowButton {
+    background-color: #5cb85c; /* Verde */
+    color: white;
+}
+#addTierRowButton:hover {
+    background-color: #4cae4c;
+}
+
+.tier-row {
+    display: flex;
+    min-height: 100px;
+    border: 1px solid #555;
+    margin-bottom: 5px;
+    background-color: #3a3f4b;
+}
+
+.tier-label {
+    width: 80px;
+    padding: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-right: 2px solid #555;
+    color: #000;
+    text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
+    outline: none; /* Para que el 'contenteditable' se vea limpio */
+    cursor: text;
+}
+
+.tier-dropzone {
+    flex-grow: 1;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-content: flex-start; /* Alinea items al inicio */
+    min-height: 80px;
+    border: 2px dashed transparent;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* Banco de items */
+#itemBank {
+    min-height: 200px;
+    background-color: #222;
+    border: 1px dashed #777;
+    margin-top: 10px;
+}
+
+.tier-item {
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #444;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: grab;
+    border: 1px solid #666;
+    transition: transform 0.2s, opacity 0.2s;
+    text-align: center;
+}
+
+.tier-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+    pointer-events: none; /* Evita que la imagen interfiera con el drag */
+}
+
+.tier-item span {
+    font-size: 12px;
+    margin-top: 5px;
+    color: white;
+    pointer-events: none; /* Evita que el texto interfiera con el drag */
+    word-break: break-word;
+}
+
+/* --- Estilos para Drag-and-Drop --- */
+.tier-item.dragging {
+    opacity: 0.4;
+    transform: scale(0.9);
+    cursor: grabbing;
+}
+
+.tier-dropzone.drag-over {
+    background-color: #454a54; /* Un poco más claro */
+    border-color: #ffcc00;
+    border-style: dashed;
+}
+.delete-tier-row-button {
+    width: 30px;
+    padding: 0;
+    margin: auto 5px; /* Centrado vertical y con espacio */
+    background-color: #d9534f; /* Rojo */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 25px; /* Ayuda a centrar la 'x' */
+    height: 25px;
+    flex-shrink: 0; /* Evita que se encoja */
+    transition: background-color 0.2s;
+}
+
+.delete-tier-row-button:hover {
+    background-color: #c9302c; /* Rojo más oscuro */
+}
+
+#downloadTierListButton {
+    background-color: #0275d8; /* Azul */
+    color: white;
+}
+#downloadTierListButton:hover {
+    background-color: #025aa5;
+}
+
+#downloadTierListButton:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+/* --- Estilos del Grimorio --- */
+
+#spellControls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px auto;
+    width: 90%;
+	align-items: center;
+}
+
+#spellControls select {
+    padding: 8px;
+    font-size: 14px;
+    background-color: #444;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 5px;
+}
+
+#spellList {
+    width: 90%;
+    margin: 20px auto;
+    display: grid;
+    /* Usamos grid para las tarjetas */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.spell-card {
+    background-color: #3a3f4b;
+    border: 1px solid #555;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: left;
+}
+
+.spell-card h4 {
+    color: #ffcc00;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.spell-card .spell-meta {
+    font-style: italic;
+    color: #ccc;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+.spell-card .spell-type,
+.spell-card .spell-classes {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #ddd;
+}
+
+.spell-card .spell-description {
+    font-size: 1em;
+    line-height: 1.4;
+}
+#searchSpell {
+    padding: 8px 12px;
+    font-size: 16px;
+    background-color: #333;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 5px;
+    
+    /* Para que ocupe un espacio coherente */
+    width: 300px; 
+    max-width: 100%; /* Se adaptará en móviles */
+    
+    /* Pequeño truco para que el padding no rompa el layout */
+    box-sizing: border-box; 
+}
 /* Ajustes para dispositivos móviles */
 @media screen and (max-width: 768px) {
     .result-container {
@@ -355,7 +582,7 @@ font-size: 16px;
         padding: 52px 30px;
         width: 320px;
         height: 700px;
-		background: rgba(0, 0, 0, 1);
+		background: rgba(0, 0, 0, 0.4);
     }
 	.nav-button:hover {
 		background-color: rgba(0, 0, 0, 0.1);

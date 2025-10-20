@@ -1,3 +1,5 @@
+
+
 document.addEventListener("DOMContentLoaded", () => {
     const button = document.getElementById("discoverButton");
     const classImage = document.getElementById("classImage");
@@ -22,7 +24,25 @@ document.addEventListener("DOMContentLoaded", () => {
 	const quizBar = document.getElementById("quizBar");
 	const quizRemaining = document.getElementById("quizRemaining");
 	const answerSound = document.getElementById("answerSound");
+
+    // --- NUEVAS VARIABLES PARA EL GRIMORIO ---
+    const spellbookButton = document.getElementById("spellbookButton");
+    const spellbookContainer = document.getElementById("spellbookContainer");
+    const exitSpellbookButton = document.getElementById("exitSpellbookButton");
+    const spellList = document.getElementById("spellList");
+	const searchSpell = document.getElementById("searchSpell");
 	
+    // Filtros
+    const filterClass = document.getElementById("filterClass");
+    const filterLevel = document.getElementById("filterLevel");
+    const filterType = document.getElementById("filterType");
+	const filterSchool = document.getElementById("filterSchool");
+    const filterRitual = document.getElementById("filterRitual");
+	const filterDamage = document.getElementById("filterDamage");
+    const sortSpells = document.getElementById("sortSpells");
+
+    let allSpells = []; // Aquí guardaremos los 900+ hechizos
+    let isSpellsLoaded = false; // Para cargarlos solo una vez
     // Lista de clases con imágenes y descripciones
     const classes = [
 { name: "Alchemist", image: "images/alchemist.webp", description: "Un genio de las ciencias mágicas y la creación de pociones y elixires.", link: "https://homebrewery.naturalcrit.com/share/km9PgnczNSRA", subclasses: ["Amorist", "Apothecary", "Dynamo Engineer", "Ionizer", "Mad Bomber", "Mutagenist", "Ooze Rancher", "Pigmentist", "Polymorphist", "Resonator", "Venomsmith", "Xenoalchemist"] },
@@ -140,19 +160,37 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Evento para hacer zoom en la imagen
+// Evento para hacer zoom en la imagen (alterna el estado)
     modalImage.addEventListener("click", (event) => {
-        if (zoomLevel === 0) {
-            modalImage.classList.add("zoomed");
+        // Alterna la clase 'zoomed'
+        modalImage.classList.toggle("zoomed");
+
+        if (modalImage.classList.contains("zoomed")) {
+            // Si acabamos de hacer zoom...
+            zoomLevel = 1;
+            // Calculamos la posición inicial del click para el primer zoom
             const rect = modalImage.getBoundingClientRect();
             const x = ((event.clientX - rect.left) / rect.width) * 100;
             const y = ((event.clientY - rect.top) / rect.height) * 100;
             modalImage.style.setProperty("--zoom-x", `${x}%`);
             modalImage.style.setProperty("--zoom-y", `${y}%`);
-            zoomLevel = 1;
         } else {
-            modalImage.classList.remove("zoomed");
+            // Si acabamos de quitar el zoom...
             zoomLevel = 0;
+        }
+    });
+
+    // Evento para mover la "lupa" (NUEVO)
+    modalImage.addEventListener("mousemove", (event) => {
+        // Solo actualiza la posición si la imagen tiene zoom (zoomLevel es 1)
+        if (zoomLevel === 1) {
+            const rect = modalImage.getBoundingClientRect();
+            const x = ((event.clientX - rect.left) / rect.width) * 100;
+            const y = ((event.clientY - rect.top) / rect.height) * 100;
+            
+            // Actualiza continuamente el punto de origen del zoom (la lupa)
+            modalImage.style.setProperty("--zoom-x", `${x}%`);
+            modalImage.style.setProperty("--zoom-y", `${y}%`);
         }
     });
 	
@@ -736,5 +774,514 @@ function shuffleArray(array) {
     return array;
 }
 
+// ---- TIER LIST y SPELL BOOK ---- //
+
+    const tierListButton = document.getElementById("tierListButton");
+    const tierListContainer = document.getElementById("tierListContainer");
+    const exitTierListButton = document.getElementById("exitTierListButton");
+    const addTierRowButton = document.getElementById("addTierRowButton");
+    const itemBank = document.getElementById("itemBank");
+    const tierRowsContainer = document.getElementById("tierRowsContainer");
+	const downloadTierListButton = document.getElementById("downloadTierListButton");
+
+// ... (después de los listeners de tierListButton y exitTierListButton) ...
+
+spellbookButton.addEventListener("click", () => {
+    mainContainer.classList.add("hidden");
+    quizContainer.classList.add("hidden");
+    tierListContainer.classList.add("hidden");
+    spellbookContainer.classList.remove("hidden");
+
+    // Carga los hechizos solo la primera vez
+    if (!isSpellsLoaded) {
+        loadSpells();
+    }
+});
+
+exitSpellbookButton.addEventListener("click", () => {
+    spellbookContainer.classList.add("hidden");
+    mainContainer.classList.remove("hidden");
+});
+    let draggedItem = null; // Variable para guardar el item que se está arrastrando
+
+    // Función para añadir eventos de Drop (soltar) a una zona
+    function addDragEventsToZone(zone) {
+        // 1. Cuando un item está SOBRE la zona
+        zone.addEventListener("dragover", (e) => {
+            e.preventDefault(); // Necesario para permitir el drop
+            zone.classList.add("drag-over");
+        });
+
+        // 2. Cuando un item DEJA de estar sobre la zona
+        zone.addEventListener("dragleave", () => {
+            zone.classList.remove("drag-over");
+        });
+
+        // 3. Cuando un item es SOLTADO en la zona
+        zone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            zone.classList.remove("drag-over");
+            
+            if (draggedItem) { // Si realmente estamos arrastrando algo
+                zone.appendChild(draggedItem); // Mueve el item a esta zona
+            }
+        });
+    }
+
+    // Función para poblar el banco de items con las clases
+    function populateItemBank() {
+        // Usamos la misma constante 'classes' que ya tienes definida
+        classes.forEach(cls => {
+            const item = document.createElement("div");
+            item.classList.add("tier-item");
+            item.draggable = true;
+            // ID único para referencia
+            item.id = `tier-item-${cls.name.replace(/\s+/g, '-')}`; 
+
+            const img = document.createElement("img");
+            img.src = cls.image;
+            img.alt = cls.name;
+
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = cls.name;
+
+            item.appendChild(img);
+            item.appendChild(nameSpan);
+
+            // Eventos de Drag (arrastrar) para el item
+            item.addEventListener("dragstart", () => {
+                draggedItem = item; // Guarda el item que estamos arrastrando
+                // 'setTimeout' es un truco para que el estilo se aplique después de "levantar" el item
+                setTimeout(() => item.classList.add("dragging"), 0);
+            });
+
+            item.addEventListener("dragend", () => {
+                if(draggedItem) {
+                    draggedItem.classList.remove("dragging"); // Limpia el estilo
+                }
+                draggedItem = null; // Suelta el item
+            });
+
+            itemBank.appendChild(item); // Añade el item al banco
+        });
+    }
+    
+    // 1. Poblar el banco de items al cargar la página
+    populateItemBank();
+
+    // 2. Añadir eventos a TODAS las zonas de drop existentes (las filas por defecto + el banco)
+    document.querySelectorAll(".tier-dropzone").forEach(zone => {
+        addDragEventsToZone(zone);
+    });
+
+    // 3. Botón de añadir nueva fila
+    addTierRowButton.addEventListener("click", () => {
+        const newRow = document.createElement("div");
+        newRow.classList.add("tier-row");
+
+        // Generar un color aleatorio para la etiqueta
+        const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+
+        // Añadimos el HTML de la fila, incluyendo el botón de borrado
+        newRow.innerHTML = `
+            <div class="tier-label" contenteditable="true" style="background-color: ${randomColor};">Nueva Fila</div>
+            <button class="delete-tier-row-button">×</button>
+            <div class="tier-dropzone"></div>
+        `;
+        
+        // --- Conectar los eventos a la fila NUEVA ---
+
+        // a) Conectar el evento de borrado al nuevo botón 'X'
+        const newDeleteButton = newRow.querySelector('.delete-tier-row-button');
+        addDeleteEventToButton(newDeleteButton);
+
+        // b) Conectar el evento de dropzone a la nueva zona
+        const newDropzone = newRow.querySelector(".tier-dropzone");
+        addDragEventsToZone(newDropzone);
+
+        // Añadir la nueva fila al contenedor
+        tierRowsContainer.appendChild(newRow);
+    });
+
+    // 4. Botones para mostrar/ocultar el Tier List
+    tierListButton.addEventListener("click", () => {
+        mainContainer.classList.add("hidden");
+        quizContainer.classList.add("hidden"); // Ocultar quiz si está abierto
+        tierListContainer.classList.remove("hidden");
+    });
+
+    exitTierListButton.addEventListener("click", () => {
+        tierListContainer.classList.add("hidden");
+        mainContainer.classList.remove("hidden");
+    });
+
+    // --- NUEVAS FUNCIONES PARA BORRAR FILAS ---
+
+    /**
+     * Mueve todos los items de una fila al banco y luego la elimina.
+     */
+    function handleTierRowDelete(deleteButton) {
+        // 1. Encontrar la fila padre
+        const rowToDelete = deleteButton.closest('.tier-row');
+        if (!rowToDelete) return;
+
+        // 2. Encontrar todos los items (.tier-item) dentro de esa fila
+        const itemsToMove = rowToDelete.querySelectorAll('.tier-item');
+        
+        // 3. Mover cada item de vuelta al banco (#itemBank)
+        itemsToMove.forEach(item => {
+            itemBank.appendChild(item); // itemBank está definido globalmente
+        });
+
+        // 4. Eliminar la fila del DOM
+        rowToDelete.remove();
+    }
+
+    /**
+     * Añade el listener de click a un botón de borrado, incluyendo una confirmación.
+     */
+    function addDeleteEventToButton(button) {
+        button.addEventListener('click', () => {
+            if (confirm('¿Seguro que quieres borrar esta fila? Los items volverán al banco.')) {
+                handleTierRowDelete(button);
+            }
+        });
+    }
+
+    // Conectar la lógica de borrado a los botones que YA existen en el HTML
+    document.querySelectorAll('.delete-tier-row-button').forEach(button => {
+        addDeleteEventToButton(button);
+    });
+
+    // ---- FIN TIER LIST ---- //
+	
+// ---- GRIMORIO DE HECHIZOS ---- //
+
+/**
+* Carga los hechizos desde el archivo spells.json
+ */
+async function loadSpells() {
+    try {
+        const response = await fetch('spells.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        allSpells = await response.json();
+        isSpellsLoaded = true;
+
+// --- SECCIÓN MODIFICADA ---
+        // Mapeo de nombres "bonitos" del array 'classes' a las claves "feas" del JSON
+        // Añade aquí cualquier otra excepción que encuentres
+        const classJsonMap = {
+            "Bard": "bardo",
+            "Cleric": "clerigo",
+            "Druid": "druida",
+            "Paladin": "paladin",
+            "Ranger": "ranger",
+            "Sorcerer": "sorcerer",
+            "Warlock": "warlock",
+            "Wizard": "wizard",
+            "Artificer": "artificer",
+            "Warmage": "warmage",
+            "Witch": "witch",
+            "Martyr": "martyrs", // Excepción: 'Martyr' -> 'martyrs'
+            "Vessel": "The Vessel", // Excepción: 'Vessel' -> 'The Vessel'
+            "Necromancer": "Necromancer",
+            "Magus": "Magus",
+            "Investigator": "Investigator"
+            // Nota: "Shaman" no está en tu array 'classes', así que no se añadirá al filtro.
+            // Si quieres añadirlo, primero debes añadir "Shaman" a tu array 'classes' principal.
+        };
+		
+		const damageTypes = [
+                { value: "acid", display: "Ácido" },
+                { value: "bludgeoning", display: "Contundente" }, // (Golpe)
+                { value: "cold", display: "Frío" },
+                { value: "fire", display: "Fuego" },
+                { value: "force", display: "Fuerza" },
+                { value: "lightning", display: "Rayo" },
+                { value: "necrotic", display: "Necrótico" },
+                { value: "piercing", display: "Perforante" },
+                { value: "poison", display: "Veneno" },
+                { value: "psychic", display: "Psíquico" },
+                { value: "radiant", display: "Radiante" },
+                { value: "slashing", display: "Cortante" },
+                { value: "thunder", display: "Trueno" }
+            ];
+		
+		// Ordena la lista alfabéticamente por el nombre a mostrar
+            damageTypes.sort((a, b) => a.display.localeCompare(b.display));
+
+            // Añade cada tipo de daño al <select>
+            damageTypes.forEach(type => {
+                const option = document.createElement('option');
+                option.value = type.value; // ej: "acid"
+                option.textContent = type.display; // ej: "Ácido"
+                filterDamage.appendChild(option);
+            });
+		
+	// Limpiar el filtro (por si acaso)
+			filterClass.innerHTML = '<option value="all">Todas las Clases</option>';
+
+			// Poblar el filtro de clases dinámicamente
+			classes.forEach(cls => {
+				const jsonKey = classJsonMap[cls.name];
+				// Si la clase existe en nuestro mapa Y en el JSON...
+				if (jsonKey && allSpells.length > 0 && allSpells[0].hasOwnProperty(jsonKey)) {
+					const option = document.createElement('option');
+					option.value = jsonKey; // El valor es la clave del JSON (ej: "martyrs")
+					option.textContent = cls.name; // El texto es el nombre bonito (ej: "Martyr")
+					filterClass.appendChild(option);
+				}
+			});
+
+            // 1. Encontrar todas las escuelas únicas
+            const allSchools = allSpells.map(spell => spell.Escuela);
+            // Usamos 'Set' para eliminar duplicados
+            const uniqueSchools = [...new Set(allSchools)]; 
+            
+            // 2. Ordenarlas alfabéticamente
+            uniqueSchools.sort((a, b) => (a || "").localeCompare(b || "")); 
+
+            // 3. Añadirlas al <select>
+            uniqueSchools.forEach(school => {
+                if (school) { // Evita valores nulos o vacíos
+                    const option = document.createElement('option');
+                    // Capitaliza la primera letra para que se vea mejor
+                    const displayName = school.charAt(0).toUpperCase() + school.slice(1);
+                    option.value = school;
+                    option.textContent = displayName;
+                    filterSchool.appendChild(option);
+                }
+            });
+            // --- FIN DEL NUEVO BLOQUE ---
+
+			// Añadir listeners a los filtros
+			const allFilters = [filterClass, filterLevel, filterType, filterSchool, filterRitual, filterDamage, sortSpells];
+			allFilters.forEach(filter => {
+				filter.addEventListener('change', applyFiltersAndSort);
+			});
+			
+			searchSpell.addEventListener('input', applyFiltersAndSort);
+			
+			// Renderizar la lista inicial
+			applyFiltersAndSort();
+
+		} catch (error) {
+			console.error("Error al cargar los hechizos:", error);
+			spellList.innerHTML = `<p style="color: red;">Error al cargar el libro de hechizos. Revisa el archivo spells.json.</p>`;
+		}
+	}
+
+/**
+ * Aplica los filtros y el orden seleccionados, y luego llama a renderSpells
+ */
+/**
+ * Aplica los filtros y el orden seleccionados, y luego llama a renderSpells
+ */
+function applyFiltersAndSort() {
+    let filteredSpells = [...allSpells]; // Empezamos con la lista completa
+
+    // 1. Filtrar
+    const classVal = filterClass.value;
+    const levelVal = filterLevel.value;
+    const typeVal = filterType.value;
+    const ritualVal = filterRitual.value;
+	const schoolVal = filterSchool.value;
+	const damageVal = filterDamage.value;
+	
+	
+    // Obtenemos el valor del buscador, lo pasamos a minúsculas y quitamos espacios
+    const searchVal = searchSpell.value.toLowerCase().trim();
+    // --- FIN ---
+    // --- LÓGICA DE FILTRADO MODIFICADA ---
+    if (classVal !== 'all') {
+        // classVal ya es la clave correcta del JSON (ej: "bardo", "martyrs", "The Vessel")
+        // Filtramos donde el valor de esa clave sea 1 (significa "sí")
+        filteredSpells = filteredSpells.filter(spell => spell[classVal] === 1);
+    }
+    if (levelVal !== 'all') {
+        // Comparamos 'Nivel' (del JSON) con el valor del filtro (convertido a número)
+        filteredSpells = filteredSpells.filter(spell => spell.Nivel == levelVal);
+    }
+    if (typeVal !== 'all') {
+        // El filtro nos da "Arcano", "Divino" o "Primal".
+        // Mapeamos eso a las claves A, D, P de tu JSON.
+        if (typeVal === 'Arcano') {
+            filteredSpells = filteredSpells.filter(spell => spell.A === 1);
+        } else if (typeVal === 'Divino') {
+            filteredSpells = filteredSpells.filter(spell => spell.D === 1);
+        } else if (typeVal === 'Primal') {
+            filteredSpells = filteredSpells.filter(spell => spell.P === 1);
+        }
+    }
+	
+	if (schoolVal !== 'all') {
+        // Filtra donde la 'Escuela' del hechizo sea igual al valor seleccionado
+        filteredSpells = filteredSpells.filter(spell => 
+            spell.Escuela === schoolVal
+        );
+    }
+	
+    if (ritualVal !== 'all') {
+        // El filtro nos da "true" o "false"
+        // Mapeamos eso a "si" o "no" de tu JSON
+        if (ritualVal === 'true') {
+            filteredSpells = filteredSpells.filter(spell => spell.ritual === "si");
+        } else if (ritualVal === 'false') {
+            filteredSpells = filteredSpells.filter(spell => spell.ritual === "no");
+        }
+    }
+    if (damageVal !== 'all') {
+        // Buscamos el término exacto en inglés. Ej: "fire damage"
+        // Esto es más seguro que buscar solo "fire" (que podría estar en "firefly")
+        const searchTerm = damageVal + " damage"; 
+        
+        filteredSpells = filteredSpells.filter(spell => {
+            // Comprobamos que la clave "efecto" exista
+            if (spell.efecto) {
+                // Convertimos el texto del efecto a minúsculas
+                // y comprobamos si incluye nuestro término de búsqueda
+                return spell.efecto.toLowerCase().includes(searchTerm);
+            }
+            return false; // Si no hay "efecto", no se incluye
+        });
+    }
+	
+	// --- NUEVO FILTRO DE BÚSQUEDA (se aplica después de los otros) ---
+    if (searchVal.length > 0) {
+        filteredSpells = filteredSpells.filter(spell => 
+            spell.Nombre.toLowerCase().includes(searchVal)
+        );
+    }
+    // --- FIN ---
+
+    // 2. Ordenar
+    // --- LÓGICA DE ORDEN MODIFICADA ---
+    const sortVal = sortSpells.value;
+    if (sortVal === 'name') {
+        // Ordenamos por la clave "Nombre"
+        filteredSpells.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+    } else if (sortVal === 'level') {
+        // Ordenamos por la clave "Nivel"
+        filteredSpells.sort((a, b) => a.Nivel - b.Nivel);
+    }
+    // --- FIN LÓGICA DE ORDEN ---
+
+    // 3. Renderizar
+    renderSpells(filteredSpells);
+}
+
+/**
+ * Muestra los hechizos en el HTML
+ * @param {Array} spells - El array de hechizos (ya filtrados y ordenados)
+ */
+function renderSpells(spells) {
+    // Limpiar la lista anterior
+    spellList.innerHTML = '';
+
+    if (spells.length === 0) {
+        spellList.innerHTML = '<p>No se encontraron hechizos con esos filtros.</p>';
+        return;
+    }
+
+    // Mapa para volver a convertir claves de JSON en nombres bonitos
+    // (Inverso al mapa de loadSpells)
+    const classDisplayMap = {
+        "bardo": "Bardo",
+        "clerigo": "Clérigo",
+        "druida": "Druida",
+        "paladin": "Paladín",
+        "ranger": "Ranger",
+        "sorcerer": "Hechicero",
+        "warlock": "Brujo",
+        "wizard": "Mago",
+        "artificer": "Artificero",
+        "warmage": "Mago de Guerra",
+        "witch": "Bruja",
+        "martyrs": "Mártir",
+        "The Vessel": "Vessel",
+        "Necromancer": "Nigromante",
+        "Magus": "Magus",
+        "Investigator": "Investigador",
+        "Shaman": "Chamán"
+        // (Asegúrate de que los nombres aquí coincidan con lo que quieres mostrar)
+    };
+
+// --- NUEVO: Mapa de traducción para Tiempo de Lanzamiento ---
+    const castingTimeMap = {
+        "action": "1 Acción",
+        "bonus action": "1 Bonus Action",
+        "reaction": "1 Reacción",
+        "1 minute": "1 Minuto",
+        "10 minutes": "10 Minutos",
+        "1 hour": "1 Hora", // Tu JSON puede tener "1 Hour" o "1 hour"
+        "8 hours": "8 Horas",
+        "12 hours": "12 Horas",
+        "24 hours": "24 Horas"
+        // (puedes añadir más si los descubres)
+    };
+
+    // Crear una tarjeta por cada hechizo
+    spells.forEach(spell => {
+        const spellCard = document.createElement('div');
+        spellCard.className = 'spell-card';
+        
+        // 1. Construir string de Tipos de Magia (Arcano, Divino, Primal)
+        let magicTypes = [];
+        if (spell.A === 1) magicTypes.push('Arcano');
+        if (spell.D === 1) magicTypes.push('Divino');
+        if (spell.P === 1) magicTypes.push('Primal');
+        const typeString = magicTypes.length > 0 ? magicTypes.join(', ') : 'N/A';
+
+        // 2. Construir string de Componentes (V, S, M)
+        let components = [];
+        if (spell.verbal === "si") components.push('V');
+        if (spell.somatico === "si") components.push('S');
+        if (spell.material === "si") components.push('M');
+        const compString = components.join(', ');
+
+        // 3. Construir string de Clases
+        let spellClasses = [];
+        // Iteramos sobre las claves de nuestro mapa
+        for (const key in classDisplayMap) {
+            if (spell[key] === 1) { // Si el hechizo tiene esta clase (valor 1)
+                spellClasses.push(classDisplayMap[key]); // Añadimos el nombre bonito
+            }
+        }
+        const classString = spellClasses.length > 0 ? spellClasses.join(', ') : 'N/A';
+        
+		// 4. Obtener y traducir el tiempo de lanzamiento
+        // IMPORTANTE: Tu clave JSON es "Casting time" (con espacio)
+        const originalCastingTime = spell["Casting time"] || "N/A";
+        // Buscamos la traducción; si no existe, usamos el valor original
+        const translatedCastingTime = castingTimeMap[originalCastingTime.toLowerCase()] || originalCastingTime;
+
+        // 5. Construir la tarjeta HTML
+        spellCard.innerHTML = `
+            <h4>${spell.Nombre}</h4>
+            <p class="spell-meta">
+                Nivel ${spell.Nivel} (${spell.Escuela || 'N/A'})
+                ${spell.ritual === "si" ? ' (Ritual)' : ''}
+            </p>
+            <p class="spell-meta">
+                <strong>Tiempo:</strong> ${translatedCastingTime} | 
+                <strong>Rango:</strong> ${spell.Range || 'N/A'} | 
+                <strong>Duración:</strong> ${spell.duracion || 'N/A'}
+            </p>
+            <p class="spell-meta">
+                <strong>Componentes:</strong> ${compString}
+                ${spell.material === "si" && spell.descripcion_material ? ` (${spell.descripcion_material})` : ''}
+            </p>
+            <p class="spell-type">Tipo: ${typeString}</p>
+            <p class="spell-classes">Clases: ${classString}</p>
+            <p class="spell-description">${spell.efecto || 'Sin descripción.'}</p>
+            ${spell.level_alto ? `<p class="spell-description"><strong>A mayor nivel:</strong> ${spell.level_alto}</p>` : ''}
+        `;
+        // --- FIN SECCIÓN MODIFICADA ---
+
+        spellList.appendChild(spellCard);
+    });
+}
 
 });
