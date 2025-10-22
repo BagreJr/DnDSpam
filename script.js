@@ -48,11 +48,37 @@ document.addEventListener("DOMContentLoaded", () => {
     const addTierRowButton = document.getElementById("addTierRowButton");
     const itemBank = document.getElementById("itemBank");
     const tierRowsContainer = document.getElementById("tierRowsContainer");
-	const downloadTierListButton = document.getElementById("downloadTierListButton");
     const subclassTierListButton = document.getElementById("subclassTierListButton"); // New button
     const tierListTitle = document.getElementById("tierListTitle"); // Title element
+    const downloadTierListButton = document.getElementById("downloadTierListButton"); // Reference the new button
+    // --- NEW TIER COLOR SEQUENCE ---
+    const defaultTierConfigs = [
+        // Corresponds to the initial HTML rows
+        { label: 'S', color: '#ff7f7f' }, // Red
+        { label: 'A', color: '#ffbf7f' }, // Orange
+        { label: 'B', color: '#ffff7f' }, // Yellow
+        { label: 'C', color: '#7fff7f' }, // Green
+        { label: 'D', color: '#7fbfff' }, // Blue
+        { label: 'E', color: '#3100f0' },
+        { label: 'F', color: '#6200e1' },
+        { label: 'G', color: '#9400d3' },
+       { label: 'H', color: '#bf7fff' }, // Púrpura (Completando el espectro)
+       { label: 'I', color: '#cc9eff' }, // Púrpura (Decayendo 1)
+       { label: 'J', color: '#d4b2ff' }, // Púrpura (Decayendo 2)
+       { label: 'K', color: '#dbc4ff' }, // Púrpura (Decayendo 3)
+       { label: 'L', color: '#e2d4ff' }, // Púrpura (Decayendo 4)
+       { label: 'M', color: '#e9e4ff' }, // Púrpura (Decayendo 5)
+       { label: 'N', color: '#efefff' }, // Púrpura (Decayendo 6)
+       { label: 'Ñ', color: '#ffffffff' }, // Púrpura (Decayendo 6)
+       { label: 'O', color: '#bfbfbf' },  // Gris Neutro (Decaimiento completo)
+       { label: 'P', color: '#666666ff' },
+       { label: 'Q', color: '#353535ff' },
+       { label: 'R', color: '#282828ff' }
+    ];
+    const fallbackColor = '#8f6262ff'; // Even Darker Gray for subsequent rows
+    const fallbackLabel = 'Tier'; // Default label if we run out
+    
     // --- STATE VARIABLES ---
-
     let favoriteSpells = [];
     let favoriteSpellsByCharacter = {}; // Object to hold lists
     let currentCharacter = "Default"; // Default character
@@ -894,6 +920,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // --- TIER LIST --- (Keep your Tier List functions and listeners)
+
+
+    
 // Función para limpiar las filas del tier list y devolver items al banco
     function resetTierListItems() {
         tierRowsContainer.querySelectorAll('.tier-dropzone .tier-item').forEach(item => {
@@ -1026,20 +1055,97 @@ function populateItemBank(mode = 'class') { // Restore mode parameter
     addDragEventsToZone(itemBank);
 }
 
+    
+
     addTierRowButton.addEventListener("click", () => {
+        const currentRowCount = tierRowsContainer.children.length; // How many rows exist *before* adding
+        let nextConfig;
+
+        if (currentRowCount < defaultTierConfigs.length) {
+            // Use the next predefined config
+            nextConfig = defaultTierConfigs[currentRowCount];
+        } else {
+            // Use fallback if we ran out of predefined ones
+            nextConfig = { label: fallbackLabel, color: fallbackColor };
+        }
+
         const newRow = document.createElement("div");
         newRow.classList.add("tier-row");
-        const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+
+        // Use the determined color and label
         newRow.innerHTML = `
-            <div class="tier-label" contenteditable="true" style="background-color: ${randomColor};">Nueva Fila</div>
+            <div class="tier-label" contenteditable="true" style="background-color: ${nextConfig.color};">${nextConfig.label}</div>
             <button class="delete-tier-row-button">×</button>
             <div class="tier-dropzone"></div>
         `;
+
         const newDeleteButton = newRow.querySelector('.delete-tier-row-button');
-        addDeleteEventToButton(newDeleteButton);
+        addDeleteEventToButton(newDeleteButton); // Make sure the delete button works
         const newDropzone = newRow.querySelector(".tier-dropzone");
-        addDragEventsToZone(newDropzone);
+        addDragEventsToZone(newDropzone); // Make sure drag/drop works
+
         tierRowsContainer.appendChild(newRow);
+    });
+
+    // --- NEW DOWNLOAD TIER LIST FUNCTIONALITY ---
+    downloadTierListButton.addEventListener('click', () => {
+        const elementToCapture = document.getElementById('tierListContainer'); // Capture the whole container
+        if (!elementToCapture) {
+            console.error("Tier list container not found!");
+            return;
+        }
+
+        // Temporarily disable buttons and show loading state
+        downloadTierListButton.disabled = true;
+        downloadTierListButton.textContent = 'Generando...';
+        exitTierListButton.disabled = true; // Disable exit while generating
+        addTierRowButton.disabled = true; // Disable add while generating
+
+        // Options for html2canvas (optional, but can help)
+        const options = {
+            scale: 2, // Increase resolution for better quality
+            useCORS: true, // If images might come from other domains
+            logging: false, // Turn off console logs from the library
+             // Attempt to capture the background color
+            backgroundColor: window.getComputedStyle(document.body).backgroundColor,
+            // Scroll to the top before capturing to ensure everything is rendered
+            scrollY: -window.scrollY,
+            scrollX: -window.scrollX,
+            windowWidth: document.documentElement.offsetWidth,
+            windowHeight: document.documentElement.offsetHeight
+        };
+
+
+        html2canvas(elementToCapture, options).then(canvas => {
+            // Convert canvas to image data URL (PNG)
+            const imageDataUrl = canvas.toDataURL('image/png');
+
+            // Create a temporary link element
+            const link = document.createElement('a');
+            link.href = imageDataUrl;
+            link.download = 'tierlist.png'; // Set the filename
+
+            // Programmatically click the link to trigger download
+            document.body.appendChild(link); // Required for Firefox
+            link.click();
+            document.body.removeChild(link); // Clean up
+
+             // Restore button state
+            downloadTierListButton.disabled = false;
+            downloadTierListButton.textContent = 'Descargar Tier List';
+            exitTierListButton.disabled = false;
+            addTierRowButton.disabled = false;
+
+
+        }).catch(err => {
+            console.error('Error generating tier list image:', err);
+            alert('Hubo un error al generar la imagen.');
+             // Restore button state even on error
+            downloadTierListButton.disabled = false;
+            downloadTierListButton.textContent = 'Descargar Tier List';
+            exitTierListButton.disabled = false;
+            addTierRowButton.disabled = false;
+        });
     });
 
     function handleTierRowDelete(deleteButton) {
