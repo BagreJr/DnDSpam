@@ -349,6 +349,8 @@ font-size: 16px;
     width: 90%;
     margin: 20px auto;
     text-align: left;
+    /* --- AJUSTAR PADDING INFERIOR --- */
+    padding-bottom: 125px; /* Ajusta según la altura fija del banco */
 }
 
 .tier-controls {
@@ -392,7 +394,7 @@ font-size: 16px;
     border-right: 2px solid #555;
     color: #000;
     text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
-    outline: none; /* Para que el 'contenteditable' se vea limpio */
+    outline: none;
     cursor: text;
 }
 
@@ -402,7 +404,7 @@ font-size: 16px;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    align-content: flex-start; /* Alinea items al inicio */
+    align-content: flex-start;
     min-height: 80px;
     border: 2px dashed transparent;
     transition: background-color 0.3s, border-color 0.3s;
@@ -410,40 +412,67 @@ font-size: 16px;
 
 /* Banco de items */
 #itemBank {
-    min-height: 200px;
-    background-color: #222;
-    border: 1px dashed #777;
-    margin-top: 10px;
+    position: fixed; /* Fija el banco al viewport */
+    bottom: 0;       /* Lo pega abajo */
+    left: 0;         /* Ocupa todo el ancho */
+    right: 0;
+    z-index: 50;     /* Para que esté por encima de otras cosas, pero debajo de modales */
+    background-color: #2c313a; /* Un fondo para distinguirlo */
+    border-top: 2px solid #777; /* Línea divisoria */
+    height: 155px;   /* Altura FIJA deseada (ajusta si es necesario) */
+    padding: 10px 10px; /* Padding interno */
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.4); /* Sombra superior */
+    box-sizing: border-box; /* Incluye padding en la altura */
+
+    overflow-x: hidden;   /* Habilita scroll HORIZONTAL */
+    overflow-y: auto; /* DESHABILITA scroll VERTICAL */
+    white-space: nowrap;/* Evita que los items hagan wrap a la siguiente línea */
+
+    -webkit-overflow-scrolling: touch; /* Mejora scroll en iOS */
+
+    /* Estilos explícitos para la barra de scroll */
+    scrollbar-width: thin; /* Para Firefox */
+    scrollbar-color: #666 #333; /* Colores scroll Firefox (thumb track) */
 }
+#itemBank::-webkit-scrollbar { height: 10px; }
+#itemBank::-webkit-scrollbar-track { background: #333; border-radius: 5px; }
+#itemBank::-webkit-scrollbar-thumb { background-color: #666; border-radius: 5px; border: 2px solid #333; }
+/* FIN - Estilos de la barra de scroll */
 
 .tier-item {
+    display: inline-flex; /* Mantener para scroll horizontal */
+    vertical-align: top;
+    margin-right: 10px; /* Espacio original */
+    /* --- TAMAÑO ORIGINAL --- */
     width: 80px;
-    display: flex;
+    padding: 5px;
+    /* --- Mantener estilos --- */
     flex-direction: column;
     align-items: center;
     background-color: #444;
     border-radius: 5px;
-    padding: 5px;
     cursor: grab;
     border: 1px solid #666;
     transition: transform 0.2s, opacity 0.2s;
     text-align: center;
+    white-space: normal; /* Para que el texto haga wrap */
 }
 
+/* Asegúrate que los estilos de imagen y span dentro de .tier-item sigan como estaban */
 .tier-item img {
     width: 60px;
     height: 60px;
     object-fit: cover;
     border-radius: 5px;
-    pointer-events: none; /* Evita que la imagen interfiera con el drag */
+    pointer-events: none;
 }
 
 .tier-item span {
     font-size: 12px;
     margin-top: 5px;
     color: white;
-    pointer-events: none; /* Evita que el texto interfiera con el drag */
-    word-break: break-word;
+    pointer-events: none;
+    word-break: break-word; /* Asegura el wrap si es necesario */
 }
 
 /* --- Estilos para Drag-and-Drop --- */
@@ -872,8 +901,11 @@ font-size: 16px;
     body {
         font-size: 15px; /* Ligeramente más pequeño si es necesario, o mantener 16px */
     }
-
-    .container, #quizContainer, #tierListContainer, #spellbookContainer {
+    #tierListContainer {
+        /* Aumentar el padding inferior en móvil si es necesario */
+        padding-bottom: 140px;
+    }
+    .container, #quizContainer, #spellbookContainer {
         width: 95%; /* Usar más ancho de pantalla */
         margin-left: auto;
         margin-right: auto;
@@ -1023,19 +1055,20 @@ font-size: 16px;
         gap: 6px; /* Menos espacio entre items */
         min-height: 60px;
     }
-    .tier-item {
-        width: 65px; /* Ligeramente más pequeño */
-        padding: 4px;
+    #itemBank {
+        height: 105px; /* Un poco más bajo en móvil si quieres */
+        padding: 8px 5px;
     }
-    .tier-item img {
+    #itemBank .tier-item {
+        width: 70px; /* Items un poco más pequeños si caben muchos */
+        margin-right: 6px;
+    }
+    #itemBank .tier-item img {
         width: 50px;
         height: 50px;
     }
-    .tier-item span {
+    #itemBank .tier-item span {
         font-size: 10px;
-    }
-    #itemBank {
-        min-height: 150px;
     }
 
     /* --- Grimorio --- */

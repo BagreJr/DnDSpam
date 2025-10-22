@@ -49,10 +49,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const itemBank = document.getElementById("itemBank");
     const tierRowsContainer = document.getElementById("tierRowsContainer");
 	const downloadTierListButton = document.getElementById("downloadTierListButton");
-
+    const subclassTierListButton = document.getElementById("subclassTierListButton"); // New button
+    const tierListTitle = document.getElementById("tierListTitle"); // Title element
     // --- STATE VARIABLES ---
+
     let favoriteSpells = [];
-    const FAVORITES_STORAGE_KEY = 'dndSpellFavorites';
+    let favoriteSpellsByCharacter = {}; // Object to hold lists
+    let currentCharacter = "Default"; // Default character
+    const FAVORITES_STORAGE_KEY = 'dndSpellFavoritesByCharacter_v1'; // Use a new key
+    const characterSelect = document.getElementById("characterSelect");
+    const addCharacterButton = document.getElementById("addCharacterButton");
+    const renameCharacterButton = document.getElementById("renameCharacterButton");
+    const deleteCharacterButton = document.getElementById("deleteCharacterButton");
+    const currentCharacterNameSpan = document.getElementById("currentCharacterName"); // Optional span
+    
     let showingFavorites = false;
     let isSpellViewSimplified = false;
     let allSpells = [];
@@ -77,40 +87,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- DATA --- (Keep your 'classes' array here)
     const classes = [
-        { name: "Alchemist", hitDie: 'd8', savingThrows: ['DEX', 'INT'], image: "images/alchemist.webp", description: "Un genio de las ciencias mágicas y la creación de pociones y elixires.", link: "https://homebrewery.naturalcrit.com/share/km9PgnczNSRA", subclasses: ["Amorist", "Apothecary", "Dynamo Engineer", "Ionizer", "Mad Bomber", "Mutagenist", "Ooze Rancher", "Pigmentist", "Polymorphist", "Resonator", "Venomsmith", "Xenoalchemist"] },
-        { name: "Artificer", hitDie: 'd8', savingThrows: ['CON', 'INT'], image: "images/artificer.webp", description: "Maestros de la magia y la tecnología, que crean artefactos mágicos y construcciones complejas.", link: "https://homebrewery.naturalcrit.com/share/XlnxbXPJwSb_", subclasses: ["Aeronaut", "Agent", "Alchemist", "Archivist", "Armorer", "Battle Smith", "Biomancer", "Chronothief", "Composer", "Dungeoneer", "Enhanced", "Forgewright", "Machinist", "Mechanic", "Pilot", "Puppeteer", "Reanimator", "Venomist", "Wandslinger"] },
-        { name: "Barbarian", hitDie: 'd12', savingThrows: ['STR', 'CON'], image: "images/barbarian.webp", description: "Guerreros primitivos que canalizan su furia en combate, capaces de resistir grandes daños y desatar su fuerza bruta.", link: "https://homebrewery.naturalcrit.com/share/EMNC8JdcJ-I1", subclasses: ["Path of the Ancestral Guardian", "Path of the Battlerager", "Path of the Beast", "Path of the Berserker", "Path of the Brute", "Path of the Burning Rage", "Path of the Champion", "Path of the Deep", "Path of the Devourer", "Path of the Dreadnought", "Path of the Drifter", "Path of the Favored", "Path of the Fin", "Path of the Kaiju", "Path of Heavy Metal", "Path of the Inferno", "Path of the Juggernaut", "Path of the Muscle Wizard", "Path of the Lycan", "Path of the Mutant", "Path of the Reaver", "Path of the Storm Herald", "Path of Terror", "Path of the Titan", "Path of the Totem Warrior", "Path of Tranquility", "Path of the Warden", "Path of the Wrecker", "Path of Wild Magic", "Path of the World Tree", "Path of the Zealot"] },
-        { name: "Bard", hitDie: 'd8', savingThrows: ['DEX', 'CHA'], image: "images/bard.webp", description: "Músicos encantadores y maestros de la magia, cuya música inspira y controla la magia.", link: "https://homebrewery.naturalcrit.com/share/nqImfN7DQmo8", subclasses: ["College of Birdsong", "College of Blade Conductors", "College of Cantors", "College of Chance", "College of Chaos", "College of Command", "College of Creation", "College of Crossroads", "College of Cyberwave", "College of Drama", "College of Eloquence", "College of Eulogies", "College of Fine Art", "College of Fools", "College of Glamour", "College of Glory", "College of Graffiti", "College of Jesters", "College of Lore", "College of the Mad God", "College of Many Faces", "College of Masks", "College of Radiance", "College of Revelry", "College of Romance", "College of the Spheres", "College of Swords", "College of the Vanguard", "College of Valor", "College of Whispers", "College of the Wilds"] },
+        { name: "Alchemist", hitDie: 'd8', savingThrows: ['DEX', 'INT'], image: "images/alchemist.webp", description: "Un genio de las ciencias mágicas y la creación de pociones y elixires.", link: "https://homebrewery.naturalcrit.com/share/km9PgnczNSRA", subclasses: ["Amorist", "Apothecary", "Bowgunner","Dynamo Engineer", "Ionizer", "Mad Bomber", "Mutagenist", "Ooze Rancher", "Pigmentist", "Polymorphist", "Resonator", "Spectral Bomber", "Venomsmith", "Xenoalchemist"] },
+        { name: "Artificer", hitDie: 'd8', savingThrows: ['CON', 'INT'], image: "images/artificer.webp", description: "Maestros de la magia y la tecnología, que crean artefactos mágicos y construcciones complejas.", link: "https://homebrewery.naturalcrit.com/share/XlnxbXPJwSb_", subclasses: ["Aeronaut", "Agent", "Alchemist", "Archivist", "Armorer", "Battle Smith", "Biomancer", "Chronothief", "Composer", "Cryptozoologist", "Dungeoneer", "Enhanced", "Forgewright", "Machinist", "Mechanic","Miner","Nuclear Engineer", "Pilot", "Puppeteer", "Reanimator", "Venomist", "Wandslinger"] },
+        { name: "Barbarian", hitDie: 'd12', savingThrows: ['STR', 'CON'], image: "images/barbarian.webp", description: "Guerreros primitivos que canalizan su furia en combate, capaces de resistir grandes daños y desatar su fuerza bruta.", link: "https://homebrewery.naturalcrit.com/share/EMNC8JdcJ-I1", subclasses: ["Path of the Ancestral Guardian", "Path of the Battlerager", "Path of the Beast", "Path of the Berserker", "Path of the Brute", "Path of the Burning Rage", "Path of the Champion", "Path of the Deep", "Path of the Devourer", "Path of the Dreadnought", "Path of the Drifter", "Path of the Favored", "Path of the Fin","Path of the Glaicer", "Path of the Kaiju", "Path of Heavy Metal", "Path of the Infernal","Path of the Inferno", "Path of the Juggernaut", "Path of the Muscle Wizard", "Path of the Lycan", "Path of the Mutant", "Path of the Reaver", "Path of the Storm Herald", "Path of the Titan", "Path of the Totem Warrior", "Path of Tranquility", "Path of the Warden", "Path of the Wrecker", "Path of Wilds","Path of Wild Magic", "Path of the World Tree", "Path of the Zealot"] },
+        { name: "Bard", hitDie: 'd8', savingThrows: ['DEX', 'CHA'], image: "images/bard.webp", description: "Músicos encantadores y maestros de la magia, cuya música inspira y controla la magia.", link: "https://homebrewery.naturalcrit.com/share/nqImfN7DQmo8", subclasses: ["College of Birdsong", "College of Blade Conductors", "College of Cantors", "College of Chance", "College of Chaos", "College of Command", "College of Creation", "College of Crossroads", "College of Cyberwave", "College of Drama", "College of Eloquence", "College of Eulogies", "College of Fey", "College of Fine Art", "College of Fools", "College of Glamour", "College of Glory", "College of Graffiti", "College of Jesters", "College of Lore", "College of the Mad God", "College of Many Faces", "College of Masks", "College of Mercantile","College of Radiance", "College of Revelry", "College of Romance", "College of the Spheres", "College of Swords", "College of the Vanguard", "College of Valor", "College of Whispers", "College of the Wilds"] },
         { name: "Binder", hitDie: 'd8', savingThrows: ['WIS', 'CHA'], image: "images/binder.webp", description: "Mortal que establece pactos con entidades sobrenaturales para obtener poder.", link: "https://homebrewery.naturalcrit.com/share/Rq5NbuBPOkD5", subclasses: ["The Avatarists", "Brotherhood of Ascetics", "Church of Gyx", "Ishtar’s Faithful", "Legion’s Lodge", "Order of Crimson Binding", "Society of the Stygian Seal"] },
-        { name: "Blood Hunter", hitDie: 'd12', savingThrows: ['STR', 'CON'], image: "images/blood_hunter.webp", description: "Cazadores que emplean magia oscura y sacrificios de sangre para cazar monstruos y defender a los inocentes.", link: "https://homebrewery.naturalcrit.com/share/zB7dBsU3NoaA", subclasses: ["Order of Alchemists", "Order of Ascension",  "Order of Dawnbringer", "Order of Heretics", "Order of Ichor", "Order of the Pale Moon", "Order of Reapers", "Order of Salt & Iron", "Order of Sorcery", "Order of Transference", "Order of Undying Thirst", "Order of Witch Knights"] },
-        { name: "Captain", hitDie: 'd8', savingThrows: ['CON', 'CHA'], image: "images/captain.webp", description: "Un líder carismático y estratega, que guía a sus compañeros con autoridad y determinación.", link: "https://homebrewery.naturalcrit.com/share/4_dADwfpFgLl", subclasses: ["Demon Banner", "Dragon Banner", "Eagle Banner", "Jolly Roger Banner", "Lion Banner", "Ram Banner", "Raven Banner", "Sport Banner", "Star Wolf Banner", "Treant Banner", "Turtle Banner"] },
-        { name: "Cleric", hitDie: 'd8', savingThrows: ['WIS', 'CHA'], image: "images/cleric.webp", description: "Canalizan el poder de los dioses para sanar, proteger y combatir las fuerzas del mal.", link: "https://homebrewery.naturalcrit.com/share/ypjQ6cODzLs3", subclasses: ["Arcana Domain", "Beauty Domain", "Blood Domain", "Cataclysm Domain", "Chaos Domain", "Death Domain", "Destruction Domain", "Evolution Domain", "Exorcist Domain", "Forge Domain", "Grave Domain", "Hearth Domain", "Knowledge Domain", "Life Domain", "Light Domain", "Luck Domain", "Madness Domain", "Mysticism Domain", "Nature Domain", "Occult Domain", "Order Domain", "Peace Domain", "Peril Domain", "Pestilence Domain", "Poverty Domain", "Rum Domain", "Shadow Domain", "Shrine Warden Domain", "Steel Domain", "Sun Above Domain", "Tempest Domain", "Thieves Domain", "Time Domain", "Travel Domain", "Trickery Domain", "Twilight Domain", "Void Domain", "War Domain", "Wealth Domain"] },
-        { name: "Commoner", hitDie: 'd8', savingThrows: ['STR', 'CON'], image: "images/commoner.webp", description: "Aunque simple, el potencial de un humano es infinito. Con humildad, resistencia y una voluntad inquebrantable, son capaces de enfrentar desafíos que parecerían fuera de su alcance.", link: "https://homebrewery.naturalcrit.com/share/OJJEj04Qu-zG", subclasses: ["Farmer", "Innkeeper", "Laborer", "Old Timer", "Town Guard"] },
-        { name: "Craftsman", hitDie: 'd10', savingThrows: ['CON', 'INT'], image: "images/craftsman.webp", description: "Experto en la creación de objetos mágicos y artefactos con fines prácticos o poderosos.", link: "https://homebrewery.naturalcrit.com/share/MnBaupC_WVWe", subclasses: ["Arcane Maesters’ Guild", "Armigers’ Guild", "Bladeworkers’ Guild", "Calibaron’s Guild", "Clockworkers’ Guild", "Courtiers’ Guild", "Forgeknight’s Guild", "Liveoaks’ Guild", "Luminaries’ Guild", "Mechanauts’ Guild", "Scrappers’ Guild", "Thunderlords’ Guild", "Trappers’ Guild"] },
-        { name: "Druid", hitDie: 'd8', savingThrows: ['INT', 'WIS'], image: "images/druid.webp", description: "Guardianes de la naturaleza con habilidades para transformarse en animales y controlar los elementos naturales.", link: "https://homebrewery.naturalcrit.com/share/e3kR64Zn-Qin", subclasses: ["Circle of the Ancients", "Circle of the City", "Circle of Configuration", "Circle of the Deep", "Circle of the Depths", "Circle of Disaster", "Circle of Dreams", "Circle of the Fist", "Circle of Guardians", "Circle of the Harvest", "Circle of Land", "Circle of the Moon", "Circle of the Obelisk", "Circle of Pollen", "Circle of the Self Sacrifice", "Circle of the Shepherd", "Circle of Spores", "Circle of the Sower", "Circle of Stars", "Circle of Stones", "Circle of the Tempest", "Circle of the Tides", "Circle of Vermin", "Circle of the Yokai", "Circle of Wildfire", "Circle of the Wild Gift", "Circle of the Wyrm", "Primal Circle"] },
-        { name: "Fighter", hitDie: 'd10', savingThrows: ['STR', 'CON'], image: "images/fighter.webp", description: "Guerrero experto en el combate físico, con habilidades para dominar cualquier tipo de arma.", link: "https://homebrewery.naturalcrit.com/share/ObJ7sUAx1Ggn", subclasses: ["Arcane Archer", "Arcane Knight", "Bestiarius", "Bone Knight", "Brawler", "Cavalier", "Celestial Lancer", "Champion", "Commander", "Corsair", "Crusader", "Dynamic Duelist", "Dungeoneer", "Echo Knight", "Guardian", "Guerrilla", "Mage Hand Magus", "Mandalorian", "Marksman", "Master at Arms", "Master of Hounds", "Mutant Knight", "Mystic Warrior", "Quartermaster", "Rations", "Opportunists", "Pseudomorph", "Renegade", "Firearm Upgrades", "Relentless Hunter", "Rune Knight", "Samurai", "Stonecrusher", "Swordsage", "Tinker Knight", "Schematics", "Witch Knight"] },
-        { name: "Gadgeteer", hitDie: 'd6', savingThrows: ['DEX', 'INT'], image: "images/gadgeteer.webp", description: "Inventor que utiliza una combinación de ingenio y dispositivos mecánicos para resolver cualquier problema.", link: "https://homebrewery.naturalcrit.com/share/1pBjFWWMDUME", subclasses: ["Drone Jockey", "Futurist", "Hardlight Architect", "Mastermaker", "Nanoengineer"] },
-        { name: "Gunslinger", hitDie: 'd8', savingThrows: ['DEX', 'CHA'], image: "images/gunslinger.webp", description: "Tirador experto con pistolas, rápido en el combate y letal con cada disparo.", link: "https://homebrewery.naturalcrit.com/share/K2ZWpZUCPF_Q", subclasses: ["Big Game Hunter", "Covert Operative", "Gun Tank", "Gun-Ko Master", "Gundead", "Grenadier", "High Roller", "Holy Marksman", "Janissary", "Laserist", "League of Shadows", "Lucky Son of a Bitch", "Musketeer", "Pistolero", "Sharpshooter", "Space Cowboy", "Spellslinger", "Storm Gunner", "Trick Shot", "Twice-Damned", "White Hat"] },
-        { name: "Illrigger", hitDie: 'd10', savingThrows: ['CON', 'CHA'], image: "images/illriger.webp", description: "Un individuo que forja contratos oscuros con entidades infernales para obtener poder a cambio de su alma.", link: "https://homebrewery.naturalcrit.com/share/YkHqcotv-KCQ", subclasses: ["Architect of Ruin", "Black Menagerist", "Brass Banker", "Cardinals of Inferno", "Despotic Ruler", "Fatebreaker", "Fiendish Marksman", "Hellspeaker", "Nails of Odium", "Painkiller", "Queen’s Champion", "Radiant Sentinel", "Sanguine Knight", "Shadowmaster", "Forsaken"] },
-        { name: "Investigator", hitDie: 'd8', savingThrows: ['DEX', 'INT'], image: "images/investigador.webp", description: "Profesional en resolver misterios y desentrañar secretos, con una mente aguda y habilidades excepcionales para el rastreo.", link: "https://homebrewery.naturalcrit.com/share/Vdd_tiCoHg9d", subclasses: ["Antiquarian", "Archivist", "Conspiracy Theorist", "Containment Specialist", "Contractor", "Cursed Energy Specialist", "Decommissioner", "Detective", "Exterminator", "Infernal Agent", "Inquisitor", "Kid Sleuth", "Medium", "Occultist", "Spy", "Time Operative", "Witch Hunter"] },
-        { name: "Magus", hitDie: 'd10', savingThrows: ['CON', 'INT'], image: "images/magus.webp", description: "Talentoso en el uso de magia mediante el dominio de espadas y hechizos combinados.", link: "https://homebrewery.naturalcrit.com/share/ghElGwEE2Io9", subclasses: ["Order of Arcanists", "Order of Arcane Archers", "Order of Armorers", "Order of the Aurora", "Order of Blades", "Order of Blade Dancers", "Order of Conduits", "Order of Evolution", "Order of Hexblades", "Order of the Occultism", "Order of Scales", "Order of Spellswords", "Order of Sentinels", "Order of Spellbreakers", "Order of Travelers"] },
-        { name: "Martyr", hitDie: 'd12', savingThrows: ['STR', 'WIS'], image: "images/martyr.webp", description: "Héroe que sacrifica su propio bienestar por el bien de los demás, con un fuerte sentido del sacrificio y la redención.", link: "https://homebrewery.naturalcrit.com/share/o8FUKqZUgoT7", subclasses: ["Burden of Anonymity", "Burden of Ascension", "Burden of Atonement", "Burden of Calamity", "Burden of Discord", "Burden of the End", "Burden of Fame", "Burden of Humanity", "Burden of Levity", "Burden of Mercy", "Burden of Rebirth", "Burden of Revolution", "Burden of Truth", "Burden of Tyranny", "Burden of Uncharted"] },
-        { name: "Monk", hitDie: 'd8', savingThrows: ['STR', 'DEX'], image: "images/monk.webp", description: "Experto en artes marciales y en la meditación, que canaliza su energía interior para mejorar sus habilidades físicas y espirituales.", link: "https://homebrewery.naturalcrit.com/share/guTke3mXD9Nk", subclasses: ["Way of the Astral Self", "Way of the Ascendant Dragon", "Way of the Boulder", "Way of the Bow", "Way of the Brawler", "Way of the Dodo", "Way of the Drunken Fist", "Way of the Eight Gates", "Way of the Feather", "Way of Ferocity", "Way of the Flagellant", "Way of the Flowing River", "Way of the Four Fists", "Way of Gravity", "Way of the Hurricane", "Way of the Mask", "Way of the Open Hand", "Way of Radiance", "Way of the Reaper", "Way of the Sacred Inks", "Way of the Shadow Arts", "Way of Street Fighting", "Way of the Vigilante", "Way of the Void", "Way of the Warped", "Way of the Wu Jen", "Way of the Wuxia"] },
-        { name: "Necromancer", hitDie: 'd6', savingThrows: ['INT', 'CON'], image: "images/necromancer.webp", description: "Ente que manipula las fuerzas de la muerte y controla a los muertos para servir a sus fines oscuros.", link: "https://homebrewery.naturalcrit.com/share/yrujLNR8NHGX", subclasses: ["Black Rider", "Blood Ascendent", "Bow of the Grave", "Corpse Florist", "Crone", "Divine Soul", "Dead Mist Acolyte", "Death Knight", "Harbinger of Darkness", "Necrodancer", "Overlord", "Pale Master", "Pharaoh", "Plague Lord", "Reanimator", "Reaper", "Toymaker"] },
-        { name: "Paladin", hitDie: 'd10', savingThrows: ['WIS', 'CHA'], image: "images/paladin.webp", description: "Caballero sagrado que combate el mal con el poder divino y un fuerte código de honor.", link: "https://homebrewery.naturalcrit.com/share/QL_7_qGcSaio", subclasses: ["Oath of the Ancients", "Oath of Beauty", "Oath of the Blade", "Oath of the Bound", "Oath of Conquest", "Oath of the Corsair", "Oath of the Crown", "Oath of Devotion", "Oath of the Doomforged", "Oath of the Eternal Dragon", "Oath of Eternal Night", "Oath of the Exorcist", "Oath of the Forge", "Oath of Glory", "Oath of Heresy", "Oath of Inquisition", "Oath of Liberty", "Oath of Mysticism", "Oath of Preservation", "Oath of Prosperity", "Oath of Redemption", "Oath of Revelry", "Oath of the Sepulcher", "Oath of the Shield", "Oath of Storms", "Oath of the Sun", "Oath of Vengeance", "Oath of the Watchers", "Oath of Winter", "Oath of the Yojimbo", "The Oathless", "Oathbreaker"] },
-        { name: "Psionico", hitDie: 'd6', savingThrows: ['WIS', 'INT'], image: "images/psion.webp", description: "La realidad se desvía hacia donde van tus pensamientos. Los psiónicos canalizan la voluntad pura, transformando el pensamiento, la emoción y la memoria en fuerza psíquica pura.", link: "https://homebrewery.naturalcrit.com/share/MoGx_lZZ32mC", subclasses: ["Awakened Mind", "Consuming Mind", "Elemental Mind", "Shaper’s Mind", "Transcended Mind", "Unleashed Mind","Wandering Mind"] },
-        { name: "Ranger", hitDie: 'd10', savingThrows: ['STR', 'DEX'], image: "images/ranger.webp", description: "Explorador experto en el uso de arcos y el sigilo, con un vínculo profundo con la naturaleza.", link: "https://homebrewery.naturalcrit.com/share/usNwevklFcoN", subclasses: ["Beastborne", "Beast Master", "Bounty Hunter", "Buccaneer", "Deadeye Sniper", "Drakewarden", "Druidic Guardian", "Dunestrider", "Fey Wanderer", "Freerunner", "Gloom Stalker", "Grim Warden", "Horizon Walker", "Highwayman", "Hunter", "Monster Slayer", "Nomad", "Reconnaissance Scout", "Ronin", "Skysworn", "Shadowbane", "Spiritbound", "Spellbreaker", "Stargazer", "Swarmkeeper", "Vigilante", "Wrangler"] },
-        { name: "Rogue", hitDie: 'd8', savingThrows: ['DEX', 'INT'], image: "images/rogue.webp", description: "Experto en el sigilo, la evasión y las trampas, ideal para misiones que requieren astucia y agilidad.", link: "https://homebrewery.naturalcrit.com/share/TQg2QgZKbsDv", subclasses: ["Arachnoid Stalker", "Arcane Trickster", "Angler", "Assassin", "Bloodknife", "Chameleon", "Charlatan", "Duskcaller", "Enforcer", "Daredevil", "Duelist", "Falconer", "Gambler", "Grifter", "Infiltrator", "Inquisitive", "Jumper", "Justicar", "Magehunter", "Mastermind", "Phantom", "Ruffian", "Saboteur", "Scoundrel", "Scout", "Socialite", "Soulknife", "Shadow Master", "Skinchanger", "Surgeon", "Swashbuckler", "Tamaya", "Temporal Trickster", "Thief", "Titan Slayer"] },
-        { name: "Savant", hitDie: 'd8', savingThrows: ['INT', 'WIS'], image: "images/savant.webp", description: "Conocedor profundo de las artes arcanas o la ciencia, con habilidades excepcionales para el estudio y la enseñanza.", link: "https://homebrewery.naturalcrit.com/share/3Lw7KbWJnUsy", subclasses: ["Archaeologist", "Culinarian", "Engineer", "Investigator", "Naturalist", "Mentors", "Occultist", "Orator", "Philosopher", "Physician", "Rune Scribe", "Tactician", "Tinker", "Virtuoso", "Voyager"] },
-        { name: "Sorcerer", hitDie: 'd6', savingThrows: ['CON', 'CHA'], image: "images/sorcerer.webp", description: "Un hechicero que canaliza su magia a través de su linaje o conexión con fuerzas sobrenaturales.", link: "https://homebrewery.naturalcrit.com/share/NOEmC8CLMj9P", subclasses: ["Aberrant Mind", "The Chained", "Clockwork Soul", "Divine Soul", "Divine Right", "Draconic Bloodline", "Emberheart", "Emotion Lord", "Faeblood", "Gifted One", "Greensinger", "Hellspawn", "Jinx", "Lunar Sorcery", "Mirrorkin", "Mutagenic Bloodline", "Nanite Host", "Oozemaster", "Radiation Freak", "Reincarnated Hero", "Shadow", "Spiritborn", "Spirit Caller", "Stoneblood", "Storm Sorcery", "Toon Magic", "Vampiric Soul", "Voidwielder", "Waveborn", "Wild Magic"] },
+        { name: "Blood Hunter", hitDie: 'd12', savingThrows: ['STR', 'CON'], image: "images/blood_hunter.webp", description: "Cazadores que emplean magia oscura y sacrificios de sangre para cazar monstruos y defender a los inocentes.", link: "https://homebrewery.naturalcrit.com/share/zB7dBsU3NoaA", subclasses: ["Order of Alchemists", "Order of Ascension",  "Order of Crystal","Order of Dawnbringer", "Order of Hellfire","Order of Heretics", "Order of Ichor", "Order of the Inquisition","Order of the Pale Moon", "Order of Temporal Knight", "Order of Reapers", "Order of Salt & Iron", "Order of Sorcery", "Order of Transference", "Order of Undying Thirst", "Order of Witch Knights","Order of the Wyrm"] },
+        { name: "Captain", hitDie: 'd8', savingThrows: ['CON', 'CHA'], image: "images/captain.webp", description: "Un líder carismático y estratega, que guía a sus compañeros con autoridad y determinación.", link: "https://homebrewery.naturalcrit.com/share/4_dADwfpFgLl", subclasses: ["Astral Militarum Banner","Beast Banner","Dagger Banner","Demon Banner", "Dragon Banner", "Dreadnought Banner","Eagle Banner", "Holy Banner","Jolly Roger Banner", "Lion Banner", "Ram Banner", "Raven Banner", "Skull Banner","Sport Banner", "Star Banner","Star Wolf Banner", "Treant Banner", "Turtle Banner", "Yellow sign Banner"] },
+        { name: "Cleric", hitDie: 'd8', savingThrows: ['WIS', 'CHA'], image: "images/cleric.webp", description: "Canalizan el poder de los dioses para sanar, proteger y combatir las fuerzas del mal.", link: "https://homebrewery.naturalcrit.com/share/ypjQ6cODzLs3", subclasses: ["Arcana Domain", "Beauty Domain", "Blood Domain", "Cataclysm Domain", "Chaos Domain", "Death Domain", "Destruction Domain", "Evolution Domain", "Exorcist Domain", "Forge Domain", "Grave Domain", "Hearth Domain", "Knowledge Domain", "Judgment Domain","Life Domain", "Light Domain", "Luck Domain", "Madness Domain", "Mechanicum Domain","Mysticism Domain", "Nature Domain", "Occult Domain", "Order Domain", "Peace Domain", "Peril Domain", "Pestilence Domain", "Poverty Domain", "Rum Domain", "Shadow Domain", "Shrine Warden Domain", "Steel Domain", "Sun Above Domain", "Tempest Domain", "Thieves Domain", "Time Domain", "Travel Domain", "Trickery Domain", "Twilight Domain", "Void Domain", "War Domain", "Wealth Domain"] },
+        { name: "Commoner", hitDie: 'd8', savingThrows: ['STR', 'CON'], image: "images/commoner.webp", description: "Aunque simple, el potencial de un humano es infinito. Con humildad, resistencia y una voluntad inquebrantable, son capaces de enfrentar desafíos que parecerían fuera de su alcance.", link: "https://homebrewery.naturalcrit.com/share/OJJEj04Qu-zG", subclasses: ["Farmer", "Innkeeper", "Laborer", "Old Timer", "Servitor", "Town Guard"] },
+        { name: "Craftsman", hitDie: 'd10', savingThrows: ['CON', 'INT'], image: "images/craftsman.webp", description: "Experto en la creación de objetos mágicos y artefactos con fines prácticos o poderosos.", link: "https://homebrewery.naturalcrit.com/share/MnBaupC_WVWe", subclasses: ["Arcane Maesters’ Guild", "Armigers’ Guild", "Bladeworkers’ Guild", "Calibaron’s Guild", "Clockworkers’ Guild", "Courtiers’ Guild", "Finesmith’s Guild","Forgeknight’s Guild", "Hexsmith’s Guild", "Liveoaks’ Guild", "Luminaries’ Guild", "Mechanauts’ Guild", "Scrappers’ Guild", "Thunderlords’ Guild", "Trappers’ Guild","Wintercarvers’ Guild"] },
+        { name: "Druid", hitDie: 'd8', savingThrows: ['INT', 'WIS'], image: "images/druid.webp", description: "Guardianes de la naturaleza con habilidades para transformarse en animales y controlar los elementos naturales.", link: "https://homebrewery.naturalcrit.com/share/e3kR64Zn-Qin", subclasses: ["Circle of the Ancients", "Circle of the City", "Circle of Configuration", "Circle of the Deep", "Circle of the Depths", "Circle of Disaster", "Circle of Dreams", "Circle of the Fairy","Circle of the Fist", "Circle of Guardians", "Circle of the Harvest", "Circle of Land", "Circle of the Moon", "Circle of the Obelisk", "Circle of Petal","Circle of Pollen", "Circle of the Self Sacrifice", "Circle of the Shepherd", "Circle of Spores", "Circle of the Sower", "Circle of Stars", "Circle of Stones", "Circle of the Tempest", "Circle of the Tides", "Circle of Vermin", "Circle of the Yokai", "Circle of Wildfire", "Circle of the Wild Gift", "Circle of the Wyrm", "Primal Circle"] },
+        { name: "Fighter", hitDie: 'd10', savingThrows: ['STR', 'CON'], image: "images/fighter.webp", description: "Guerrero experto en el combate físico, con habilidades para dominar cualquier tipo de arma.", link: "https://homebrewery.naturalcrit.com/share/ObJ7sUAx1Ggn", subclasses: ["Arcane Archer", "Arcane Knight", "Bestiarius", "Bone Knight", "Brawler", "Caelagarm Oath-Keeper", "Cavalier", "Celestial Lancer", "Champion", "Commander", "Corsair", "Crusader", "Dynamic Duelist", "Dungeoneer", "Echo Knight", "Guardian", "Guerrilla", "Mage Hand Magus", "Mandalorian", "Marksman", "Master at Arms", "Master of Hounds", "Mutant Knight", "Mystic Warrior", "Quartermaster", "Opportunists", "Pseudomorph", "Renegade", "Relentless Hunter", "Rune Knight", "Samurai", "Shadow Knight","Stonecrusher", "Swordsage", "Tinker Knight", "Witch Knight"] },
+        { name: "Gadgeteer", hitDie: 'd6', savingThrows: ['DEX', 'INT'], image: "images/gadgeteer.webp", description: "Inventor que utiliza una combinación de ingenio y dispositivos mecánicos para resolver cualquier problema.", link: "https://homebrewery.naturalcrit.com/share/1pBjFWWMDUME", subclasses: ["Biohacker","Cyber Surgeon", "Drone Jockey", "Futurist", "Hardlight Architect", "Hologrammer","Jumper","Mastermaker", "Nanoengineer","Photonist","Quantum Mechanics"] },
+        { name: "Gunslinger", hitDie: 'd8', savingThrows: ['DEX', 'CHA'], image: "images/gunslinger.webp", description: "Tirador experto con pistolas, rápido en el combate y letal con cada disparo.", link: "https://homebrewery.naturalcrit.com/share/K2ZWpZUCPF_Q", subclasses: ["Big Game Hunter", "Covert Operative", "Gun Tank", "Gun-Ko Master", "Gundead", "Grenadier", "High Roller", "Holy Marksman", "Janissary", "Laserist", "League of Shadows", "Lucky Son of a Bitch", "Musketeer", "Pistolero", "Sharpshooter", "Space Cowboy", "Spellslinger", "Storm Gunner", "Trick Shot", "Twice-Damned", "Wetslinger","White Hat"] },
+        { name: "Illrigger", hitDie: 'd10', savingThrows: ['CON', 'CHA'], image: "images/illriger.webp", description: "Un individuo que forja contratos oscuros con entidades infernales para obtener poder a cambio de su alma.", link: "https://homebrewery.naturalcrit.com/share/YkHqcotv-KCQ", subclasses: ["Architect of Ruin", "Black Menagerist", "Brass Banker", "Cardinals of Inferno", "Despotic Ruler", "Fatebreaker", "Fiendish Marksman", "Hellspeaker", "Nails of Odium", "Painkiller", "Queen’s Champion", "Radiant Sentinel", "Sanguine Knight", "Shadowmaster", "Forsaken","Forsworn"] },
+        { name: "Investigator", hitDie: 'd8', savingThrows: ['DEX', 'INT'], image: "images/investigador.webp", description: "Profesional en resolver misterios y desentrañar secretos, con una mente aguda y habilidades excepcionales para el rastreo.", link: "https://homebrewery.naturalcrit.com/share/Vdd_tiCoHg9d", subclasses: ["Antiquarian", "Archivist", "Conspiracy Theorist", "Containment Specialist", "Contractualist", "Cursed Energy Specialist", "Decommissioner", "Detective", "Exterminator", "Infernal Agent", "Inquisitor", "Kid Sleuth", "King of Curses","Medium", "Occultist", "Spy", "Time Operative", "Witch Hunter"] },
+        { name: "Magus", hitDie: 'd10', savingThrows: ['CON', 'INT'], image: "images/magus.webp", description: "Talentoso en el uso de magia mediante el dominio de espadas y hechizos combinados.", link: "https://homebrewery.naturalcrit.com/share/ghElGwEE2Io9", subclasses: ["Order of Aether Blade","Order of Arcanists", "Order of Arcane Archers", "Order of Armorers", "Order of the Aurora", "Order of Blades", "Order of Blade Dancers", "Order of Conduits", "Order of Evolution", "Order of Hexblades", "Order of the Occultism", "Order of Scales", "Order of Spellswords", "Order of Sentinels", "Order of Spellbreakers", "Order of Travelers"] },
+        { name: "Martyr", hitDie: 'd12', savingThrows: ['STR', 'WIS'], image: "images/martyr.webp", description: "Héroe que sacrifica su propio bienestar por el bien de los demás, con un fuerte sentido del sacrificio y la redención.", link: "https://homebrewery.naturalcrit.com/share/o8FUKqZUgoT7", subclasses: ["Burden of Anonymity", "Burden of Ascension", "Burden of Atonement", "Burden of Calamity", "Burden of Discord", "Burden of the End", "Burden of Fame", "Burden of Humanity", "Burden of Levity", "Burden of Primarch","Burden of Mercy", "Burden of Rebirth", "Burden of Revolution", "Burden of Truth", "Burden of Tyranny", "Burden of Uncharted"] },
+        { name: "Monk", hitDie: 'd8', savingThrows: ['STR', 'DEX'], image: "images/monk.webp", description: "Experto en artes marciales y en la meditación, que canaliza su energía interior para mejorar sus habilidades físicas y espirituales.", link: "https://homebrewery.naturalcrit.com/share/guTke3mXD9Nk", subclasses: ["Way of the Astral Self", "Way of the Ascendant Dragon", "Way of the Boulder", "Way of the Bow", "Way of the Brawler", "Way of the Butterfly", "Way of the Dodo", "Way of the Drunken Fist", "Way of the Eight Gates", "Way of the Feather", "Way of Ferocity", "Way of the Flagellant", "Way of the Flowing River", "Way of the Four Fists", "Way of Gravity", "Way of the Hurricane", "Way of the Mask", "Way of the Open Hand", "Way of Radiance", "Way of the Reaper", "Way of the Riftwalker","Way of the Sacred Inks", "Way of the Shadow Arts", "Way of Street Fighting", "Way of the Vigilante", "Way of the Void", "Way of the Warped", "Way of the Wu Jen", "Way of the Wuxia"] },
+        { name: "Necromancer", hitDie: 'd6', savingThrows: ['INT', 'CON'], image: "images/necromancer.webp", description: "Ente que manipula las fuerzas de la muerte y controla a los muertos para servir a sus fines oscuros.", link: "https://homebrewery.naturalcrit.com/share/yrujLNR8NHGX", subclasses: ["Black Rider", "Blood Ascendent", "Bonefist","Bow of the Grave", "Corpse Florist", "Crone", "Cyberghoul","Divine Soul", "Dead Mist Acolyte", "Death Knight", "Harbinger of Darkness", "Necrodancer", "Overlord", "Pale Master", "Pharaoh", "Plague Lord", "Reanimator", "Reaper", "Toymaker"] },
+        { name: "Paladin", hitDie: 'd10', savingThrows: ['WIS', 'CHA'], image: "images/paladin.webp", description: "Caballero sagrado que combate el mal con el poder divino y un fuerte código de honor.", link: "https://homebrewery.naturalcrit.com/share/QL_7_qGcSaio", subclasses: ["Oath of the Ancients", "Oath of Avarice","Oath of Beauty", "Oath of the Blade", "Oath of the Bound", "Oath of Conquest", "Oath of the Corsair", "Oath of Cosmos","Oath of the Crown", "Oath of Devotion", "Oath of the Doomforged", "Oath of the Eternal Dragon", "Oath of Eternal Night", "Oath of the Exorcist", "Oath of the Forge", "Oath of Glory", "Oath of Heresy", "Oath of Inquisition", "Oath of Judgement","Oath of Liberty", "Oath of Neversetting Star","Oath of Mysticism", "Oath of Preservation", "Oath of Prosperity", "Oath of Redemption", "Oath of Revelry", "Oath of the Sanity", "Oath of the Shield", "Oath of Silence","Oath of Speed","Oath of Splendor","Oath of Solar","Oath of Storms", "Oath of the Sun", "Oath of Timekeeper","Oath of Vengeance", "Oath of the Watchers", "Oath of Winter", "Oath of the Yojimbo", "The Oathless", "Oathbreaker"] },
+        { name: "Psionico", hitDie: 'd6', savingThrows: ['WIS', 'INT'], image: "images/psion.webp", description: "La realidad se desvía hacia donde van tus pensamientos. Los psiónicos canalizan la voluntad pura, transformando el pensamiento, la emoción y la memoria en fuerza psíquica pura.", link: "https://homebrewery.naturalcrit.com/share/MoGx_lZZ32mC", subclasses: ["Awakened Mind", "Consuming Mind", "Elemental Mind", "Knowing Mind","Shaper’s Mind", "Transcended Mind", "Unleashed Mind","Wandering Mind"] },
+        { name: "Ranger", hitDie: 'd10', savingThrows: ['STR', 'DEX'], image: "images/ranger.webp", description: "Explorador experto en el uso de arcos y el sigilo, con un vínculo profundo con la naturaleza.", link: "https://homebrewery.naturalcrit.com/share/usNwevklFcoN", subclasses: ["Beastborne", "Beast Master", "Bounty Hunter", "Buccaneer", "Crystal Guardian","Deadeye Sniper", "Death Hunter","Drakewarden", "Druidic Guardian", "Dunestrider", "Fey Wanderer", "Freerunner", "Gloom Stalker", "Grim Warden", "Horizon Walker", "Highwayman", "Hunter", "Monster Slayer", "Nomad", "Reconnaissance Scout", "Ronin", "Skysworn", "Slim Rancher","Shadowbane", "Spiritbound", "Spellbreaker", "Stargazer", "Stormchaser","Swarmkeeper", "Trapper", "Vigilante", "Wrangler"] },
+        { name: "Rogue", hitDie: 'd8', savingThrows: ['DEX', 'INT'], image: "images/rogue.webp", description: "Experto en el sigilo, la evasión y las trampas, ideal para misiones que requieren astucia y agilidad.", link: "https://homebrewery.naturalcrit.com/share/TQg2QgZKbsDv", subclasses: ["Arachnoid Stalker", "Arcane Trickster", "Angler", "Assassin", "Bloodknife", "Chameleon", "Charlatan", "Duskcaller", "Enforcer", "Daredevil", "Duelist", "Falconer", "Gambler", "Gloaming Knight","Grifter", "Infiltrator", "Inquisitive", "Jumper", "Justicar", "Magehunter", "Mastermind", "Phantom", "Ruffian", "Saboteur", "Scion of the Three","Scoundrel", "Scout", "Socialite", "Soulknife", "Shadow Master", "Skinchanger", "Steelsilk Operative","Surgeon", "Swashbuckler", "Tamaya", "Temporal Trickster", "Thief", "Titan Slayer","Windwalker"] },
+        { name: "Savant", hitDie: 'd8', savingThrows: ['INT', 'WIS'], image: "images/savant.webp", description: "Conocedor profundo de las artes arcanas o la ciencia, con habilidades excepcionales para el estudio y la enseñanza.", link: "https://homebrewery.naturalcrit.com/share/3Lw7KbWJnUsy", subclasses: ["AdeAdeptus Administratum", "Archaeologist", "Culinarian", "Engineer", "Gunner","Investigator", "Naturalist", "Mentors", "Occultist", "Orator", "Philosopher", "Physician", "Rune Scribe", "Tactician", "Tinker", "Virtuoso", "Voyager"] },
+        { name: "Sorcerer", hitDie: 'd6', savingThrows: ['CON', 'CHA'], image: "images/sorcerer.webp", description: "Un hechicero que canaliza su magia a través de su linaje o conexión con fuerzas sobrenaturales.", link: "https://homebrewery.naturalcrit.com/share/NOEmC8CLMj9P", subclasses: ["Aberrant Mind", "Aether Heart","Astral Sorcery","Bloodrazor","The Chained", "Clockwork Soul", "Cosmic Sorcery", "Dark Wild Magic","Divine Soul", "Divine Right", "Draconic Bloodline", "Emberheart", "Emotion Lord", "Faeblood", "Frost Sorcery", "Gifted One", "Greensinger", "Hellspawn", "Iron Sorcery","Jinx", "Lunar Sorcery", "Magnetism Sorcery", "Mirrorkin", "Mutagenic Bloodline", "Nanite Host", "Oozemaster", "Radiation Freak", "Reincarnated Hero", "Shadow", "Spiritborn", "Spirit Caller", "Stoneblood", "Storm Sorcery", "Toon Magic", "Vampiric Soul", "Voidwielder", "Waveborn", "Wild Magic"] },
         { name: "Vagabond", hitDie: 'd10', savingThrows: ['STR', 'CON'], image: "images/vagabond.webp", description: "Exiliados, perseguidos o simplemente inquietos que viven en movimiento. El camino es su hogar y la desesperación, su mayor maestra.", link: "https://homebrewery.naturalcrit.com/share/7LePIfQ0CLhu", subclasses: ["Adrenaline Junkie", "Brigand", "Experiment X", "Feylost", "Gourmand", "Houndmaster","Justicar","Knight Errant","Mage Brand","Mindblade","Plague Doctor","Pugilist","Rōnin","Troubadour"] },
-        { name: "Vessel", hitDie: 'd10', savingThrows: ['CON', 'CHA'], image: "images/vessel.webp", description: "Un ser marcado por una conexión especial con espíritus, otorgándole poderes místicos y transformadores.", link: "https://homebrewery.naturalcrit.com/share/vBYpvFeHFy6v", subclasses: ["The Ancient Wyrms", "The Ascended", "The Beyond", "The Cataclysm", "The Cursed", "The Fallen", "The Formless", "The Mushroom Prince", "The Mythic Hero", "The Parasite", "The Overgrown", "The Titan", "The Trickster", "The Undying"] },
-        { name: "Warden", hitDie: 'd12', savingThrows: ['CON', 'STR'], image: "images/warden.webp", description: "Defensores de tierras y territorios, especializados en la protección de lo que es sagrado o valioso.", link: "https://homebrewery.naturalcrit.com/share/90VpGRQPU-Cn", subclasses: ["Bloodwrath Guardian", "Carrion King", "Eye of Twilight", "Fey Trailblazer", "Godsworn", "Grey Watchman", "Hellkeeper", "Iceheart Bastion", "Lawbringer", "Loreseeker", "Nightgaunt", "Soulblood Shaman", "Stoneheart Defender", "Storm Sentinel", "Verdant Protector", "Witchbane Hunter"] },
-        { name: "Warlock", hitDie: 'd8', savingThrows: ['WIS', 'CHA'], hitDie: 'd8', savingThrows: ['WIS', 'CHA'], image: "images/warlock.webp", description: "Ser que obtiene poder mediante pactos con entidades sobrenaturales a cambio de favores y lealtad.", link: "https://homebrewery.naturalcrit.com/share/kLwQFqpQ7pei", subclasses: ["The Alabaster", "The Archfey", "The Archmage", "The Celestial", "The Coven", "The Dead Mists", "The Elder Sphinx", "The Fathomless", "The Fiend", "The Future You", "The Genie", "The GM", "The Great Old One", "The Great Wyrm", "The Hexblade", "The King", "The Legacy", "The Legendary Hero", "The Magician", "The Mummy Lord", "The Primeval Growth", "The Shinigami", "The Singularity", "The Star", "The Swarm", "The Symbiont", "The Titan", "The Unblinking", "The Undead", "The Undying", "The Wild Hunt"] },
-        { name: "Warlord", hitDie: 'd10', savingThrows: ['INT', 'CON'], image: "images/warlord.webp", description: "Señor de la guerra, un líder militar que dirige a sus tropas con astucia y habilidad estratégica en el campo de batalla.", link: "https://homebrewery.naturalcrit.com/share/3IUIglJ_K-O4", subclasses: ["Academy of Chivalry", "Academy of Dawnbringer", "Academy of Dreadlords", "Academy of Ferocity", "Academy of Schemes", "Academy of Skalds", "Academy of Tactics"] },
-        { name: "Warmage", hitDie: 'd8', savingThrows: ['INT', 'CON'], image: "images/warmage.webp", description: "Estratega experto que domina un area de magia especializada para devastar a sus enemigos en el campo de batalla.", link: "https://homebrewery.naturalcrit.com/share/rau8aywbKXzF", subclasses: ["House of Bishops", "House of Coalition Arcanist", "House of Darts", "House of Dice", "House of Go", "House of Kings", "House of Knights", "House of Queens", "House of Lancers", "House of Pawns", "House of Rooks", "House of Roulette"] },
-        { name: "Witch", hitDie: 'd8', savingThrows: ['CHA', 'WIS'], image: "images/witch.webp", description: "Una usuaria de la magia arcana que emplea encantamientos y maldiciones para manipular el destino.", link: "https://homebrewery.naturalcrit.com/share/cl5HbkIH2xFw", subclasses: ["Black Magic", "Blood Magic", "Blue Magic", "Duskcaller Magic", "Fragrant Magic", "Gingerbread Magic", "Green Magic", "Lunar Magic", "Purple Magic", "Red Magic", "Sky Magic", "Steel Magic", "Tea Magic", "Technicolor Magic", "White Magic"] },
-        { name: "Wizard", hitDie: 'd6', savingThrows: ['INT', 'WIS'], image: "images/wizard.webp", description: "Erudito en el estudio y dominio de la magia arcana, capaz de lanzar poderosos hechizos y controlarla con precisión.", link: "https://homebrewery.naturalcrit.com/share/ymEiMM7-iT9H", subclasses: ["Familiar Master", "Magic Missile Mage", "Mystic Savant", "Order of Scribes", "School of Abjuration", "School of Automata", "School of Bladesinging", "School of Conjuration", "School of Chronomancy", "School of Divination", "School of Enchantment", "School of Evocation", "School of Gastronomy", "School of Graviturgy", "School of Hardlight", "School of Hexcraft", "School of Illusion", "School of Necromancy", "School of Metallurgy", "School of Somnomancy", "School of Theurgy", "School of Teleportation", "School of Transmutation", "School of War Magic", "School of Warp Watcher", "Shinobi"] }
+        { name: "Vessel", hitDie: 'd10', savingThrows: ['CON', 'CHA'], image: "images/vessel.webp", description: "Un ser marcado por una conexión especial con espíritus, otorgándole poderes místicos y transformadores.", link: "https://homebrewery.naturalcrit.com/share/vBYpvFeHFy6v", subclasses: ["The Ancient Wyrms", "The Ascended", "The Beyond", "The Cataclysm", "The Cursed", "The Departed","The Fallen", "The Formless", "The Mushroom Prince", "The Mythic Hero", "The Parasite", "The Overgrown", "The Titan", "The Trickster", "The Undying"] },
+        { name: "Warden", hitDie: 'd12', savingThrows: ['CON', 'STR'], image: "images/warden.webp", description: "Defensores de tierras y territorios, especializados en la protección de lo que es sagrado o valioso.", link: "https://homebrewery.naturalcrit.com/share/90VpGRQPU-Cn", subclasses: ["Beastblood Guardian", "Carrion King", "Cosmic Seeker","Elastic Hero","Eye of Twilight", "Diabolist","Drake Blooded","Fey Trailblazer", "Godsworn", "Grey Watchman", "Hellkeeper", "Iceheart Bastion", "Lawbringer", "Loreseeker", "Nightgaunt", "Soulblood Shaman", "Steel Shepherd","Stoneheart Defender", "Storm Sentinel", "Sun Watcher", "Titanblood Sentinel", "Verdant Protector", "Witchbane Hunter"] },
+        { name: "Warlock", hitDie: 'd8', savingThrows: ['WIS', 'CHA'], hitDie: 'd8', savingThrows: ['WIS', 'CHA'], image: "images/warlock.webp", description: "Ser que obtiene poder mediante pactos con entidades sobrenaturales a cambio de favores y lealtad.", link: "https://homebrewery.naturalcrit.com/share/kLwQFqpQ7pei", subclasses: ["The Alabaster", "The Archfey", "The Archmage", "The Celestial", "The Coven", "The Dead Mists", "The Elder Sphinx", "The Fathomless", "The Fiend", "The Future You", "The Genie", "The GM", "The Great Tree","The Great Old One", "The Great Wyrm", "The Hexblade", "The King", "The Lantern","The Legacy", "The Legendary Hero", "The Magician", "The Mummy Lord", "The Primeval Growth", "The Shinigami", "The Singularity", "The Solar", "The Star", "The Swarm", "The Symbiont", "The Titan", "The Unblinking", "The Undead", "The Undying", "The Wild Hunt"] },
+        { name: "Warlord", hitDie: 'd10', savingThrows: ['INT', 'CON'], image: "images/warlord.webp", description: "Señor de la guerra, un líder militar que dirige a sus tropas con astucia y habilidad estratégica en el campo de batalla.", link: "https://homebrewery.naturalcrit.com/share/3IUIglJ_K-O4", subclasses: ["Academy of Chivalry", "Academy of Claws","Academy of Counsel","Academy of Dawnbringer", "Academy of Dreadlords", "Academy of Ferocity", "Academy of Liberty","Academy of Order","Academy of the Red","Academy of the Seadog","Academy of Schemes", "Academy of Skalds", "Academy of Tactics","Academy of Zeals"] },
+        { name: "Warmage", hitDie: 'd8', savingThrows: ['INT', 'CON'], image: "images/warmage.webp", description: "Estratega experto que domina un area de magia especializada para devastar a sus enemigos en el campo de batalla.", link: "https://homebrewery.naturalcrit.com/share/rau8aywbKXzF", subclasses: ["House of Bishops", "House of Coalition Arcanist", "House of Darts", "House of Dice", "House of Go", "House of Janus","House of Kings", "House of Knights", "House of Queens", "House of Lancers", "House of Pawns", "House of Rooks", "House of Roulette","House of Words"] },
+        { name: "Witch", hitDie: 'd8', savingThrows: ['CHA', 'WIS'], image: "images/witch.webp", description: "Una usuaria de la magia arcana que emplea encantamientos y maldiciones para manipular el destino.", link: "https://homebrewery.naturalcrit.com/share/cl5HbkIH2xFw", subclasses: ["Black Magic", "Blood Magic", "Blue Magic", "Disformity Magic","Duskcaller Magic", "Fragrant Magic", "Fruit Magic","Gingerbread Magic", "Green Magic", "Lunar Magic", "Purple Magic", "Red Magic", "Sky Magic", "Steel Magic", "Tea Magic", "Technicolor Magic", "White Magic"] },
+        { name: "Wizard", hitDie: 'd6', savingThrows: ['INT', 'WIS'], image: "images/wizard.webp", description: "Erudito en el estudio y dominio de la magia arcana, capaz de lanzar poderosos hechizos y controlarla con precisión.", link: "https://homebrewery.naturalcrit.com/share/ymEiMM7-iT9H", subclasses: ["Familiar Master", "Magic Missile Mage", "Mystic Savant", "Order of Embalmers", "Order of Scribes", "Origami Mage","School of Abjuration", "School of Animism","School of Automata", "School of Bladesinging", "School of Conjuration", "School of Chronomancy", "School of Divination", "School of Enchantment", "School of Evocation", "School of Gastronomy", "School of Graviturgy", "School of Hardlight", "School of Hexcraft", "School of Illusion", "School of Necromancy", "School of Metallurgy", "School of Somnomancy", "School of Theurgy", "School of Teleportation", "School of Transmutation", "School of War Magic", "School of Warp Watcher", "Shinobi"] }
     ];
 
     // --- FUNCIONES ---
@@ -884,15 +894,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // --- TIER LIST --- (Keep your Tier List functions and listeners)
+// Función para limpiar las filas del tier list y devolver items al banco
+    function resetTierListItems() {
+        tierRowsContainer.querySelectorAll('.tier-dropzone .tier-item').forEach(item => {
+            // No es necesario añadirlo explícitamente al banco aquí,
+            // porque populateItemBank lo vaciará y rellenará de todos modos.
+            // Simplemente los quitamos de las filas.
+             item.remove(); // Opcionalmente podrías moverlos al bank si populateItemBank no lo vaciara
+        });
+        // También vaciamos el banco por si acaso (aunque populateItemBank ya lo hace)
+        itemBank.innerHTML = '';
+    }
+
     tierListButton.addEventListener("click", () => {
         mainContainer.classList.add("hidden");
         quizContainer.classList.add("hidden");
         spellbookContainer.classList.add("hidden");
+        hpCalculatorContainer.classList.add("hidden");
         tierListContainer.classList.remove("hidden");
-        // Ensure item bank is populated if it wasn't already
-        if (itemBank.children.length === 0) {
-            populateItemBank();
-        }
+        tierListTitle.textContent = "Crea tu Tier List de Clases";
+
+        resetTierListItems(); // <--- LLAMA A LA FUNCIÓN DE LIMPIEZA AQUÍ
+        populateItemBank('class'); // Llena el banco DESPUÉS de limpiar
+    });
+
+    subclassTierListButton.addEventListener("click", () => {
+        mainContainer.classList.add("hidden");
+        quizContainer.classList.add("hidden");
+        spellbookContainer.classList.add("hidden");
+        hpCalculatorContainer.classList.add("hidden");
+        tierListContainer.classList.remove("hidden");
+        tierListTitle.textContent = "Crea tu Tier List de Subclases";
+
+        resetTierListItems(); // <--- LLAMA A LA FUNCIÓN DE LIMPIEZA AQUÍ
+        populateItemBank('subclass'); // Llena el banco DESPUÉS de limpiar
     });
 
     exitTierListButton.addEventListener("click", () => {
@@ -917,39 +952,79 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function populateItemBank() {
-        itemBank.innerHTML = ''; // Clear first in case of re-population
+function populateItemBank(mode = 'class') { // Restore mode parameter
+    itemBank.innerHTML = ''; // Clear first
+
+    const itemsToCreate = []; // Array to hold items before appending
+
+    if (mode === 'class') {
+        itemBank.innerHTML = '';
         classes.forEach(cls => {
-            const item = document.createElement("div");
-            item.classList.add("tier-item");
-            item.draggable = true;
-            item.id = `tier-item-${cls.name.replace(/\s+/g, '-')}`;
-
-            const img = document.createElement("img");
-            img.src = cls.image;
-            img.alt = cls.name;
-
-            const nameSpan = document.createElement("span");
-            nameSpan.textContent = cls.name;
-
-            item.appendChild(img);
-            item.appendChild(nameSpan);
-
-            item.addEventListener("dragstart", () => {
-                draggedItem = item;
-                setTimeout(() => item.classList.add("dragging"), 0);
+            itemsToCreate.push({
+                id: `tier-item-class-${cls.name.replace(/[^a-zA-Z0-9]/g, '-')}`,
+                name: cls.name,
+                image: cls.image,
+                alt: cls.name,
+                isClass: true
             });
-            item.addEventListener("dragend", () => {
-                if(draggedItem) {
-                    draggedItem.classList.remove("dragging");
-                }
-                draggedItem = null;
-            });
-            itemBank.appendChild(item);
         });
-        // Add drag events to the bank itself after populating
-        addDragEventsToZone(itemBank);
+    } else if (mode === 'subclass') {
+        itemBank.innerHTML = '';
+        classes.forEach(cls => {
+            if (cls.subclasses && cls.subclasses.length > 0) {
+                cls.subclasses.sort((a, b) => a.localeCompare(b)); // Sort subclasses
+                cls.subclasses.forEach(subclass => {
+                    itemsToCreate.push({
+                        id: `tier-item-subclass-${cls.name.replace(/[^a-zA-Z0-9]/g, '-')}-${subclass.replace(/[^a-zA-Z0-9]/g, '-')}`,
+                        name: subclass,
+                        image: cls.image, // Use parent class image
+                        alt: `${subclass} (${cls.name})`,
+                        isClass: false
+                    });
+                });
+            }
+        });
+         // Optional: Sort all subclasses alphabetically regardless of parent class
+         // itemsToCreate.sort((a, b) => a.name.localeCompare(b.name));
     }
+
+    // Create and append elements from the array
+    itemsToCreate.forEach(itemData => {
+        const item = document.createElement("div");
+        item.classList.add("tier-item");
+        item.draggable = true;
+        item.id = itemData.id;
+
+        const img = document.createElement("img");
+        img.src = itemData.image;
+        img.alt = itemData.alt;
+
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = itemData.name;
+        if (itemData.isClass) {
+             nameSpan.style.fontWeight = 'bold'; // Bold for main classes
+        }
+
+        item.appendChild(img);
+        item.appendChild(nameSpan);
+
+        item.addEventListener("dragstart", () => {
+            draggedItem = item;
+            setTimeout(() => item.classList.add("dragging"), 0);
+        });
+        item.addEventListener("dragend", () => {
+            if (draggedItem) {
+                draggedItem.classList.remove("dragging");
+            }
+            draggedItem = null;
+        });
+        itemBank.appendChild(item);
+    });
+
+
+    // Add drag events to the bank itself after populating
+    addDragEventsToZone(itemBank);
+}
 
     addTierRowButton.addEventListener("click", () => {
         const newRow = document.createElement("div");
@@ -968,14 +1043,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function handleTierRowDelete(deleteButton) {
-        const rowToDelete = deleteButton.closest('.tier-row');
-        if (!rowToDelete) return;
-        const itemsToMove = rowToDelete.querySelectorAll('.tier-item');
-        itemsToMove.forEach(item => {
-            itemBank.appendChild(item);
-        });
-        rowToDelete.remove();
-    }
+    const rowToDelete = deleteButton.closest('.tier-row');
+    if (!rowToDelete) return;
+    const itemsToMove = rowToDelete.querySelectorAll('.tier-item');
+
+    // Check which mode we are in to populate correctly if needed later
+    // Or simply always move back to the bank regardless of mode currently displayed
+    itemsToMove.forEach(item => {
+        itemBank.appendChild(item); // Move back to the currently populated bank
+    });
+    rowToDelete.remove();
+}
 
     function addDeleteEventToButton(button) {
         button.addEventListener('click', () => {
@@ -988,7 +1066,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial setup for existing elements
     document.querySelectorAll(".tier-dropzone").forEach(zone => addDragEventsToZone(zone));
     document.querySelectorAll('.delete-tier-row-button').forEach(button => addDeleteEventToButton(button));
-    populateItemBank(); // Populate bank on initial load
 
     // --- GRIMORIO ---
 
@@ -1121,74 +1198,113 @@ document.addEventListener("DOMContentLoaded", () => {
         const storedFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
         if (storedFavorites) {
             try {
-                favoriteSpells = JSON.parse(storedFavorites);
-            } catch (e) { console.error("Error parsing favorites:", e); favoriteSpells = []; }
+                favoriteSpellsByCharacter = JSON.parse(storedFavorites);
+                // Ensure there's always a default list if the loaded data is weird
+                if (typeof favoriteSpellsByCharacter !== 'object' || favoriteSpellsByCharacter === null) {
+                    favoriteSpellsByCharacter = { "Default": [] };
+                } else if (!favoriteSpellsByCharacter["Default"]) {
+                    favoriteSpellsByCharacter["Default"] = []; // Ensure Default exists
+                }
+            } catch (e) {
+                console.error("Error parsing favorites:", e);
+                favoriteSpellsByCharacter = { "Default": [] }; // Initialize with default on error
+            }
         } else {
-            favoriteSpells = [];
+            favoriteSpellsByCharacter = { "Default": [] }; // Initialize with default if nothing stored
+        }
+        // Load last selected character or default
+        currentCharacter = localStorage.getItem('dndSpellCurrentCharacter') || "Default";
+        // Make sure the loaded character actually exists in our data
+        if (!favoriteSpellsByCharacter[currentCharacter]) {
+            currentCharacter = "Default";
+            localStorage.setItem('dndSpellCurrentCharacter', currentCharacter); // Save corrected character
         }
     }
 
     function saveFavorites() {
-        localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favoriteSpells));
+        localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favoriteSpellsByCharacter));
+        // Also save the currently selected character
+        localStorage.setItem('dndSpellCurrentCharacter', currentCharacter);
     }
 
     function toggleFavorite(spellName, buttonElement) {
-        const index = favoriteSpells.indexOf(spellName);
-        if (index > -1) {
-            favoriteSpells.splice(index, 1);
-        } else {
-            favoriteSpells.push(spellName);
+    // Ensure the current character's list exists
+        if (!favoriteSpellsByCharacter[currentCharacter]) {
+            favoriteSpellsByCharacter[currentCharacter] = [];
         }
+
+        const currentList = favoriteSpellsByCharacter[currentCharacter];
+        const index = currentList.indexOf(spellName);
+
+        if (index > -1) {
+            currentList.splice(index, 1); // Remove from current character's list
+        } else {
+            currentList.push(spellName); // Add to current character's list
+        }
+        // No need to reassign, splice/push modify the array in place
+        // favoriteSpellsByCharacter[currentCharacter] = currentList; // This line is redundant
+
         saveFavorites();
         updateFavoriteButtonState(spellName); // Update ALL buttons for this spell
 
-        // If currently showing favorites, re-render that list
+        // If currently showing favorites for the *current character*, re-render that list
         if (showingFavorites) {
             renderFavoriteSpells();
         }
     }
 
-    function renderFavoriteSpells() {
-        favoriteSpellListContainer.innerHTML = '<h3>Mis Hechizos Favoritos</h3>'; // Clear and add title
+function renderFavoriteSpells() {
+    favoriteSpellListContainer.innerHTML = ''; // Limpia el contenedor PRIMERO
 
-        const favoriteSpellObjects = allSpells.filter(spell => favoriteSpells.includes(spell.Nombre));
+    // CREA el título H3 aquí DENTRO de la función
+    const titleElement = document.createElement('h3');
+    titleElement.id = "favoriteListTitle"; // Puedes mantener el ID si lo necesitas
+    titleElement.textContent = `Favoritos de ${currentCharacter}`;
+    favoriteSpellListContainer.appendChild(titleElement); // Añade el título al contenedor vacío
 
-        if (favoriteSpellObjects.length === 0) {
-            favoriteSpellListContainer.innerHTML += '<p>No has marcado ningún hechizo como favorito.</p>';
-            // Still apply simplified view class in case user switches back later
-            favoriteSpellListContainer.classList.toggle('simplified-view', isSpellViewSimplified);
-            return;
-        }
+    // El resto de la lógica para obtener y mostrar los hechizos
+    const currentFavs = favoriteSpellsByCharacter[currentCharacter] || [];
+    const favoriteSpellObjects = allSpells.filter(spell => currentFavs.includes(spell.Nombre));
 
-        // Apply sorting to favorites as well
-        const sortVal = sortSpells.value;
-        if (sortVal === 'name') {
-           favoriteSpellObjects.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
-       } else if (sortVal === 'level') {
-           favoriteSpellObjects.sort((a, b) => a.Nivel - b.Nivel || a.Nombre.localeCompare(b.Nombre)); // Add secondary name sort
-       }
-
-        renderSpells(favoriteSpellObjects, favoriteSpellListContainer); // Render into the correct container
-        // Ensure simplified view is applied correctly after rendering
+    if (favoriteSpellObjects.length === 0) {
+        // Añade el mensaje de "no hay favoritos" directamente
+        const p = document.createElement('p');
+        p.textContent = `No has marcado ningún hechizo como favorito para ${currentCharacter}.`;
+        favoriteSpellListContainer.appendChild(p);
         favoriteSpellListContainer.classList.toggle('simplified-view', isSpellViewSimplified);
-
-        // Ensure cards within favorites respect simplified view state
-        favoriteSpellListContainer.querySelectorAll('.spell-card .spell-details').forEach(details => {
-            details.classList.toggle('hidden', isSpellViewSimplified);
-        });
-        favoriteSpellListContainer.querySelectorAll('.spell-card').forEach(card => card.classList.remove('expanded'));
-
+        return; // Sal de la función si no hay favoritos
     }
 
+    // Aplica el ordenamiento (sin cambios aquí)
+    const sortVal = sortSpells.value;
+    if (sortVal === 'name') {
+       favoriteSpellObjects.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+   } else if (sortVal === 'level') {
+       favoriteSpellObjects.sort((a, b) => a.Nivel - b.Nivel || a.Nombre.localeCompare(b.Nombre));
+   }
+
+    // Renderiza los hechizos (sin cambios aquí, se añaden después del título)
+    renderSpells(favoriteSpellObjects, favoriteSpellListContainer);
+
+    // Asegúrate que la vista simplificada/extendida se aplique correctamente (sin cambios aquí)
+    favoriteSpellListContainer.classList.toggle('simplified-view', isSpellViewSimplified);
+    favoriteSpellListContainer.querySelectorAll('.spell-card .spell-details').forEach(details => {
+        details.classList.toggle('hidden', isSpellViewSimplified);
+    });
+    favoriteSpellListContainer.querySelectorAll('.spell-card').forEach(card => card.classList.remove('expanded'));
+}
+
     function updateFavoriteButtonState(spellName) {
-        const isFav = favoriteSpells.includes(spellName);
-        // Select buttons in BOTH lists
-        const buttons = document.querySelectorAll(`#spellList .favorite-button[data-spell-name="${spellName}"], #favoriteSpellList .favorite-button[data-spell-name="${spellName}"]`);
-        buttons.forEach(button => {
-            button.textContent = isFav ? '★' : '☆';
-            button.classList.toggle('favorited', isFav);
-            button.title = isFav ? 'Quitar de favoritos' : 'Añadir a favoritos';
-        });
+    // Check if the spell is in the *current character's* list
+    const isFav = (favoriteSpellsByCharacter[currentCharacter] || []).includes(spellName);
+
+    // Select buttons in BOTH lists (no change here needed)
+    const buttons = document.querySelectorAll(`#spellList .favorite-button[data-spell-name="${spellName}"], #favoriteSpellList .favorite-button[data-spell-name="${spellName}"]`);
+    buttons.forEach(button => {
+        button.textContent = isFav ? '★' : '☆';
+        button.classList.toggle('favorited', isFav);
+        button.title = isFav ? `Quitar de ${currentCharacter}` : `Añadir a ${currentCharacter}`; // Update title
+    });
     }
 
     // --- SPELL LOADING AND RENDERING ---
@@ -1199,7 +1315,8 @@ document.addEventListener("DOMContentLoaded", () => {
             allSpells = await response.json();
             isSpellsLoaded = true;
             loadFavorites(); // Load favorites AFTER spells are loaded
-
+            populateCharacterSelect();
+            
             // --- Populate Filters (Keep this logic) ---
             const classJsonMap = { "Bard": "bardo", "Cleric": "clerigo", "Druid": "druida", "Paladin": "paladin", "Ranger": "ranger", "Sorcerer": "sorcerer", "Warlock": "warlock", "Wizard": "wizard", "Artificer": "artificer", "Warmage": "warmage", "Witch": "witch", "Martyr": "martyrs", "Vessel": "The Vessel", "Necromancer": "Necromancer", "Magus": "Magus", "Investigator": "Investigator", "Shaman": "Shaman" }; // Added Shaman
             const damageTypes = [ { value: "acid", display: "Ácido" }, { value: "bludgeoning", display: "Contundente" }, { value: "cold", display: "Frío" }, { value: "fire", display: "Fuego" }, { value: "force", display: "Fuerza" }, { value: "lightning", display: "Rayo" }, { value: "necrotic", display: "Necrótico" }, { value: "piercing", display: "Perforante" }, { value: "poison", display: "Veneno" }, { value: "psychic", display: "Psíquico" }, { value: "radiant", display: "Radiante" }, { value: "slashing", display: "Cortante" }, { value: "thunder", display: "Trueno" } ];
@@ -1388,6 +1505,110 @@ document.addEventListener("DOMContentLoaded", () => {
         // Ensure the container has the correct view class AFTER rendering
         container.classList.toggle('simplified-view', isSpellViewSimplified);
     }
+
+    function populateCharacterSelect() {
+    characterSelect.innerHTML = ''; // Clear existing options
+    const characterNames = Object.keys(favoriteSpellsByCharacter).sort(); // Get and sort names
+
+    characterNames.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        if (name === currentCharacter) {
+            option.selected = true; // Select the current character
+        }
+        characterSelect.appendChild(option);
+    });
+     // Update optional display span
+     if(currentCharacterNameSpan) currentCharacterNameSpan.textContent = `Actual: ${currentCharacter}`;
+     // Enable/disable buttons based on selection
+     renameCharacterButton.disabled = (currentCharacter === "Default");
+     deleteCharacterButton.disabled = (currentCharacter === "Default");
+
+}
+
+function switchCharacter(newName) {
+    if (favoriteSpellsByCharacter[newName]) {
+        currentCharacter = newName;
+        populateCharacterSelect(); // Update dropdown selection
+        saveFavorites(); // Save the new current character selection
+         // If viewing favorites, refresh the list
+        if (showingFavorites) {
+            renderFavoriteSpells();
+        }
+        // Update the state of favorite buttons on the main list
+        applyFiltersAndSort();
+    } else {
+        console.error("Character not found:", newName);
+    }
+}
+
+// --- Add Event Listeners for New Buttons ---
+characterSelect.addEventListener('change', (e) => {
+    switchCharacter(e.target.value);
+});
+
+addCharacterButton.addEventListener('click', () => {
+    const newCharName = prompt("Ingresa el nombre del nuevo personaje:");
+    if (newCharName && newCharName.trim() !== "") {
+        const cleanName = newCharName.trim();
+        if (favoriteSpellsByCharacter[cleanName]) {
+            alert("Ya existe un personaje con ese nombre.");
+        } else {
+            favoriteSpellsByCharacter[cleanName] = []; // Add new character with empty list
+            switchCharacter(cleanName); // Switch to the new character
+            // saveFavorites() is called within switchCharacter
+        }
+    }
+});
+
+renameCharacterButton.addEventListener('click', () => {
+    if (currentCharacter === "Default") {
+        alert("No se puede renombrar el personaje 'Default'.");
+        return;
+    }
+    const newName = prompt(`Ingresa el nuevo nombre para "${currentCharacter}":`, currentCharacter);
+    if (newName && newName.trim() !== "" && newName.trim() !== currentCharacter) {
+        const cleanNewName = newName.trim();
+        if (favoriteSpellsByCharacter[cleanNewName]) {
+            alert("Ya existe un personaje con ese nombre.");
+        } else {
+            // Copy list, delete old, add new, update current
+            const oldList = favoriteSpellsByCharacter[currentCharacter];
+            delete favoriteSpellsByCharacter[currentCharacter];
+            favoriteSpellsByCharacter[cleanNewName] = oldList;
+            currentCharacter = cleanNewName; // Update currentCharacter *after* modifying the object
+            populateCharacterSelect(); // Refresh dropdown
+            saveFavorites(); // Save changes
+             // Update favorite list title if showing favorites
+            if (showingFavorites) {
+               favoriteListTitle.textContent = `Favoritos de ${currentCharacter}`;
+            }
+        }
+    }
+});
+
+deleteCharacterButton.addEventListener('click', () => {
+    if (currentCharacter === "Default") {
+        alert("No se puede borrar el personaje 'Default'.");
+        return;
+    }
+    if (confirm(`¿Estás seguro que quieres borrar al personaje "${currentCharacter}" y todos sus favoritos?`)) {
+        delete favoriteSpellsByCharacter[currentCharacter];
+        currentCharacter = "Default"; // Revert to default
+        populateCharacterSelect(); // Refresh dropdown
+        saveFavorites(); // Save changes
+         // If viewing favorites, switch view to default character's list
+        if (showingFavorites) {
+             renderFavoriteSpells();
+        } else {
+             // Refresh main list to update button tooltips potentially
+             applyFiltersAndSort();
+        }
+
+    }
+});
+
 // --- NEW HP CALCULATOR LISTENERS ---
 hpCalculatorButton.addEventListener("click", () => {
     mainContainer.classList.add("hidden");

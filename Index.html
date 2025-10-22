@@ -25,13 +25,12 @@
         <!-- Botón para jugar -->
         <button id="discoverButton">Descubrir mi clase</button>
 		<!-- Botón para entrar al Tier List -->
-		<button id="tierListButton">Crear Tier List</button>
+		<button id="tierListButton">Crear Tier List (Clases)</button>
+<button id="subclassTierListButton">Crear Tier List (Subclases)</button>
 		<!-- Botón para entrar al Quiz -->
 		<button id="quizButton">Iniciar Quiz</button>
 		<button id="spellbookButton">Ver Libro de Spells</button>
 		<button id="hpCalculatorButton">Calculadora de HP</button>
-        <!-- Contenedor de la galería (se oculta por defecto) -->
-        <!-- <div id="galleryContainer" class="hidden"> -->
 
     <div class="container">
         <h2>Galería de Imágenes</h2>
@@ -102,7 +101,7 @@
 </div>
 
 <div id="tierListContainer" class="hidden">
-    <h2>Crea tu Tier List de Clases</h2>
+    <h2 id="tierListTitle">Crea tu Tier List</h2>
     
 	<div class="tier-controls">
 			<button id="addTierRowButton">Añadir Fila</button>
@@ -146,6 +145,15 @@
     <div class="tier-controls">
         <button id="exitSpellbookButton">Salir</button>
 		
+    </div>
+
+    <div id="characterManagement" style="margin: 15px auto; padding: 10px; background-color: #333; border-radius: 5px; width: 90%;">
+        <label for="characterSelect" style="margin-right: 10px;">Personaje:</label>
+        <select id="characterSelect" style="padding: 5px; background-color: #444; color: white; border: 1px solid #666; border-radius: 3px;"></select>
+        <button id="addCharacterButton" style="margin-left: 10px; padding: 5px 10px;">+</button>
+        <button id="renameCharacterButton" style="margin-left: 5px; padding: 5px 10px;">Renombrar</button>
+        <button id="deleteCharacterButton" style="margin-left: 5px; padding: 5px 10px; background-color:#d9534f; color:white;">Borrar</button>
+        <span id="currentCharacterName" style="margin-left: 15px; font-style: italic;"></span> 
     </div>
 
     <div id="spellControls">
