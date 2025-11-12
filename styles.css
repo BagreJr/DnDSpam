@@ -890,6 +890,103 @@ font-size: 16px;
     background-color: #c9302c;
 }
 
+/* --- Estilos del Asistente --- */
+.assistant-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 900;
+    width: 100px; /* Ancho para la imagen */
+    height: 100px; /* Alto para la imagen */
+}
+
+.assistant-container.hidden {
+    display: none;
+}
+
+#assistantImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* o 'contain' si prefieres */
+    border-radius: 50%; /* Hacerlo circular */
+    border: 3px solid #ffcc00;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, opacity 0.3s;
+    opacity: 0.85;
+}
+
+.assistant-container:hover #assistantImage {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.assistant-bubble {
+    display: none; /* Oculto por defecto */
+    position: absolute;
+    bottom: 110px; /* Justo encima de la imagen */
+    right: 0;
+    width: 300px;
+    max-width: 80vw;
+    padding: 15px;
+    background-color: #f0e6c6; /* Un color papiro */
+    color: #3b3a30; /* Texto oscuro */
+    border: 2px solid #8B4513; /* Borde marrón */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    font-family: 'Georgia', serif; /* Fuente más de fantasía */
+    font-size: 14px;
+    line-height: 1.4;
+    /* Animación de entrada */
+    transform: translateY(10px);
+    opacity: 0;
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+/* Triángulo del bocadillo */
+.assistant-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -10px; /* Apunta hacia abajo */
+    right: 30px; /* Alineado con la imagen */
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #8B4513; /* Color del borde */
+}
+
+/* Clase 'show' para mostrar la burbuja */
+.assistant-bubble.show {
+    display: block;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.assistant-bubble #assistantTitle {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 1.1em;
+    color: #8B4513;
+    border-bottom: 1px dashed #8B4513;
+    padding-bottom: 5px;
+}
+
+.assistant-bubble p {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.assistant-bubble #assistantSubclasses {
+    font-size: 13px;
+    border-top: 1px solid #c9a479;
+    padding-top: 8px;
+}
+
+.assistant-bubble #assistantSubclasses strong {
+    color: #8B4513;
+}
+
+
 /* Responsive para la calculadora */
 @media screen and (max-width: 600px) {
      #hpCalculatorContainer .hp-calc-grid {
