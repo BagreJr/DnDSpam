@@ -185,6 +185,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const assistantEasy = document.getElementById("assistantEasy");
     const assistantHard = document.getElementById("assistantHard");
 
+    // Referencias para ocultar el asistente al cambiar de vista
+    const buttonsToHideAssistant = [
+        document.getElementById("discoverButton"),
+        document.getElementById("tierListButton"),
+        document.getElementById("subclassTierListButton"),
+        document.getElementById("quizButton"),
+        document.getElementById("spellbookButton"),
+        document.getElementById("hpCalculatorButton"),
+        document.getElementById("exitQuiz"),
+        document.getElementById("exitTierListButton"),
+        document.getElementById("exitSpellbookButton"),
+        document.getElementById("closeHpCalculator")
+    ];
     // Referencias a las imágenes del DOM principal (de script.js)
     const mainClassImage = document.getElementById("classImage");
     const galleryModalImage = document.getElementById("modalImage");
@@ -192,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentClass = null; // Para saber qué consejo mostrar
     let bubbleHover = false; // Para saber si el mouse está sobre la burbuja
     let iconHover = false;   // Para saber si el mouse está sobre el icono
-
+    
     // --- 3. CORE FUNCTIONS ---
 
     /**
@@ -312,4 +325,52 @@ document.addEventListener("DOMContentLoaded", () => {
     if (galleryModalImage) {
         observer.observe(galleryModalImage, { attributes: true });
     }
+
+    // DISPARADOR 2: Resultado del Quiz
+    if (quizResult) {
+        const quizObserverCallback = (mutationsList) => {
+            for (const mutation of mutationsList) {
+                // Vigila si se añaden nodos (el resultado) o si el div se vacía (al salir)
+                if (mutation.type === 'childList' && (mutation.addedNodes.length > 0 || quizResult.innerHTML === "")) {
+                    
+                    // Si el div se vacía (al salir o reiniciar)
+                    if (quizResult.innerHTML === "") {
+                        updateAssistant(null);
+                        assistantBubble.classList.remove("show");
+                        continue; // Sigue al próximo 'mutation'
+                    }
+
+                    // Si se añade contenido, buscar el H3
+                    const resultH3 = quizResult.querySelector("h3");
+                    if (resultH3 && resultH3.textContent.includes("¡Tu clase es")) {
+                        // Extrae la clase: "¡Tu clase es Bárbaro!" -> "Bárbaro"
+                        const text = resultH3.textContent;
+                        const match = text.match(/¡Tu clase es (.*?)!/); // Busca el texto entre "es " y "!"
+                        if (match && match[1]) {
+                            const className = match[1];
+                            updateAssistant(className); // Actualiza contenido
+                            assistantBubble.classList.add("show"); // Muestra la burbuja
+                        }
+                    } else if (resultH3 && resultH3.textContent.includes("afinidad con varias")) {
+                        // Caso de empate, no mostrar consejo específico
+                        updateAssistant(null);
+                        assistantBubble.classList.remove("show");
+                    }
+                }
+            }
+        };
+        
+        const quizObserver = new MutationObserver(quizObserverCallback);
+        // Observa cambios en los hijos (añadir/quitar el texto de resultado)
+        quizObserver.observe(quizResult, { childList: true, subtree: true });
+    }
+    buttonsToHideAssistant.forEach(button => {
+        if (button) { // Comprobar que el botón existe antes de añadir el listener
+            button.addEventListener("click", () => {
+                updateAssistant(null); // Resetea el ícono a 'default'
+                assistantBubble.classList.remove("show"); // Oculta la burbuja
+            });
+        }
+    });
+
 });
