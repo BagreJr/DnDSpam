@@ -31,7 +31,23 @@
 		<button id="quizButton">Iniciar Quiz</button>
 		<button id="spellbookButton">Ver Libro de Spells</button>
 		<button id="hpCalculatorButton">Calculadora de HP</button>
+<button id="btnAbrirMapa" class="map-button">🗺️ Explorar Mapa de Campaña</button>
 
+<div id="mapContainer" class="map-modal" style="display: none;">
+    <div class="map-header">
+        <h3>Mapa de la Campaña</h3>
+        <button id="btnCerrarMapa">Cerrar</button>
+    </div>
+    
+    <div class="iframe-wrapper">
+        <div id="mapLoader" class="loader-overlay">
+            <div class="spinner"></div>
+            <p>Sincronizando cartografía...</p>
+        </div>
+        <iframe id="azgaarMap" src="" width="100%" height="800px" frameborder="0"></iframe>
+    </div>
+</div>
+<script src="Map.js"></script>
     <div class="container">
         <h2>Galería de Imágenes</h2>
         <div class="gallery">
