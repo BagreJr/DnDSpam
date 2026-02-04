@@ -99,6 +99,19 @@ document.addEventListener("DOMContentLoaded", () => {
             easy: ["Way of the Open Hand (El monje clásico. Potencia tus 'Techniques' de golpeo con usos gratuitos)", "Way of the Drunken Fist (un estilo de 'pegar y correr' muy efectivo)"],
             hard: ["Way of the Wu Jen (Debes gestionar Spell Slots y una lista de Spells Known además de todo tu Ki)", "Way of the Flagellant (Compleja de optimizar. Usas tu bonus action para múltiples Art of Punishment y debes autoinfligirte daño)"]
         },
+        "Multiclass": {
+    advice: "¡La clave del multiclase es la sinergia de atributos! Asegúrate de tener al menos 13 en las estadísticas principales de ambas clases. No retrases funciones vitales como el 'Extra Attack' o los hechizos de nivel 3 a menos que el beneficio sea inmediato. Busca clases que compartan recursos. Y no lo hagas por hacer.",
+    easy: [
+        "Sorcadin (Sorcerer + Paladin): El combo clásico. Usa la gran cantidad de 'Spell Slots' del Sorcerer  para alimentar el 'Divine Smite' del Paladin.",
+        "Hexadin (Warlock + Paladin): Al elegir la subclase 'Hexblade' del Warlock, puedes usar tu Carisma para atacar con armas, lo que te permite ignorar la Fuerza y centrarte totalmente en tu Carisma para hechizos, auras y daño."
+    ],
+    hard: [
+        "Blood Weaver (Blood Hunter + Martyr): Gestión de riesgo extremo. Ambas clases utilizan su propia vida como combustible para sus 'Rites' y 'Torments'. Requiere una microgestión perfecta de tu salud para no caer antes que tus enemigos.",
+        "Arcane Commander (Warlord + Wizard): El estratega definitivo. Combina el 'Leadership Style' del Warlord  con el 'Spellbook' del Mago. Es muy complejo de optimizar, ya que debes equilibrar tu Inteligencia con la estadística de mando elegida.",
+        "Inquisidor Umbrío (Investigator + Rogue): Maximiza el daño de precisión combinando el 'Sneak Attack' del Rogue  con el 'Exploit Weakness' del Investigator. Dependes críticamente de tu posicionamiento y del uso de rituales instantáneos para sobrevivir.",
+        "Totemic Warden (Shaman + Warden): El tanque espiritual. Utiliza el 'Sacred Focus' del Shaman para potenciar la resistencia natural y las 'Guardian Tactics' del Warden, creando un muro que protege al grupo con magia y acero."
+    ]
+},
         "Necromancer": {
             advice: "¡Tu poder reside en la muerte! Eres un invocador frágil pero poderoso. Tu principal desafío es la gestión de recursos: tus Thralls y tus puntos de Charnel Touch. Usa Black Arcana para convertir tus ranuras de hechizo en más puntos, que alimentan casi todas tus habilidades. Posiciona a tus Thralls para protegerte, ¡eres el general de tu propio ejército de la muerte!",
             easy: ["Death Knight (Muy simple. Gana armadura, armas y Extra Attack para pegar en melee, ganando Temp HP con Charnel Resilience)", "Overlord (Un líder que se enfoca en control spells de su lista de subclase y en buffar a sus Thralls con Charnel Aura)"],
@@ -128,6 +141,11 @@ document.addEventListener("DOMContentLoaded", () => {
             advice: "¡El saber te hace letal! Eres un experto en... bueno, en todo. Tu poder principal es Adroit Analysis: usa tu acción adicional para designar un 'Focus' y destrúyelo. Pero tu verdadera fortaleza son las reacciones. Gástalas sabiamente para controlar la batalla y hacer brillar a tu equipo.",
             easy: ["Adeptus Administratum (Apoyo social y buffos directos potenciando la acción de Help)", "Investigator (Buen balance de combate melee simple con Rough & Tumble y utilidad fuera de combate)"],
             hard: ["Culinarian (Requiere gestionar un Cook Book, recolectar Samples de monstruos y preparar Morsels tras cada descanso)", "Virtuoso (Requiere tu acción y acción adicional para mantener el Wondrous Theme y añade más opciones de reacción)"]
+        },
+        "Shaman": {
+            advice: "¡Tu sabiduría conecta el mundo mortal con el espiritual! Tu poder principal es el 'Totemic Assault', úsalo para desgastar enemigos sin gastar espacios de conjuro. La clave es tu 'Sacred Focus', que define cómo sobrevives y escalas. Recuerda que tus espacios de 'Conduit Magic' se recuperan en un descanso corto, ¡no temas usarlos para lanzar tus conjuros más potentes en cada batalla!.",
+            easy: ["Spirit Warrior (Te da armas marciales y armadura media para un combate directo)", "Witch Doctor (El sanador puro; convierte tu daño en curación de forma simple)"],
+            hard: ["Wild Heart (Requiere gestionar la forma de 'Great Beast' y elegir múltiples rasgos bestiales en cada transformación)", "Idolater (Gestión táctica de un ídolo estacionario que concentra hechizos por ti)"]
         },
         "Sorcerer": {
             advice: "Sos la magia pura; no la estudias, sos ella. Tu verdadero poder no está en la cantidad de hechizos que conoces, sino en cómo los usas. Gestiona tus Sorcery Points de tu Font of Magic como tu recurso más valioso. Son tu combustible para Metamagic y para crear más Spell Slots. ¡No tengas miedo de quemar recursos para terminar una pelea con un Quicken Spell o un Twinned Spell devastador!",

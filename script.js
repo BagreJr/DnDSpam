@@ -25,6 +25,7 @@
         { name: "Ranger", hitDie: 'd10', savingThrows: ['STR', 'DEX'], image: "images/ranger.webp", description: "Explorador experto en el uso de arcos y el sigilo, con un vínculo profundo con la naturaleza.", link: "https://homebrewery.naturalcrit.com/share/usNwevklFcoN", subclasses: ["Beastborne", "Beast Master", "Bounty Hunter", "Buccaneer", "Crystal Guardian","Deadeye Sniper", "Death Hunter","Drakewarden", "Druidic Guardian", "Dunestrider", "Fey Wanderer", "Freerunner", "Gloom Stalker", "Grim Warden", "Horizon Walker", "Highwayman", "Hunter", "Monster Slayer", "Nomad", "Reconnaissance Scout", "Ronin", "Skysworn", "Slim Rancher","Shadowbane", "Spiritbound", "Spellbreaker", "Stargazer", "Stormchaser","Swarmkeeper","Torturer Conclave","Trapper", "Vigilante", "Wrangler"] },
         { name: "Rogue", hitDie: 'd8', savingThrows: ['DEX', 'INT'], image: "images/rogue.webp", description: "Experto en el sigilo, la evasión y las trampas, ideal para misiones que requieren astucia y agilidad.", link: "https://homebrewery.naturalcrit.com/share/TQg2QgZKbsDv", subclasses: ["Arachnoid Stalker", "Arcane Trickster", "Angler", "Assassin", "Bloodknife", "Chameleon", "Charlatan", "Duskcaller", "Enforcer", "Daredevil", "Duelist", "Falconer", "Gambler", "Gloaming Knight","Grifter", "Infiltrator", "Inquisitive", "Jumper", "Justicar", "Magehunter", "Mastermind", "Phantom", "Ruffian", "Saboteur", "Scion of the Three","Scoundrel", "Scout", "Socialite", "Soulknife", "Shadow Master", "Skinchanger", "Steelsilk Operative","Surgeon", "Swashbuckler", "Tamaya", "Temporal Trickster", "Thief", "Titan Slayer","Windwalker"] },
         { name: "Savant", hitDie: 'd8', savingThrows: ['INT', 'WIS'], image: "images/savant.webp", description: "Conocedor profundo de las artes arcanas o la ciencia, con habilidades excepcionales para el estudio y la enseñanza.", link: "https://homebrewery.naturalcrit.com/share/3Lw7KbWJnUsy", subclasses: ["AdeAdeptus Administratum", "Archaeologist", "Culinarian", "Engineer", "Gunner","Investigator", "Naturalist", "Mentors", "Occultist", "Orator", "Philosopher", "Physician", "Rune Scribe", "Tactician", "Tinker", "Virtuoso", "Voyager"] },
+        { name: "Shaman", hitDie: 'd8', savingThrows: ['WIS', 'CHA'], image: "images/shaman.webp", description: "", link: "Conductos espirituales que vinculan y canalizan el poder de espíritus místico a través de tótems para mantener el equilibrio entre el mundo mortal y el etéreo.", subclasses: ["Astrologer", "Blood Priest", "Curse Binder", "Elementalist", "Far Seer", "Idolater", "Spirit Guide", "Spirit Warrior", "Wild Heart", "Witch Doctor", "Wyrmbound"] },
         { name: "Sorcerer", hitDie: 'd6', savingThrows: ['CON', 'CHA'], image: "images/sorcerer.webp", description: "Un hechicero que canaliza su magia a través de su linaje o conexión con fuerzas sobrenaturales.", link: "https://homebrewery.naturalcrit.com/share/NOEmC8CLMj9P", subclasses: ["Aberrant Mind", "Aether Heart","Astral Sorcery","Bloodrazor","The Chained", "Clockwork Soul", "Cosmic Sorcery", "Dark Wild Magic","Divine Soul", "Divine Right", "Draconic Bloodline", "Emberheart", "Emotion Lord", "Faeblood", "Frost Sorcery", "Gifted One", "Greensinger", "Hellspawn", "Iron Sorcery","Jinx", "Lunar Sorcery", "Magnetism Sorcery", "Mirrorkin", "Mutagenic Bloodline", "Nanite Host", "Oozemaster", "Radiation Freak", "Reincarnated Hero", "Shadow", "Spiritborn", "Spirit Caller", "Stoneblood", "Storm Sorcery", "Toon Magic", "Vampiric Soul", "Voidwielder", "Waveborn", "Wild Magic"] },
         { name: "Vagabond", hitDie: 'd10', savingThrows: ['STR', 'CON'], image: "images/vagabond.webp", description: "Exiliados, perseguidos o simplemente inquietos que viven en movimiento. El camino es su hogar y la desesperación, su mayor maestra.", link: "https://homebrewery.naturalcrit.com/share/7LePIfQ0CLhu", subclasses: ["Adrenaline Junkie", "Brigand", "Experiment X", "Feylost", "Gourmand","Heretic" ,"Houndmaster","Jaeger","Justicar","Knight Errant","Mage Brand","Marauder","Mindblade","Plague Doctor","Pugilist","Rōnin","Sanguine Chapter","Troubadour"] },
         { name: "Vessel", hitDie: 'd10', savingThrows: ['CON', 'CHA'], image: "images/vessel.webp", description: "Un ser marcado por una conexión especial con espíritus, otorgándole poderes místicos y transformadores.", link: "https://homebrewery.naturalcrit.com/share/vBYpvFeHFy6v", subclasses: ["The Ancient Wyrms", "The Ascended", "The Beyond", "The Cataclysm", "The Cursed", "The Departed","The Fallen", "The Formless", "The Mushroom Prince", "The Mythic Hero", "The Parasite", "The Overgrown", "The Titan", "The Trickster", "The Undying"] },
@@ -33,7 +34,8 @@
         { name: "Warlord", hitDie: 'd10', savingThrows: ['INT', 'CON'], image: "images/warlord.webp", description: "Señor de la guerra, un líder militar que dirige a sus tropas con astucia y habilidad estratégica en el campo de batalla.", link: "https://homebrewery.naturalcrit.com/share/3IUIglJ_K-O4", subclasses: ["Academy of Chivalry", "Academy of Claws","Academy of Counsel","Academy of Dawnbringer", "Academy of Dreadlords", "Academy of Ferocity", "Academy of Liberty","Academy of Order","Academy of the Red","Academy of the Seadog","Academy of Schemes", "Academy of Skalds", "Academy of Tactics","Academy of Zeals"] },
         { name: "Warmage", hitDie: 'd8', savingThrows: ['INT', 'CON'], image: "images/warmage.webp", description: "Estratega experto que domina un area de magia especializada para devastar a sus enemigos en el campo de batalla.", link: "https://homebrewery.naturalcrit.com/share/rau8aywbKXzF", subclasses: ["House of Bishops", "House of Cards","House of Coalition Arcanist", "House of Darts", "House of Dice", "House of Go", "House of Janus","House of Kings", "House of Knights", "House of Queens", "House of Lancers", "House of Pawns", "House of Rooks", "House of Roulette","House of Words"] },
         { name: "Witch", hitDie: 'd8', savingThrows: ['CHA', 'WIS'], image: "images/witch.webp", description: "Una usuaria de la magia arcana que emplea encantamientos y maldiciones para manipular el destino.", link: "https://homebrewery.naturalcrit.com/share/cl5HbkIH2xFw", subclasses: ["Black Magic", "Blood Magic", "Blue Magic", "Disformity Magic","Duskcaller Magic", "Fragrant Magic", "Fruit Magic","Gingerbread Magic", "Green Magic", "Lunar Magic", "Purple Magic", "Red Magic", "Sky Magic", "Steel Magic", "Tea Magic", "Technicolor Magic", "White Magic"] },
-        { name: "Wizard", hitDie: 'd6', savingThrows: ['INT', 'WIS'], image: "images/wizard.webp", description: "Erudito en el estudio y dominio de la magia arcana, capaz de lanzar poderosos hechizos y controlarla con precisión.", link: "https://homebrewery.naturalcrit.com/share/ymEiMM7-iT9H", subclasses: ["Familiar Master", "Magic Missile Mage", "Mystic Savant", "Order of Embalmers", "Order of Scribes", "Origami Mage","School of Abjuration", "School of Animism","School of Automata", "School of Bladesinging", "School of Conjuration", "School of Chronomancy", "School of Divination", "School of Enchantment", "School of Evocation", "School of Gastronomy", "School of Graviturgy", "School of Hardlight", "School of Hexcraft", "School of Illusion", "School of Necromancy", "School of Metallurgy", "School of Somnomancy", "School of Theurgy", "School of Teleportation", "School of Transmutation", "School of War Magic", "School of Warp Watcher", "Shinobi"] }
+        { name: "Wizard", hitDie: 'd6', savingThrows: ['INT', 'WIS'], image: "images/wizard.webp", description: "Erudito en el estudio y dominio de la magia arcana, capaz de lanzar poderosos hechizos y controlarla con precisión.", link: "https://homebrewery.naturalcrit.com/share/ymEiMM7-iT9H", subclasses: ["Familiar Master", "Magic Missile Mage", "Mystic Savant", "Order of Embalmers", "Order of Scribes", "Origami Mage","School of Abjuration", "School of Animism","School of Automata", "School of Bladesinging", "School of Conjuration", "School of Chronomancy", "School of Divination", "School of Enchantment", "School of Evocation", "School of Gastronomy", "School of Graviturgy", "School of Hardlight", "School of Hexcraft", "School of Illusion", "School of Necromancy", "School of Metallurgy", "School of Somnomancy", "School of Theurgy", "School of Teleportation", "School of Transmutation", "School of War Magic", "School of Warp Watcher", "Shinobi"] },
+        { name: "Multiclass", hitDie: '?', savingThrows: ['?', '?'], image: "images/multiclass.webp", description: "Reglas para combinar niveles de diferentes clases. Permite personalizar las capacidades de tu personaje a cambio de cumplir con requisitos mínimos de atributos.", link: "https://homebrewery.naturalcrit.com/share/2X57A9Vq031z", subclasses: ["Multiclasear"] }
     ];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -46,21 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const galleryButton = document.getElementById("toggleGalleryButton");
     const gallery = document.getElementById("gallery");
 	const subclassName = document.getElementById("subclassName") || document.createElement("h4");
-	// QUIZ
-	const quizButton = document.getElementById("quizButton");
-	const quizContainer = document.getElementById("quizContainer");
-	const quizQuestion = document.getElementById("quizQuestion");
-	const quizOptions = document.getElementById("quizOptions");
-	const backButton = document.getElementById("backButton");
-	const quizResult = document.getElementById("quizResult");
-	const mainContainer = document.querySelector(".container"); // Contenedor principal
-	const exitQuiz = document.getElementById("exitQuiz");
-	const quizAudio = document.getElementById("quizAudio");
 
-	const quizProgress = document.getElementById("quizProgress");
-	const quizBar = document.getElementById("quizBar");
-	const quizRemaining = document.getElementById("quizRemaining");
-	const answerSound = document.getElementById("answerSound");
 
     // --- GRIMORIO VARIABLES ---
     const spellbookButton = document.getElementById("spellbookButton");
@@ -264,7 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
         spellbookButton.style.opacity = "0.5";
         hpCalculatorButton.disabled = true;
         hpCalculatorButton.style.opacity = "0.5";
-
+        
         let shuffleCount = 45;
         let interval = setInterval(() => {
             let randomIndex = Math.floor(Math.random() * classes.length);
@@ -396,531 +384,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // --- QUIZ --- (Keep your Quiz functions: quizQuestions, startQuiz, updateProgress, showQuestion, selectOption, showResult, shuffleArray)
-    // Preguntas de ejemplo, puedes agregar
-    const quizQuestions = [
-    {
-        question: "Te das cuenta que el tabernero te quiere estafar ¿Qué haces?",
-        options: [
-            { text: "Lo beso para que sus labios no sigan hablandome", classes: ["Alchemist","Bard"] },
-            { text: "Le muestro el arma", classes: ["Gunslinger", "Warlord", "Captain", "Warden","Gadgeteer","Warmage"] },
-            { text: "Planeo como robarle luego", classes: ["Artificer","Investigator","Rogue","Necromancer"] },
-            { text: "Lo reporto a las autoridades", classes: ["Paladin", "Cleric","Craftsman"] },
-            { text: "Lo mato a golpes", classes: ["Blood Hunter","Barbarian", "Fighter","Ranger","Illrigger","Magus","Vessel"] },
-			{ text: "Le hago un encantamiento para mi beneficio", classes: ["Warlock","Wizard", "Witch","Sorcerer","Psionico"] },
-            { text: "Me voy en paz", classes: ["Monk", "Druid","Martyr","Commoner","Savant","Vagabond"]}
-        ]
-    },
-    {
-        question: "Un dragón aparece en el horizonte acercándose a tu pueblo ¿Qué haces?",
-        options: [
-            { text: "Tomo mi arma y me preparo a enfrentarlo", classes: ["Fighter","Barbarian","Paladin","Ranger","Blood Hunter"] },
-            { text: "Busco un lugar para esconderme y esperar", classes: ["Rogue","Vagabond","Investigator"] },
-            { text: "Intento dialogar con él, quizá podamos razonar", classes: ["Bard","Cleric","Sorcerer","Savant"] },
-            { text: "Uso la magia para manipular la situación a mi favor", classes: ["Wizard","Warmage","Witch","Psionico"] },
-            { text: "Organizo a la gente del pueblo para resistir juntos", classes: ["Warlord","Warden","Martyr","Captain","Warlord"] },
-            { text: "Me uno al dragón y busco el caos", classes: ["Illrigger","Necromancer","Warlock"] }
-        ]
-    },
-	    {
-        question: "Encontras un cofre misterioso en medio del bosque ¿Qué haces?",
-        options: [
-            { text: "Lo abro sin pensarlo, la fortuna favorece a los valientes", classes: ["Barbarian","Fighter","Sorcerer","Warmage"] },
-            { text: "Lo examino cuidadosamente en busca de trampas", classes: ["Rogue","Investigator","Artificer"] },
-            { text: "Lanzo un hechizo para descubrir su naturaleza", classes: ["Wizard","Warlock","Witch","Psionico"] },
-            { text: "Lo ignoro, no quiero arriesgarme por simple curiosidad", classes: ["Monk","Commoner","Druid","Magus"] },
-            { text: "Lo reclamo en nombre de la justicia y el pueblo", classes: ["Paladin","Cleric","Martyr"] },
-            { text: "Intento venderlo sin abrirlo, seguro alguien lo quiere", classes: ["Bard","Captain","Gunslinger"] }
-        ]
-    },
-	    {
-        question: "Un aliado cae herido en medio de la batalla ¿Qué haces?",
-        options: [
-            { text: "Lo curo de inmediato, su vida es prioridad", classes: ["Cleric","Paladin","Martyr","Druid"] },
-            { text: "Sigo peleando, ya tendré tiempo de ayudar luego", classes: ["Fighter","Barbarian","Blood Hunter","Magus"] },
-            { text: "Lo protejo con mi cuerpo para que nadie más lo hiera", classes: ["Warden","Captain","Vessel"] },
-            { text: "Intento distraer al enemigo para ganar tiempo", classes: ["Bard","Investigator","Warmage"] },
-            { text: "Aprovecho la distracción para atacar con todo", classes: ["Rogue","Vagabond","Wizard","Necromancer"] },
-            { text: "Huyo, no puedo arriesgar mi vida también", classes: ["Warlock","Commoner","Illrigger"] }
-        ]
-    },
-	{
-        question: "Llegas a una biblioteca prohibida llena de tomos antiguos ¿Qué haces?",
-        options: [
-            { text: "Leo cada libro en busca de conocimiento oculto", classes: ["Wizard","Psionico","Savant"] },
-            { text: "Busco magia oscura para volverme más poderoso", classes: ["Warlock","Necromancer","Witch"] },
-            { text: "Quemo los libros, nadie debería acceder a este mal", classes: ["Paladin","Cleric","Martyr"] },
-            { text: "Los robo para venderlos al mejor postor", classes: ["Rogue","Investigator","Sorcerer"] },
-            { text: "Escribo mis propias teorías y notas sobre lo que encuentro", classes: ["Ranger","Artificer","Craftsman","Alchemist"] },
-            { text: "No me interesa, salgo de ahí sin tocar nada", classes: ["Monk","Druid","Vagabond","Commoner"] }
-        ]
-    },
-	{
-        question: "Un noble arrogante te insulta en público ¿Cómo respondes?",
-        options: [
-            { text: "Le devuelvo el insulto con un chiste más ingenioso", classes: ["Bard","Savant","Captain"] },
-            { text: "Le rompo la nariz ahí mismo", classes: ["Barbarian","Fighter","Blood Hunter","Illrigger","Magus"] },
-            { text: "Uso magia sutil para humillarlo sin que lo note", classes: ["Wizard","Warlock","Sorcerer","Witch","Psionico"] },
-            { text: "Ignoro el insulto, no vale mi energía", classes: ["Ranger","Monk","Druid","Commoner","Martyr"] },
-            { text: "Recurro a mis contactos para arruinar su reputación", classes: ["Rogue","Investigator","Necromancer"] },
-            { text: "Le doy un discurso para que reflexione sobre su arrogancia", classes: ["Paladin","Cleric","Warlord","Warden"] }
-        ]
-    },
-    {
-        question: "Te ofrecen un objeto maldito de enorme poder ¿Qué haces?",
-        options: [
-            { text: "Lo tomo sin dudar, el poder es mío", classes: ["Warlock","Necromancer","Witch","Illrigger","Vessel"] },
-            { text: "Lo estudio en detalle antes de decidir", classes: ["Wizard","Artificer","Investigator","Savant"] },
-            { text: "Lo destruyo, nadie debería usarlo", classes: ["Paladin","Cleric","Warden","Martyr"] },
-            { text: "Lo escondo para que nadie más lo encuentre", classes: ["Vagabond","Druid"] },
-            { text: "Intento usarlo para proteger a los demás", classes: ["Captain","Warlord","Blood Hunter"] },
-            { text: "Lo vendo al mejor postor, negocios son negocios", classes: ["Rogue","Bard","Gunslinger","Craftsman","Alchemist"] }
-        ]
-    },
-    {
-        question: "Estás perdido en un pantano de noche ¿Qué haces?",
-        options: [
-            { text: "Busco señales naturales para orientarme", classes: ["Ranger","Druid","Vagabond"] },
-            { text: "Lanzo un hechizo de luz para abrir camino", classes: ["Wizard","Sorcerer","Warmage","Psionico"] },
-            { text: "Subo a un árbol para ubicarme mejor", classes: ["Rogue","Monk"] },
-            { text: "Grito pidiendo ayuda, seguro alguien escucha", classes: ["Commoner","Bard","Captain"] },
-            { text: "Construyo un artefacto improvisado para orientarme", classes: ["Artificer","Craftsman","Gadgeteer","Alchemist"] },
-            { text: "Me siento en calma, espero y dejo que la fe me guíe", classes: ["Cleric","Paladin","Martyr","Warden"] }
-        ]
-    },
-    {
-        question: "Un espíritu te ofrece conocimiento prohibido a cambio de tu memoria ¿Qué haces?",
-        options: [
-            { text: "Acepto, el conocimiento es más valioso que mi pasado", classes: ["Wizard","Psionico","Warlock","Necromancer"] },
-            { text: "Lo rechazo, nada vale mi identidad", classes: ["Paladin","Cleric","Martyr","Monk"] },
-            { text: "Negocio para reducir el precio", classes: ["Bard","Captain","Illrigger","Savant"] },
-            { text: "Intento engañar al espíritu y llevarme el conocimiento gratis", classes: ["Rogue","Investigator","Vagabond"] },
-            { text: "Le ofrezco algo alternativo como mi sangre o dolor", classes: ["Blood Hunter","Vessel","Binder"] },
-            { text: "Lo atrapo en un artefacto o sello", classes: ["Artificer","Craftsman","Warden","Gadgeteer"] }
-        ]
-    },
-    {
-        question: "Un niño roba tu bolsa de monedas y huye ¿Qué haces?",
-        options: [
-            { text: "Lo persigo y recupero lo mío", classes: ["Rogue","Fighter","Ranger"] },
-            { text: "Lo dejo ir, seguramente lo necesita más que yo", classes: ["Cleric","Monk","Druid","Martyr"] },
-            { text: "Lo maldigo para que aprenda su lección", classes: ["Witch","Warlock","Necromancer"] },
-            { text: "Lo uso como aprendiz, veo potencial en él", classes: ["Artificer","Alchemist","Captain","Investigator"] },
-            { text: "Organizo a la guardia de la ciudad para atraparlo", classes: ["Paladin","Warlord","Warden"] },
-            { text: "Lo dejo ir pero luego lo sigo desde las sombras", classes: ["Illrigger","Vagabond"] }
-        ]
-    },
-	    {
-        question: "4 goblins están golpeando a una jubilada ¿Qué haces?",
-        options: [
-            { text: "Me uno a la pelea, algo habra hecho la jubilada", classes: ["Illrigger","Rogue"] },
-            { text: "Les grito una canción tan molesta que se van", classes: ["Bard","Savant","Captain"] },
-            { text: "Me lanzo con furia desmedida y golpeo a todos", classes: ["Barbarian","Fighter","Blood Hunter","Vagabond"] },
-            { text: "Convoco esqueletos para que la defiendan, es un buen entrenamiento", classes: ["Necromancer","Warlock","Witch","Binder"] },
-            { text: "La protejo con un aura divina y hago smite en los goblins", classes: ["Paladin","Cleric","Warden","Martyr"] },
-            { text: "Construyo un objeto para distraerlos", classes: ["Artificer","Craftsman","Gadgeteer","Alchemist"] }
-        ]
-    },
-    {
-        question: "Encontras a un mago borracho tirado en la calle con un grimorio abierto ¿Qué haces?",
-        options: [
-            { text: "Le robo el grimorio", classes: ["Rogue","Illrigger","Vagabond"] },
-            { text: "Lo despierto con un sermón sobre la responsabilidad", classes: ["Savant","Cleric","Paladin","Martyr"] },
-            { text: "Le pongo un sombrero más gracioso y le saco retratos", classes: ["Bard","Captain"] },
-            { text: "Lo dejo ahi tirado", classes: ["Artificer","Craftsman","Alchemist"] },
-            { text: "Le robo los conjuros", classes: ["Wizard","Sorcerer","Warmage","Psionico"] },
-            { text: "Lo cargo en la espalda y lo dejo en la taberna más cercana", classes: ["Fighter","Ranger","Monk","Warden"] }
-        ]
-    },
-    {
-        question: "Un pollo empieza a hablarte con voz demoníaca ¿Qué haces?",
-        options: [
-            { text: "Lo cocino", classes: ["Barbarian","Blood Hunter","Vessel"] },
-            { text: "Lo adopto como familiar, es perfecto", classes: ["Witch","Warlock","Necromancer"] },
-            { text: "Intento razonar con él, quizá necesite ayuda", classes: ["Cleric","Paladin","Bard"] },
-            { text: "Lo estudio para replicarlo", classes: ["Alchemist","Artificer","Gadgeteer"] },
-            { text: "Lo ignoro", classes: ["Savant","Captain","Commoner"] },
-            { text: "Lo exorcizo con una patada voladora", classes: ["Monk","Illrigger","Magus"] }
-        ]
-    },
-    {
-        question: "Un rey te ofrece oro a cambio de que te cases con su hija ogra ¿Qué haces?",
-        options: [
-            { text: "Acepto, siempre quise una esposa", classes: ["Commoner","Vagabond","Warden"] },
-            { text: "Acepto pero solo por el oro, después vemos", classes: ["Rogue","Necromancer","Illrigger"] },
-            { text: "Declino con una canción romántica para suavizarlo", classes: ["Bard","Savant","Captain"] },
-            { text: "Lanzo un hechizo para cambiar su apariencia", classes: ["Wizard","Sorcerer","Psionico","Witch"] },
-            { text: "Acepto, y la respeto como es y me convierto en su campeón", classes: ["Paladin","Cleric","Martyr"] },
-            { text: "Le construyo un esposo orco", classes: ["Artificer","Craftsman","Gadgeteer","Alchemist"] }
-        ]
-    },
-    {
-        question: "Un goblin te desafía a un concurso de beber cerveza ¿Qué haces?",
-        options: [
-            { text: "Acepto y bebo hasta caer, nadie me gana", classes: ["Barbarian","Fighter","Blood Hunter"] },
-            { text: "Le pongo laxantes en la jarra", classes: ["Rogue","Investigator","Illrigger"] },
-            { text: "Lo animo para hacer una fiesta en vez de competir", classes: ["Bard","Captain","Savant"] },
-            { text: "Le hago un hechizo para poder ganar", classes: ["Wizard","Warmage","Sorcerer","Witch"] },
-            { text: "Le predico sobre los males del alcohol", classes: ["Cleric","Paladin","Martyr","Monk"] },
-            { text: "Transformo la cerveza en una poción explosiva", classes: ["Alchemist","Artificer","Gadgeteer","Craftsman"] }
-        ]
-    },
-    {
-        question: "En un pueblo, todos los perros empiezan a ladrarte a la vez ¿Qué haces?",
-        options: [
-            { text: "Ladro más fuerte para imponer respeto", classes: ["Barbarian","Blood Hunter","Fighter"] },
-            { text: "Lanzo un hechizo para convertirlos en gatos", classes: ["Sorcerer","Psionico","Witch"] },
-            { text: "Me subo a un techo y me escondo", classes: ["Rogue","Investigator","Vagabond"] },
-            { text: "Los bendigo y les doy comida, ahora son mis aliados", classes: ["Cleric","Paladin","Druid","Ranger"] },
-            { text: "Los estudio como si fueran un fenómeno paranormal", classes: ["Wizard","Savant","Artificer","Alchemist"] },
-            { text: "Organizo un desfile canino", classes: ["Bard","Captain","Warlord"] }
-        ]
-    },
-    {
-        question: "Tu espada empieza a hablarte y te pide vacaciones ¿Qué haces?",
-        options: [
-            { text: "La mando a trabajar igual", classes: ["Illrigger","Warlord","Captain"] },
-            { text: "Le doy vacaciones, que luche mis puños", classes: ["Barbarian","Monk","Fighter"] },
-            { text: "La fundo y hago un arma nueva mejorada", classes: ["Craftsman","Artificer","Alchemist"] },
-            { text: "La mando a un retiro y la dejo de usar", classes: ["Cleric","Paladin","Martyr","Druid"] },
-            { text: "La uso como show de comedia", classes: ["Bard","Commoner"] },
-            { text: "La clavo en una piedra para que este eternamente sola", classes: ["Wizard","Magus","Vessel","Psionico"] }
-        ]
-    },
-    {
-        question: "Un niño te pide que le enseñes a ser héroe ¿Qué haces?",
-        options: [
-            { text: "Lo entreno a golpes, la vieja escuela", classes: ["Barbarian","Fighter","Ranger"] },
-            { text: "Le enseño que el conocimiento es poder", classes: ["Wizard","Savant","Psionico"] },
-            { text: "Le enseño a robar antes de que la vida lo golpee", classes: ["Rogue","Investigator","Vagabond"] },
-            { text: "Le enseño a ayudar a los demás primero", classes: ["Cleric","Paladin","Martyr","Warden"] },
-            { text: "Le enseño a hacer explotar cosas", classes: ["Artificer","Alchemist","Gadgeteer","Warmage"] },
-            { text: "Le vendo la guía para héroes en fascículos", classes: ["Illrigger","Bard","Captain","Craftsman"] }
-        ]
-    },
-    {
-        question: "Un gnomo insiste en venderte seguros contra dragones ¿Qué haces?",
-        options: [
-            { text: "Lo golpeo por estafador", classes: ["Barbarian","Blood Hunter","Fighter"] },
-            { text: "Firmo el contrato, nunca se sabe", classes: ["Commoner","Paladin","Cleric"] },
-            { text: "Reviso el contrato en busca de cláusulas ocultas", classes: ["Investigator","Rogue","Savant"] },
-            { text: "Lanzo un hechizo para que olvide quién soy", classes: ["Wizard","Warlock","Witch","Psionico"] },
-            { text: "Lo contrato para que trabaje conmigo", classes: ["Illrigger","Captain","Warlord","Warden"] },
-            { text: "Le mejoro la póliza y le cobro comisión", classes: ["Artificer","Craftsman","Alchemist","Gadgeteer"] }
-        ]
-    },
-	    {
-        question: "Encontras a un niño hambriento robando pan en el mercado. El guardia está a punto de arrestarlo. ¿Qué haces?",
-        options: [
-            { text: "Detengo al guardia.", classes: ["Paladin","Cleric","Martyr","Warden"] },
-            { text: "Le enseño al niño a robar sin ser atrapado.", classes: ["Rogue","Vagabond","Investigator","Commoner"] },
-            { text: "Uso magia para alterar la memoria del guardia y dejarlo libre.", classes: ["Wizard","Sorcerer","Psionico","Warlock","Witch"] },
-            { text: "Aprovecho la situación para manipular al niño y ganarme un sirviente fiel.", classes: ["Illrigger","Necromancer","Binder","Vessel"] },
-            { text: "Construyo un artefacto para proveer pan en el barrio y evitar futuros robos.", classes: ["Artificer","Craftsman","Gadgeteer","Alchemist","Savant"] },
-            { text: "Observo en silencio, el mundo enseña sus lecciones mejor que yo.", classes: ["Druid","Ranger","Monk","Blood Hunter","Barbarian"] }
-        ]
-    },
-    {
-        question: "Un rey injusto pero estable mantiene la paz con mano de hierro. Un grupo rebelde quiere tu ayuda para derrocarlo, aunque eso podría sumir al reino en caos. ¿Qué haces?",
-        options: [
-            { text: "Defiendo el orden existente, mejor un tirano que la anarquía.", classes: ["Warlord","Captain","Warden","Paladin","Illrigger"] },
-            { text: "Me uno a los rebeldes, prefiero el riesgo del caos a la opresión.", classes: ["Barbarian","Rogue","Vagabond","Fighter","Ranger"] },
-            { text: "Me convierto en consejero secreto del rey, manipulando desde las sombras para suavizar su crueldad.", classes: ["Investigator","Wizard","Savant","Warlock"] },
-            { text: "Ofrezco mi poder al rey, pero con la condición de gobernar con mi influencia.", classes: ["Necromancer","Binder","Vessel","Illrigger"] },
-            { text: "Armo y fortalezco al pueblo con mis inventos para que decidan su destino.", classes: ["Artificer","Craftsman","Gadgeteer","Alchemist"] },
-            { text: "Me retiro, el ciclo del poder no me concierne.", classes: ["Druid","Monk","Commoner","Martyr","Sorcerer"] }
-        ]
-    },
-    {
-        question: "Tenes prisionero al asesino de tu familia. Está desarmado, suplicando por su vida. Nadie sabrá qué decisión tomes. ¿Qué haces?",
-        options: [
-            { text: "Lo ejecuto con furia, la venganza es justicia.", classes: ["Bard","Barbarian","Blood Hunter","Ranger","Fighter"] },
-            { text: "Lo entrego a las autoridades, la justicia no es mía para ejercer.", classes: ["Paladin","Cleric","Warlord","Captain"] },
-            { text: "Lo libero, cargando yo con el peso de esa misericordia.", classes: ["Monk","Druid","Martyr","Commoner"] },
-            { text: "Lo tomo como experimento, su sufrimiento servirá a mi conocimiento.", classes: ["Necromancer","Alchemist","Wizard","Savant","Witch"] },
-            { text: "Lo obligo a servirme con pactos o juramentos, convirtiendo su crimen en mi fuerza.", classes: ["Warlock","Illrigger","Binder","Vessel"] },
-            { text: "Lo manipulo para que dedique el resto de su vida a reparar el daño hecho.", classes: ["Investigator","Psionico","Craftsman","Gadgeteer"] }
-        ]
-    },
-    {
-        question: "Un pueblo entero está maldito: si rompes la maldición morirán 10 inocentes, si la dejas vivirán en sufrimiento perpetuo. ¿Qué decides?",
-        options: [
-            { text: "Rompo la maldición, mejor una muerte rápida que una vida de tormento.", classes: ["Cleric","Martyr","Paladin","Blood Hunter"] },
-            { text: "No intervengo, el destino no debe alterarse.", classes: ["Druid","Monk","Ranger","Commoner"] },
-            { text: "Busco una solución alternativa aunque me consuma la vida intentándolo.", classes: ["Wizard","Savant","Craftsman","Artificer"] },
-            { text: "Uso la maldición como herramienta para mis propios fines.", classes: ["Warlock","Necromancer","Illrigger","Binder"] },
-            { text: "Sacrifico a los inocentes sin dudar.", classes: ["Captain","Warlord","Warden","Magus","Sorcerer"] },
-            { text: "Me río del dilema.", classes: ["Witch","Vessel","Psionico","Warmage"] }
-        ]
-    },
-    {
-        question: "Un demonio exige tributo de un pueblo pobre a cambio de no destruirlo. ¿Qué haces?",
-        options: [
-            { text: "Lucho contra el demonio aunque muera intentándolo.", classes: ["Barbarian","Paladin","Fighter","Blood Hunter"] },
-            { text: "Negocio con él, buscando un acuerdo más justo.", classes: ["Captain","Investigator","Warlord","Savant"] },
-            { text: "Lo manipulo con engaños y magia para evitar el tributo.", classes: ["Wizard","Warlock","Psionico","Witch"] },
-            { text: "Propongo sacrificar al pueblo y quedarme con el botín.", classes: ["Necromancer","Illrigger","Vessel","Binder"] },
-            { text: "Construyo defensas e inventos para resistir sus ataques.", classes: ["Artificer","Craftsman","Gadgeteer","Alchemist"] },
-            { text: "Llevo al pueblo a otro lugar, la tierra no vale más que la gente.", classes: ["Druid","Ranger","Monk","Commoner"] }
-        ]
-    },
-    {
-        question: "Un amigo tuyo confiesa que ha cometido un crimen terrible. Nadie lo sabe, y te pide ayuda para ocultarlo. ¿Qué haces?",
-        options: [
-            { text: "Lo entrego a la justicia, aunque me duela.", classes: ["Paladin","Cleric","Warden","Captain"] },
-            { text: "Lo ayudo a esconder la verdad, la lealtad está por encima de la ley.", classes: ["Bard","Rogue","Vagabond","Barbarian","Fighter"] },
-            { text: "Lo uso como herramienta, ahora su secreto me da poder sobre él.", classes: ["Illrigger","Necromancer","Binder","Vessel"] },
-            { text: "Lo redimo con paciencia y disciplina, guiándolo hacia el bien.", classes: ["Monk","Martyr","Druid","Savant"] },
-            { text: "Manipulo la percepción pública para borrar toda sospecha.", classes: ["Wizard","Warlock","Witch","Psionico"] },
-            { text: "Diseño un sistema para que nunca vuelva a ocurrir algo así.", classes: ["Artificer","Craftsman","Gadgeteer","Alchemist"] }
-        ]
-    },
-    {
-        question: "Durante una guerra, descubres que tu ejército planea masacrar a civiles para obtener ventaja estratégica. ¿Qué haces?",
-        options: [
-            { text: "Me rebelo contra mis superiores y defiendo a los inocentes.", classes: ["Paladin","Cleric","Martyr","Ranger"] },
-            { text: "Obedezco órdenes, la victoria requiere sacrificios.", classes: ["Warlord","Captain","Illrigger","Magus","Sorcerer"] },
-            { text: "Deserto, no lucharé en una guerra injusta.", classes: ["Monk","Vagabond","Commoner","Druid"] },
-            { text: "Uso la masacre como oportunidad para experimentar con magia prohibida.", classes: ["Necromancer","Warlock","Witch","Binder"] },
-            { text: "Diseño una estrategia alternativa que evite la masacre.", classes: ["Investigator","Craftsman","Savant","Artificer"] },
-            { text: "Canalizo mi furia y lucho contra ambos bandos si es necesario.", classes: ["Barbarian","Blood Hunter","Fighter","Warmage"] }
-        ]
-    },
-    {
-        question: "Un poderoso artefacto puede salvar al mundo… o condenarlo, dependiendo de quién lo use. Vos lo encuentras primero. ¿Qué haces?",
-        options: [
-            { text: "Lo destruyo, demasiado poder para un mortal.", classes: ["Paladin","Cleric","Warden","Martyr"] },
-            { text: "Lo guardo, confiando solo en mi voluntad.", classes: ["Fighter","Barbarian","Rogue","Blood Hunter"] },
-            { text: "Lo estudio, quizás el riesgo valga el conocimiento.", classes: ["Wizard","Savant","Artificer","Alchemist"] },
-            { text: "Lo uso para dominar y forjar mi propio imperio.", classes: ["Bard","Illrigger","Vessel","Binder","Necromancer"] },
-            { text: "Lo escondo en la naturaleza, donde nadie pueda hallarlo.", classes: ["Druid","Ranger","Monk","Commoner"] },
-            { text: "Lo vendo al mejor postor, no es mi problema.", classes: ["Vagabond","Investigator","Gunslinger","Captain"] }
-        ]
-    },
-    {
-        question: "Un dios te ofrece gran poder a cambio de tu libre albedrío. ¿Qué eliges?",
-        options: [
-            { text: "Acepto, los mortales no deberíamos rechazar lo divino.", classes: ["Cleric","Paladin","Martyr","Warden"] },
-            { text: "Rechazo, prefiero vivir libre aunque sea débil.", classes: ["Monk","Druid","Vagabond","Commoner","Magus"] },
-            { text: "Acepto, pero planeo traicionar al dios en el futuro.", classes: ["Rogue","Illrigger","Necromancer","Binder"] },
-            { text: "Analizo el trato como un contrato y busco cláusulas ocultas.", classes: ["Investigator","Craftsman","Savant","Artificer"] },
-            { text: "Acepto con entusiasmo, todo poder es un regalo sin importar el costo.", classes: ["Warlock","Witch","Psionico","Vessel"] },
-            { text: "Le disparo al dios, nunca me gustó que me den órdenes.", classes: ["Gunslinger","Warmage","Blood Hunter","Barbarian"] }
-        ]
-    },
-    {
-        question: "Tu mejor amigo y un grupo de inocentes están en peligro. Solo puedes salvar a uno. ¿A quién eliges?",
-        options: [
-            { text: "Salvo a los inocentes, el bien común sobre lo personal.", classes: ["Paladin","Cleric","Captain","Martyr"] },
-            { text: "Salvo a mi amigo, mi lealtad es inquebrantable.", classes: ["Warlord","Rogue","Barbarian","Fighter","Vagabond","Magus"] },
-            { text: "Intento salvar a ambos aunque sea imposible.", classes: ["Druid","Ranger","Savant","Monk"] },
-            { text: "Me retiro, no cargaré con una decisión tan cruel.", classes: ["Commoner","Warden","Investigator","Craftsman"] },
-            { text: "Sacrifico a mi amigo para un ritual que salvará a los demás.", classes: ["Necromancer","Binder","Illrigger","Vessel"] },
-            { text: "Uso el dilema para manipular al grupo y ganar control.", classes: ["Warlock","Witch","Psionico","Warmage"] }
-        ]
-    },
-    {
-		fixed: true,
-        question: "¿Qué rol prefieres en un grupo?",
-        options: [
-            { text: "El Tanque", classes: ["Blood Hunter","Barbarian","Martyr"] },
-            { text: "La Lider", classes: ["Captain","Warlord"] },
-            { text: "El Sanador", classes: ["Bard", "Cleric"] },
-			{ text: "La Ingeniera", classes: ["Artificer","Craftsman","Alchemist","Savant"] },
-            { text: "La Magica", classes: ["Wizard","Warlock","Magus","Sorcerer", "Witch"] },
-            { text: "El Protector", classes: ["Warden", "Paladin"] },
-			{ text: "La Invocadora", classes: ["Necromancer"] },
-            { text: "El Daño Puro", classes: ["Rogue", "Fighter","Gunslinger","Monk","Vessel","Warmage"] },
-            { text: "La Superviviente", classes: ["Druid", "Ranger","Vagabond"] },
-			{ text: "La Cara", classes: ["Investigator", "Psionico"] },
-			{ text: "El Protegido", classes: ["Binder","Commoner","Gadgeteer"] },
-            { text: "El Malvado", classes: ["Illrigger","Necromancer"] }
-        ]
-    }
-    ];
-
-    quizButton.addEventListener("click", () => {
-        mainContainer.classList.add("hidden");
-        tierListContainer.classList.add("hidden");
-        spellbookContainer.classList.add("hidden");
-        quizContainer.classList.remove("hidden");
-        exitQuiz.classList.remove("hidden");
-        if (quizAudio) {
-            quizAudio.currentTime = 0;
-            quizAudio.play().catch(err => console.log("Audio playback failed:", err));
-        }
-        startQuiz();
-    });
-
-    function startQuiz() {
-        currentQuestionIndex = 0;
-        answers = [];
-
-        const fixed = quizQuestions.filter(q => q.fixed);
-        const notFixed = quizQuestions.filter(q => !q.fixed);
-        shuffleArray(notFixed);
-        shuffledQuestions = [...notFixed, ...fixed]; // Use the shuffled list
-
-        quizResult.innerHTML = "";
-        showQuestion();
-
-        quizBar.max = shuffledQuestions.length; // Use shuffled length
-        quizBar.value = 0;
-        quizRemaining.textContent = `${shuffledQuestions.length} preguntas restantes`;
-        quizProgress.classList.remove('hidden'); // Show progress bar
-    }
-
-    function updateProgress(currentIndex) {
-        quizBar.value = currentIndex;
-        quizRemaining.textContent = `${shuffledQuestions.length - currentIndex} preguntas restantes`;
-    }
-
-    function showQuestion() {
-        if (currentQuestionIndex >= shuffledQuestions.length) {
-            showResult(); // Should not happen if selectOption logic is correct, but safe fallback
-            return;
-        }
-        const q = shuffledQuestions[currentQuestionIndex];
-        quizQuestion.textContent = q.question;
-        quizOptions.innerHTML = "";
-
-        shuffleArray(q.options).forEach((opt) => { // Shuffle options as well
-            const btn = document.createElement("button");
-            btn.textContent = opt.text;
-            btn.addEventListener("click", () => selectOption(btn, opt.classes));
-            quizOptions.appendChild(btn);
-        });
-
-        backButton.classList.toggle("hidden", currentQuestionIndex === 0);
-        exitQuiz.classList.remove("hidden");
-    }
-
-    function selectOption(button, classes) {
-        // Apply fade-out effect
-        quizOptions.querySelectorAll('button').forEach(btn => {
-            if (btn === button) {
-                // Optionally highlight the selected button briefly
-                btn.style.backgroundColor = '#ffcc00'; // Highlight color
-            }
-             btn.disabled = true; // Disable all buttons
-             btn.classList.add("fade-out");
-        });
-
-        answers[currentQuestionIndex] = classes;
-
-        if (answerSound) {
-            answerSound.currentTime = 0;
-            answerSound.play().catch(e => console.log("Answer sound failed:", e));
-        }
-        updateProgress(currentQuestionIndex + 1);
-
-        setTimeout(() => {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < shuffledQuestions.length) {
-                showQuestion();
-            } else {
-                showResult();
-            }
-        }, 400); // Wait for fade-out
-    }
-
-    backButton.addEventListener("click", () => {
-        if (currentQuestionIndex > 0) {
-            currentQuestionIndex--;
-            answers.pop(); // Remove the last answer
-            updateProgress(currentQuestionIndex); // Update progress back
-            showQuestion();
-        }
-    });
-
-    exitQuiz.addEventListener("click", () => {
-        if (quizAudio) quizAudio.pause();
-        quizContainer.classList.add("hidden");
-        mainContainer.classList.remove("hidden");
-        quizResult.innerHTML = "";
-        quizProgress.classList.add('hidden'); // Hide progress bar on exit
-    });
-
-    function showResult() {
-        quizQuestion.textContent = "";
-        quizOptions.innerHTML = "";
-        if (quizAudio) quizAudio.pause();
-        backButton.classList.add("hidden");
-        exitQuiz.classList.remove("hidden");
-        quizProgress.classList.add('hidden'); // Hide progress bar on results
-
-        let score = {};
-        answers.forEach(selected => {
-            if (selected) { // Ensure answer exists (if user went back)
-                selected.forEach(cls => {
-                    score[cls] = (score[cls] || 0) + 1;
-                });
-            }
-        });
-
-        // Find the class(es) with the highest score
-        let maxScore = 0;
-        let topClasses = [];
-        for (const cls in score) {
-            if (score[cls] > maxScore) {
-                maxScore = score[cls];
-                topClasses = [cls];
-            } else if (score[cls] === maxScore) {
-                topClasses.push(cls);
-            }
-        }
-
-        let resultHTML = "";
-        if (topClasses.length === 0) {
-            resultHTML = `<h3>No pudimos determinar tu clase. ¡Inténtalo de nuevo!</h3>`;
-        } else if (topClasses.length === 1) {
-            const result = topClasses[0];
-            const finalClass = classes.find(c => c.name === result); // Use direct name comparison
-             if (finalClass) {
-                 resultHTML = `
-                    <h3>¡Tu clase es ${finalClass.name}!</h3>
-                    <p>${finalClass.description}</p>
-                    <div style="margin-top:20px;">
-                        <img src="${finalClass.image}" alt="${finalClass.name}" style="width:400px; max-width:90%; border-radius:10px;">
-                    </div>
-                     <br>
-                     <a href="${finalClass.link}" target="_blank">Ver Clase Completa</a>
-                 `;
-             } else {
-                 resultHTML = `<h3>Tu clase es: ${result}</h3><p>(Descripción no encontrada)</p>`;
-             }
-        } else {
-             resultHTML = `<h3>¡Tienes afinidad con varias clases!</h3><p>Las clases con las que más encajas son:</p><ul>`;
-             topClasses.forEach(clsName => {
-                 const clsData = classes.find(c => c.name === clsName);
-                 if(clsData) {
-                    resultHTML += `<li><strong>${clsData.name}</strong> (<a href="${clsData.link}" target="_blank">Ver Clase</a>)</li>`;
-                 } else {
-                     resultHTML += `<li><strong>${clsName}</strong></li>`;
-                 }
-             });
-             resultHTML += `</ul><p>¡Considera un personaje multiclase o elige la que más te llame!</p>`;
-        }
-
-
-        quizResult.innerHTML = resultHTML + `<br><button id="restartQuiz">Volver al inicio</button>`;
-
-        launchConfetti(); // Confetti on results
-
-        document.getElementById("restartQuiz").addEventListener("click", () => {
-            quizContainer.classList.add("hidden");
-            mainContainer.classList.remove("hidden");
-            quizResult.innerHTML = "";
-        });
-    }
-
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
 
 
     // --- TIER LIST --- (Keep your Tier List functions and listeners)
@@ -985,43 +448,46 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-function populateItemBank(mode = 'class') { // Restore mode parameter
-    itemBank.innerHTML = ''; // Clear first
+function populateItemBank(mode = 'class') { 
+    itemBank.innerHTML = ''; 
 
-    const itemsToCreate = []; // Array to hold items before appending
+    const itemsToCreate = []; 
 
     if (mode === 'class') {
-        itemBank.innerHTML = '';
         classes.forEach(cls => {
+            // Generamos la ruta al logo: logos/nombre_de_clase.webp
+            // Convertimos a minúsculas y reemplazamos espacios/caracteres raros por guion bajo
+            const logoFileName = cls.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            const logoPath = `logos/${logoFileName}.webp`;
+
             itemsToCreate.push({
                 id: `tier-item-class-${cls.name.replace(/[^a-zA-Z0-9]/g, '-')}`,
                 name: cls.name,
-                image: cls.image,
+                image: logoPath, // <--- Usa la carpeta logos
                 alt: cls.name,
                 isClass: true
             });
         });
     } else if (mode === 'subclass') {
-        itemBank.innerHTML = '';
         classes.forEach(cls => {
             if (cls.subclasses && cls.subclasses.length > 0) {
-                cls.subclasses.sort((a, b) => a.localeCompare(b)); // Sort subclasses
-                cls.subclasses.forEach(subclass => {
+                // Ordenamos las subclases alfabéticamente
+                const sortedSubclasses = [...cls.subclasses].sort((a, b) => a.localeCompare(b));
+                
+                sortedSubclasses.forEach(subclass => {
                     itemsToCreate.push({
                         id: `tier-item-subclass-${cls.name.replace(/[^a-zA-Z0-9]/g, '-')}-${subclass.replace(/[^a-zA-Z0-9]/g, '-')}`,
                         name: subclass,
-                        image: cls.image, // Use parent class image
+                        image: cls.image, // Las subclases siguen usando la ilustración (images/)
                         alt: `${subclass} (${cls.name})`,
                         isClass: false
                     });
                 });
             }
         });
-         // Optional: Sort all subclasses alphabetically regardless of parent class
-         // itemsToCreate.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    // Create and append elements from the array
+    // Renderizado de los items en el banco
     itemsToCreate.forEach(itemData => {
         const item = document.createElement("div");
         item.classList.add("tier-item");
@@ -1035,27 +501,24 @@ function populateItemBank(mode = 'class') { // Restore mode parameter
         const nameSpan = document.createElement("span");
         nameSpan.textContent = itemData.name;
         if (itemData.isClass) {
-             nameSpan.style.fontWeight = 'bold'; // Bold for main classes
+             nameSpan.style.fontWeight = 'bold';
         }
 
         item.appendChild(img);
         item.appendChild(nameSpan);
 
+        // Eventos de arrastre
         item.addEventListener("dragstart", () => {
             draggedItem = item;
             setTimeout(() => item.classList.add("dragging"), 0);
         });
         item.addEventListener("dragend", () => {
-            if (draggedItem) {
-                draggedItem.classList.remove("dragging");
-            }
+            if (draggedItem) draggedItem.classList.remove("dragging");
             draggedItem = null;
         });
         itemBank.appendChild(item);
     });
 
-
-    // Add drag events to the bank itself after populating
     addDragEventsToZone(itemBank);
 }
 
