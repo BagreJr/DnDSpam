@@ -1,7 +1,7 @@
         // --- DATA --- (Keep your 'classes' array here)
     const classes = [
-        { name: "Alchemist", hitDie: 'd8', savingThrows: ['DEX', 'INT'], image: "images/alchemist.webp", description: "Un genio de las ciencias mágicas y la creación de pociones y elixires.", link: "https://homebrewery.naturalcrit.com/share/km9PgnczNSRA", subclasses: ["Amorist", "Apothecary", "Bowgunner","Dynamo Engineer", "Ionizer","Kinetic Breaker", "Mad Bomber", "Mutagenist", "Ooze Rancher", "Pigmentist", "Polymorphist", "Resonator", "Spectral Bomber", "Venomsmith", "Xenoalchemist"] },
-        { name: "Artificer", hitDie: 'd8', savingThrows: ['CON', 'INT'], image: "images/artificer.webp", description: "Maestros de la magia y la tecnología, que crean artefactos mágicos y construcciones complejas.", link: "https://homebrewery.naturalcrit.com/share/XlnxbXPJwSb_", subclasses: ["Aeronaut", "Agent", "Alchemist", "Archivist", "Armorer", "Battle Smith", "Biomancer", "Chronothief", "Composer", "Cryptozoologist", "Dungeoneer", "Enhanced", "Forgewright", "Machinist", "Mechanic","Miner","Nuclear Engineer", "Pilot", "Puppeteer", "Reanimator", "Venomist", "Wandslinger"] },
+        { name: "Alchemist", hitDie: 'd8', savingThrows: ['DEX', 'INT'], image: "images/alchemist.webp", description: "Un genio de las ciencias mágicas y la creación de pociones y elixires.", link: "https://homebrewery.naturalcrit.com/share/km9PgnczNSRA", subclasses: ["Amorist", "Apothecary", "Bowgunner","Dynamo Engineer", "Ionizer","Kinetic Breaker", "Mad Bomber", "Mutagenist", "Ooze Rancher", "Pigmentist", "Polymorphist", "Resonator", "Venomsmith", "Xenoalchemist"] },
+        { name: "Artificer", hitDie: 'd8', savingThrows: ['CON', 'INT'], image: "images/artificer.webp", description: "Maestros de la magia y la tecnología, que crean artefactos mágicos y construcciones complejas.", link: "https://homebrewery.naturalcrit.com/share/XlnxbXPJwSb_", subclasses: ["Aeronaut", "Agent", "Alchemist", "Archivist", "Armorer", "Battle Smith", "Biomancer","Cartographer", "Chronothief", "Composer", "Cryptozoologist", "Dungeoneer", "Enhanced", "Forgewright", "Machinist", "Mechanic","Miner","Nuclear Engineer", "Pilot", "Prosthetist", "Puppeteer", "Reanimator", "Venomist", "Wandslinger"] },
         { name: "Barbarian", hitDie: 'd12', savingThrows: ['STR', 'CON'], image: "images/barbarian.webp", description: "Guerreros primitivos que canalizan su furia en combate, capaces de resistir grandes daños y desatar su fuerza bruta.", link: "https://homebrewery.naturalcrit.com/share/EMNC8JdcJ-I1", subclasses: ["Path of the Ancestral Guardian", "Path of the Battlerager", "Path of the Beast", "Path of the Berserker", "Path of the Brute", "Path of the Burning Rage", "Path of the Champion", "Path of the Deep", "Path of the Devourer", "Path of the Dreadnought", "Path of the Drifter", "Path of the Favored", "Path of the Fin","Path of the Glaicer", "Path of the Kaiju", "Path of Heavy Metal", "Path of the Infernal","Path of the Inferno", "Path of the Juggernaut", "Path of the Muscle Wizard", "Path of the Lycan", "Path of the Mutant", "Path of the Reaver", "Path of the Storm Herald", "Path of the Titan", "Path of the Totem Warrior", "Path of Tranquility", "Path of the Warden", "Path of the Wrecker", "Path of Wilds","Path of Wild Magic", "Path of the World Tree", "Path of the Zealot"] },
         { name: "Bard", hitDie: 'd8', savingThrows: ['DEX', 'CHA'], image: "images/bard.webp", description: "Músicos encantadores y maestros de la magia, cuya música inspira y controla la magia.", link: "https://homebrewery.naturalcrit.com/share/nqImfN7DQmo8", subclasses: ["College of Apocalyps","College of Birdsong", "College of Blade Conductors", "College of Cantors", "College of Chance", "College of Chaos", "College of Command", "College of Creation", "College of Crossroads", "College of Cyberwave", "College of Drama", "College of Eloquence", "College of Eulogies", "College of Fey", "College of Fine Art", "College of Fools", "College of Glamour", "College of Glory", "College of Graffiti", "College of Jesters", "College of Lore", "College of the Mad God", "College of Many Faces", "College of Masks", "College of Mercantile","College of Radiance", "College of Revelry", "College of Romance", "College of the Spheres", "College of Swords", "College of the Vanguard", "College of Valor", "College of Whispers", "College of the Wilds"] },
         { name: "Binder", hitDie: 'd8', savingThrows: ['WIS', 'CHA'], image: "images/binder.webp", description: "Mortal que establece pactos con entidades sobrenaturales para obtener poder.", link: "https://homebrewery.naturalcrit.com/share/Rq5NbuBPOkD5", subclasses: ["The Avatarists", "Brotherhood of Ascetics", "Church of Gyx", "Ishtar’s Faithful", "Legion’s Lodge", "Order of Crimson Binding", "Society of the Stygian Seal"] },
@@ -144,7 +144,10 @@ document.addEventListener("DOMContentLoaded", () => {
         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     }
 
+    
 
+
+    
     // --- NEW HP CALCULATOR FUNCTIONS ---
     function populateHpClassSelect() {
         if (hpClassesPopulated) return; // Only run once
@@ -431,21 +434,44 @@ document.addEventListener("DOMContentLoaded", () => {
         mainContainer.classList.remove("hidden");
     });
 
-    function addDragEventsToZone(zone) {
+function addDragEventsToZone(zone) {
         zone.addEventListener("dragover", (e) => {
             e.preventDefault();
             zone.classList.add("drag-over");
+
+            // --- Lógica de reordenamiento ---
+            const afterElement = getDragAfterElement(zone, e.clientX);
+            if (afterElement == null) {
+                zone.appendChild(draggedItem);
+            } else {
+                zone.insertBefore(draggedItem, afterElement);
+            }
         });
+
         zone.addEventListener("dragleave", () => {
             zone.classList.remove("drag-over");
         });
+
         zone.addEventListener("drop", (e) => {
             e.preventDefault();
             zone.classList.remove("drag-over");
-            if (draggedItem) {
-                zone.appendChild(draggedItem);
-            }
+            // El append/insertBefore ya sucede en dragover para dar feedback visual inmediato
         });
+    }
+
+    // Nueva función auxiliar para determinar la posición del mouse respecto a los items
+    function getDragAfterElement(container, x) {
+        const draggableElements = [...container.querySelectorAll('.tier-item:not(.dragging)')];
+
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = x - box.left - box.width / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
 function populateItemBank(mode = 'class') { 
