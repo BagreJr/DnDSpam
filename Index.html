@@ -32,9 +32,8 @@
 		<button id="quizButton">Iniciar Quiz</button>
 		<button id="spellbookButton">Ver Libro de Spells</button>
 		<button id="hpCalculatorButton">Calculadora de HP</button>
-		<button id="notebookButton" onclick="window.open('https://notebooklm.google.com/notebook/26d8e824-88d9-423d-9a40-61c032d80e88/preview', '_blank')" style="background-color: #4285f4; color: white;">preguntar a la IA</button>
 <button id="btnAbrirMapa" class="map-button">🗺️ Explorar Mapa de Campaña</button>
-
+<button id="notebookButton" onclick="window.open('https://notebooklm.google.com/notebook/26d8e824-88d9-423d-9a40-61c032d80e88/preview', '_blank')" style="background-color: #4285f4; color: white;">Ver Notas de Campaña</button>
 <div id="mapContainer" class="map-modal" style="display: none;">
     <div class="map-header">
         <h3>Mapa de la Campaña</h3>
@@ -49,6 +48,88 @@
         <iframe id="azgaarMap" src="" width="100%" height="800px" frameborder="0"></iframe>
     </div>
 </div>
+
+<button id="openTokenGenerator">Crear Token de Personaje</button>
+
+<div id="tokenModal" class="image-modal" style="display: none;">
+    <div class="modal-content" style="background: #2c313a; padding: 20px; border-radius: 15px; max-width: 500px; width: 90%; position: relative;">
+        <button id="closeTokenModal" class="close-button" style="position: absolute; top: 10px; right: 20px;">&times;</button>
+        
+        <h2 style="color: #ffcc00; margin-top: 0;">Creador de Tokens</h2>
+        
+        <div class="token-controls" style="text-align: left; display: grid; gap: 10px; margin-bottom: 15px;">
+            <label>1. Imagen:</label>
+            <input type="file" id="uploadImage" accept="image/*">
+            
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 120px;">
+                <label>2. Forma:</label>
+                <select id="tokenShape" style="width: 100%; padding: 5px;">
+                    <option value="circle">Circular</option>
+                    <option value="square">Cuadrado</option>
+                    <option value="pyramid">Triángulo</option>
+                    <option value="hexagon">Hexágono</option>
+                </select>
+            </div>
+            <div style="flex: 1; min-width: 120px;">
+                <label>3. Marco:</label>
+                <select id="borderStyle" style="width: 100%; padding: 5px;">
+                    <option value="none">Sin Marco</option>
+                    <option value="solid">Sólido</option>
+                    <option value="double">Doble Línea</option>
+                    <option value="dotted">Puntos Mágicos</option>
+                    <option value="runic">Rúnico (Pulsante)</option>
+                    <option value="texture">Usar Imagen como Textura</option>
+                </select>
+            </div>
+
+            <div style="flex: 1; min-width: 120px; margin-top: 10px;">
+                <label>Imagen de Textura</label>
+                <input type="file" id="uploadTexture" accept="image/*">
+            </div>
+            <div style="flex: 1; min-width: 120px;">
+                <label>4. Color:</label>
+                <input type="color" id="borderColor" value="#ffcc00" style="width: 100%; height: 30px;">
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+            <div style="flex: 1;">
+                    <label>Grosor del Marco:</label>
+                    <input type="range" id="borderWidth" min="1" max="30" value="8">
+                </div>
+         </div>
+
+         <div id="textureControls" style="display: none; gap: 10px; margin-top: 10px; border: 1px solid #444; padding: 10px; border-radius: 5px;">
+            <label style="width: 100%;">Ajustar Textura del Marco:</label>
+            <div>
+                <label>X:</label>
+                <input type="range" id="texturePosX" min="-150" max="150" value="0">
+            </div>
+            <div>
+                <label>Y:</label>
+                <input type="range" id="texturePosY" min="-150" max="150" value="0">
+            </div>
+            <div>
+                <label>Escala:</label>
+                <input type="range" id="textureScale" min="0.1" max="2" step="0.05" value="1">
+            </div>
+        </div>
+            <label>Zoom:</label>
+            <input type="range" id="zoomInput" min="0.1" max="3" step="0.01" value="1">
+        </div>
+
+        <div class="canvas-wrapper" style="margin: 10px auto; width: 300px; height: 300px; background: #1a1d23; border-radius: 10px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+            <canvas id="tokenCanvas" width="300" height="300" style="cursor: move;"></canvas>
+        </div>
+
+        <button id="downloadToken" style="width: 100%; background: #5cb85c; color: white;">Descargar PNG</button>
+    </div>
+</div>
+
+
+
+
 
     <div class="container">
         <h2>Galería de Imágenes</h2>
@@ -120,6 +201,8 @@
 	   <button id="exitQuiz" class="hidden">Salir</button>
     <div id="quizResult"></div>
 </div>
+
+
 
 <div id="tierListContainer" class="hidden">
     <h2 id="tierListTitle">Crea tu Tier List</h2>
@@ -277,7 +360,6 @@
         </div>
         <button id="closeHpCalculator">Cerrar Calculadora</button>
     </div>
-    <script src="script.js"></script>
     
     <div id="dndAssistant" class="assistant-container">
         
@@ -294,7 +376,8 @@
     <script src="map.js"></script>
     <script src="quiz.js"></script>
     <script src="assistant.js"></script>
+    <script src="script.js"></script>
+    <script src="token.js"></script>
+
 </body>
 </html>
-
-

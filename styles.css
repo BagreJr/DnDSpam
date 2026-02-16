@@ -1175,6 +1175,58 @@ font-size: 16px;
     }
 }
 
+/* Reutilizamos parte de tu clase .image-modal pero ajustada */
+/* Modifica la regla existente #tokenModal */
+#tokenModal {
+    display: none; 
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto; /* Permite scroll si el contenido es muy alto */
+    padding: 20px 0;  /* Espacio para que no pegue a los bordes al scrollear */
+}
+
+/* Ajusta el contenedor del contenido */
+.modal-content {
+    max-height: 90vh; /* No permite que el modal sea más alto que la pantalla */
+    overflow-y: auto; /* Scroll interno para los controles */
+    scrollbar-width: thin;
+    scrollbar-color: #ffcc00 #2c313a;
+}
+
+/* Mejora la cuadrícula de controles de textura */
+#textureControls {
+    display: none; 
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Layout compacto */
+    gap: 8px; 
+    margin-top: 10px; 
+    border: 1px dashed #555; 
+    padding: 12px; 
+    border-radius: 8px;
+    background: rgba(0,0,0,0.2);
+}
+
+#textureControls label {
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+/* Asegura que el canvas sea responsivo */
+.canvas-wrapper {
+    max-width: 100%;
+    height: auto !important; /* Permite que la altura se ajuste */
+    aspect-ratio: 1 / 1;    /* Mantiene forma cuadrada */
+}
+
+#tokenCanvas {
+    max-width: 100%;
+    height: auto !important;
+}
+
 /* Ajustes para dispositivos móviles */
 @media screen and (max-width: 768px) {
     body {
