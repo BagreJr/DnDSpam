@@ -935,10 +935,6 @@ function renderFavoriteSpells() {
                      filterClass.add(new Option(cls.name, jsonKey));
                 }
             });
-             // Manually add Shaman if needed and exists in JSON
-             if (allSpells.length > 0 && allSpells[0].hasOwnProperty("Shaman")) {
-                filterClass.add(new Option("Chamán", "Shaman"));
-             }
 
             // Populate School Filter
             const uniqueSchools = [...new Set(allSpells.map(spell => spell.Escuela))].filter(Boolean).sort();
@@ -1029,7 +1025,7 @@ function renderSpells(spells, container = spellList) {
              container.innerHTML = '<h3>Mis Hechizos Favoritos</h3>';
         }
 
-        const classDisplayMap = { "bardo": "Bardo", "clerigo": "Clérigo", "druida": "Druida", "paladin": "Paladín", "ranger": "Ranger", "sorcerer": "Hechicero", "warlock": "Brujo", "wizard": "Mago", "artificer": "Artificero", "warmage": "Mago de Guerra", "witch": "Bruja", "martyrs": "Mártir", "The Vessel": "Vessel", "Necromancer": "Nigromante", "Magus": "Magus", "Investigator": "Investigador", "Shaman": "Chamán" };
+        const classDisplayMap = { "bardo": "Bard", "clerigo": "Cleric", "druida": "Druid", "paladin": "Paladín", "ranger": "Ranger", "sorcerer": "Sorcerer", "warlock": "Warlock", "wizard": "Wizard", "artificer": "Artificer", "warmage": "Warmage", "witch": "Witch", "martyrs": "Martyr", "The Vessel": "Vessel", "Necromancer": "Necromancer", "Magus": "Magus", "Investigator": "Investigator", "Shaman": "Shaman" };
         const castingTimeMap = { "action": "1 Acción", "bonus action": "1 Acción Bonus", "reaction": "1 Reacción", "1 minute": "1 Minuto", "10 minutes": "10 Minutos", "1 hour": "1 Hora", "8 hours": "8 Horas", "12 hours": "12 Horas", "24 hours": "24 Horas" };
 
         // EL BUCLE EMPIEZA AQUÍ
@@ -1245,3 +1241,4 @@ hpOtherBonus.addEventListener('input', calculateAndDisplayHp);
 
 
 });
+
