@@ -12,7 +12,7 @@
         { name: "Craftsman", hitDie: 'd10', savingThrows: ['CON', 'INT'], image: "images/craftsman.webp", description: "Experto en la creación de objetos mágicos y artefactos con fines prácticos o poderosos.", link: "https://homebrewery.naturalcrit.com/share/MnBaupC_WVWe", subclasses: ["Arcane Maesters’ Guild", "Armigers’ Guild", "Bladeworkers’ Guild", "Calibaron’s Guild", "Clockworkers’ Guild", "Courtiers’ Guild", "Finesmith’s Guild","Forgeknight’s Guild", "Hexsmith’s Guild", "Liveoaks’ Guild", "Luminaries’ Guild", "Mechanauts’ Guild", "Prostheticist’s Guild","Scrappers’ Guild", "Thunderlords’ Guild", "Trappers’ Guild", "Techno-adept’s Guild","Wintercarvers’ Guild"] },
         { name: "Druid", hitDie: 'd8', savingThrows: ['INT', 'WIS'], image: "images/druid.webp", description: "Guardianes de la naturaleza con habilidades para transformarse en animales y controlar los elementos naturales.", link: "https://homebrewery.naturalcrit.com/share/e3kR64Zn-Qin", subclasses: ["Circle of the Ancients", "Circle of the City", "Circle of Configuration", "Circle of the Deep", "Circle of the Depths", "Circle of Disaster", "Circle of Dreams", "Circle of the Fairy","Circle of the Fist", "Circle of Guardians", "Circle of the Harvest", "Circle of Land", "Circle of the Moon", "Circle of the Obelisk", "Circle of Petal","Circle of Pollen","Circle of Sand and Stone", "Circle of the Self Sacrifice", "Circle of the Shepherd", "Circle of Spores", "Circle of the Sower", "Circle of Stars", "Circle of Stones", "Circle of Symbiosis","Circle of the Tempest", "Circle of the Tides", "Circle of Vermin", "Circle of the Yokai", "Circle of Wildfire", "Circle of the Wild Gift", "Circle of the Wyrm", "Primal Circle"] },
         { name: "Fighter", hitDie: 'd10', savingThrows: ['STR', 'CON'], image: "images/fighter.webp", description: "Guerrero experto en el combate físico, con habilidades para dominar cualquier tipo de arma.", link: "https://homebrewery.naturalcrit.com/share/ObJ7sUAx1Ggn", subclasses: ["Arcane Archer", "Arcane Knight", "Bestiarius", "Bone Knight", "Brawler", "Caelagarm Oath-Keeper", "Cavalier", "Celestial Lancer", "Champion", "Commander", "Corsair", "Crusader", "Dynamic Duelist", "Dungeoneer", "Echo Knight", "Guardian", "Guerrilla","Iron Oppressor","Mage Hand Magus", "Mandalorian", "Marksman", "Master at Arms", "Master of Hounds", "Mutant Knight", "Mystic Warrior","Living Nightmare", "Quartermaster", "Opportunists", "Pseudomorph", "Renegade", "Relentless Hunter", "Rune Knight", "Sacred Edge","Samurai", "Shadow Knight","Stonecrusher", "Swordsage", "Tinker Knight","The Warden", "Witch Knight"] },
-        { name: "Gadgeteer", hitDie: 'd6', savingThrows: ['DEX', 'INT'], image: "images/gadgeteer.webp", description: "Inventor que utiliza una combinación de ingenio y dispositivos mecánicos para resolver cualquier problema.", link: "https://homebrewery.naturalcrit.com/share/1pBjFWWMDUME", subclasses: ["Apex Absorbant","Biohacker","Cyber Surgeon", "Drone Jockey", "Futurist", "Hardlight Architect", "Hologrammer","Infinite Engine","Jumper","Mastermaker", "Nanoengineer","Photonist","Quantum Mechanics","Vanguarde Model"] },
+        { name: "Gadgeteer", hitDie: 'd6', savingThrows: ['DEX', 'INT'], image: "images/gadgeteer.webp", description: "Inventor que utiliza una combinación de ingenio y dispositivos mecánicos para resolver cualquier problema.", link: "https://homebrewery.naturalcrit.com/share/1pBjFWWMDUME", subclasses: ["Biohacker","Cyber Surgeon", "Drone Jockey", "Futurist", "Hardlight Architect", "Hologrammer","Jumper","Mastermaker", "Nanoengineer","Photonist","Quantum Mechanics"] },
         { name: "Gunslinger", hitDie: 'd8', savingThrows: ['DEX', 'CHA'], image: "images/gunslinger.webp", description: "Tirador experto con pistolas, rápido en el combate y letal con cada disparo.", link: "https://homebrewery.naturalcrit.com/share/K2ZWpZUCPF_Q", subclasses: ["Big Game Hunter","Chroma Duelist","Covert Operative", "Chronotriggers","The Eleventh Pillar","Gun Tank", "Gun-Ko Master", "Gundead", "Grenadier", "High Roller", "Holy Marksman", "Janissary", "Laserist", "League of Shadows", "Lucky Son of a Bitch", "Musketeer", "Pistolero", "Sharpshooter", "Space Cowboy", "Spellslinger", "Spiral Nomad", "Storm Gunner", "Trick Shot", "Twice-Damned", "Wetslinger","White Hat"] },
         { name: "Illrigger", hitDie: 'd10', savingThrows: ['CON', 'CHA'], image: "images/illriger.webp", description: "Un individuo que forja contratos oscuros con entidades infernales para obtener poder a cambio de su alma.", link: "https://homebrewery.naturalcrit.com/share/YkHqcotv-KCQ", subclasses: ["Architect of Ruin", "Black Menagerist", "Brass Banker", "Breaker of Bonds","Cardinals of Inferno", "Despotic Ruler", "Fatebreaker", "Fiendish Marksman","Harbingers of Famine","Hell’s Cantor","Hellspeaker","Knights of the Eclipsed Sun" ,"Nails of Odium", "Painkiller","Pale Reaper", "Queen’s Champion", "Radiant Sentinel", "Sanguine Knight", "Shadowmaster","Sovereign of Chains","War Artisans", "Warden of the Dual Fane", "Forsaken","Forsworn"] },
         { name: "Investigator", hitDie: 'd8', savingThrows: ['DEX', 'INT'], image: "images/investigador.webp", description: "Profesional en resolver misterios y desentrañar secretos, con una mente aguda y habilidades excepcionales para el rastreo.", link: "https://homebrewery.naturalcrit.com/share/Vdd_tiCoHg9d", subclasses: ["Antiquarian", "Archivist", "Conspiracy Theorist", "Containment Specialist", "Contractualist", "Cursed Energy Specialist", "Decommissioner", "Detective", "Exterminator", "Infernal Agent", "Inquisitor", "Kid Sleuth", "King of Curses","Medium", "Occultist", "Spy", "Time Operative", "Witch Hunter"] },
@@ -144,10 +144,6 @@ document.addEventListener("DOMContentLoaded", () => {
         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     }
 
-    
-
-
-    
     // --- NEW HP CALCULATOR FUNCTIONS ---
     function populateHpClassSelect() {
         if (hpClassesPopulated) return; // Only run once
@@ -917,7 +913,13 @@ function renderFavoriteSpells() {
             populateCharacterSelect();
             
             // --- Populate Filters (Keep this logic) ---
-            const classJsonMap = { "Bard": "bardo", "Cleric": "clerigo", "Druid": "druida", "Paladin": "paladin", "Ranger": "ranger", "Sorcerer": "sorcerer", "Warlock": "warlock", "Wizard": "wizard", "Artificer": "artificer", "Warmage": "warmage", "Witch": "witch", "Martyr": "martyrs", "Vessel": "The Vessel", "Necromancer": "Necromancer", "Magus": "Magus", "Investigator": "Investigator", "Shaman": "Shaman" }; // Added Shaman
+            const classJsonMap = { 
+                "Bard": "bardo", "Cleric": "clerigo", "Druid": "druida", "Paladin": "paladin", 
+                "Ranger": "ranger", "Sorcerer": "sorcerer", "Warlock": "warlock", "Wizard": "wizard", 
+                "Artificer": "artificer", "Warmage": "warmage", "Witch": "witch", "Martyr": "martyrs", 
+                "Vessel": "vessel", "Necromancer": "necromancer", "Magus": "magus", 
+                "Investigator": "investigator", "Shaman": "shaman" 
+            };
             const damageTypes = [ { value: "acid", display: "Ácido" }, { value: "bludgeoning", display: "Contundente" }, { value: "cold", display: "Frío" }, { value: "fire", display: "Fuego" }, { value: "force", display: "Fuerza" }, { value: "lightning", display: "Rayo" }, { value: "necrotic", display: "Necrótico" }, { value: "piercing", display: "Perforante" }, { value: "poison", display: "Veneno" }, { value: "psychic", display: "Psíquico" }, { value: "radiant", display: "Radiante" }, { value: "slashing", display: "Cortante" }, { value: "thunder", display: "Trueno" } ];
 
             // Populate Damage Filter
@@ -974,11 +976,11 @@ function renderFavoriteSpells() {
         const sortVal = sortSpells.value;
 
         // Apply filters
-        if (classVal !== 'all') filteredSpells = filteredSpells.filter(spell => spell[classVal] === 1);
+        if (classVal !== 'all') filteredSpells = filteredSpells.filter(spell => spell[classVal] === "1");
         if (levelVal !== 'all') filteredSpells = filteredSpells.filter(spell => spell.Nivel == levelVal);
-        if (typeVal === 'Arcano') filteredSpells = filteredSpells.filter(spell => spell.A === 1);
-        else if (typeVal === 'Divino') filteredSpells = filteredSpells.filter(spell => spell.D === 1);
-        else if (typeVal === 'Primal') filteredSpells = filteredSpells.filter(spell => spell.P === 1);
+        if (typeVal === 'Arcano') filteredSpells = filteredSpells.filter(spell => spell.A === "1");
+        else if (typeVal === 'Divino') filteredSpells = filteredSpells.filter(spell => spell.D === "1");
+        else if (typeVal === 'Primal') filteredSpells = filteredSpells.filter(spell => spell.P === "1");
         if (schoolVal !== 'all') filteredSpells = filteredSpells.filter(spell => spell.Escuela === schoolVal);
         if (ritualVal === 'true') filteredSpells = filteredSpells.filter(spell => spell.ritual === "si");
         else if (ritualVal === 'false') filteredSpells = filteredSpells.filter(spell => spell.ritual === "no");
@@ -1025,7 +1027,7 @@ function renderSpells(spells, container = spellList) {
              container.innerHTML = '<h3>Mis Hechizos Favoritos</h3>';
         }
 
-        const classDisplayMap = { "bardo": "Bard", "clerigo": "Cleric", "druida": "Druid", "paladin": "Paladín", "ranger": "Ranger", "sorcerer": "Sorcerer", "warlock": "Warlock", "wizard": "Wizard", "artificer": "Artificer", "warmage": "Warmage", "witch": "Witch", "martyrs": "Martyr", "The Vessel": "Vessel", "Necromancer": "Necromancer", "Magus": "Magus", "Investigator": "Investigator", "Shaman": "Shaman" };
+        const classDisplayMap = { "artificer": "Artificer","bardo": "Bard", "clerigo": "Cleric", "druida": "Druid", "Investigator": "Investigador","Magus": "Magus","martyrs": "Martyr","necromancer": "Necromancer","paladin": "Paladin", "ranger": "Ranger", "shaman": "Shaman","sorcerer": "Sorcerer", "vessel": "Vessel","warmage": "Warmage","warlock": "Warlock", "witch": "Witch", "wizard": "Wizard" };
         const castingTimeMap = { "action": "1 Acción", "bonus action": "1 Acción Bonus", "reaction": "1 Reacción", "1 minute": "1 Minuto", "10 minutes": "10 Minutos", "1 hour": "1 Hora", "8 hours": "8 Horas", "12 hours": "12 Horas", "24 hours": "24 Horas" };
 
         // EL BUCLE EMPIEZA AQUÍ
@@ -1038,9 +1040,9 @@ function renderSpells(spells, container = spellList) {
             const textoConcentracion = esConcentracion ? "Sí" : "No";
 
             let magicTypes = [];
-            if (spell.A === 1) magicTypes.push('Arcano');
-            if (spell.D === 1) magicTypes.push('Divino');
-            if (spell.P === 1) magicTypes.push('Primal');
+            if (spell.A === "1") magicTypes.push('Arcano');
+            if (spell.D === "1") magicTypes.push('Divino');
+            if (spell.P === "1") magicTypes.push('Primal');
             const typeString = magicTypes.join(', ') || 'N/A';
 
             let components = [];
@@ -1051,7 +1053,7 @@ function renderSpells(spells, container = spellList) {
 
             let spellClasses = [];
             for (const key in classDisplayMap) {
-                if (spell[key] === 1) spellClasses.push(classDisplayMap[key]);
+                if (spell[key] === "1") spellClasses.push(classDisplayMap[key]);
             }
             const classString = spellClasses.join(', ') || 'N/A';
 
@@ -1239,6 +1241,4 @@ hpOtherBonus.addEventListener('input', calculateAndDisplayHp);
     // --- INITIALIZATION ---
     populateHpClassSelect(); // Populate HP class select on initial load
 
-
 });
-
