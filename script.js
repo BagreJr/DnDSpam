@@ -1027,7 +1027,7 @@ function renderSpells(spells, container = spellList) {
              container.innerHTML = '<h3>Mis Hechizos Favoritos</h3>';
         }
 
-        const classDisplayMap = { "artificer": "Artificer","bardo": "Bard", "clerigo": "Cleric", "druida": "Druid", "Investigator": "Investigador","Magus": "Magus","martyrs": "Martyr","necromancer": "Necromancer","paladin": "Paladin", "ranger": "Ranger", "shaman": "Shaman","sorcerer": "Sorcerer", "vessel": "Vessel","warmage": "Warmage","warlock": "Warlock", "witch": "Witch", "wizard": "Wizard" };
+        const classDisplayMap = { "artificer": "Artificer","bardo": "Bard", "clerigo": "Cleric", "druida": "Druid", "investigator": "Investigador","magus": "Magus","martyrs": "Martyr","necromancer": "Necromancer","paladin": "Paladin", "ranger": "Ranger", "shaman": "Shaman","sorcerer": "Sorcerer", "vessel": "Vessel","warmage": "Warmage","warlock": "Warlock", "witch": "Witch", "wizard": "Wizard" };
         const castingTimeMap = { "action": "1 Acción", "bonus action": "1 Acción Bonus", "reaction": "1 Reacción", "1 minute": "1 Minuto", "10 minutes": "10 Minutos", "1 hour": "1 Hora", "8 hours": "8 Horas", "12 hours": "12 Horas", "24 hours": "24 Horas" };
 
         // EL BUCLE EMPIEZA AQUÍ
